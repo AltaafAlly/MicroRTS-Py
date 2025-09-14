@@ -1,0 +1,4 @@
+name,mu,sigma,games
+coacAI,25.0,8.333,0
+lightRushAI,25.0,8.333,0
+randomBiasedAI,25.0,8.333,0
