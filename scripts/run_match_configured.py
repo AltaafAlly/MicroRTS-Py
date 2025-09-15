@@ -12,7 +12,8 @@ from gym_microrts import microrts_ai
 
 
 def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: int,
-             autobuild: bool, utt_json: str | None) -> Dict[str, int]:
+             autobuild: bool, utt_json: str | None,
+             utt_json_p0: str | None = None, utt_json_p1: str | None = None) -> Dict[str, int]:
     a1 = getattr(microrts_ai, ai_left)
     a2 = getattr(microrts_ai, ai_right)
 
@@ -23,6 +24,8 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
         reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
         autobuild=autobuild,
         utt_json=utt_json,
+        utt_json_p0=utt_json_p0,
+        utt_json_p1=utt_json_p1,
     )
 
     _ = env.reset()
@@ -72,7 +75,8 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
 
 def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
                 autobuild: bool, utt_json: str | None, out_dir: str = "results",
-                max_steps_long: int | None = None, draw_retry_threshold: float = 0.0) -> None:
+                max_steps_long: int | None = None, draw_retry_threshold: float = 0.0,
+                utt_json_p0: str | None = None, utt_json_p1: str | None = None) -> None:
     standings: Dict[str, Dict[str, int | float]] = {
         name: {"wins": 0, "losses": 0, "draws": 0, "points": 0.0} for name in ai_names
     }
@@ -80,16 +84,28 @@ def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
     for i in range(len(ai_names)):
         for j in range(i + 1, len(ai_names)):
             left, right = ai_names[i], ai_names[j]
-            res = run_pair(left, right, map_path, max_steps, games, autobuild, utt_json)
+            res = run_pair(left, right, map_path, max_steps, games, autobuild, utt_json, utt_json_p0, utt_json_p1)
             lw, rw, d = res["left_wins"], res["right_wins"], res["draws"]
             print(f"{left} vs {right}: {lw}-{rw} (draws {d}) over {games} games")
             # Optional retry with longer horizon if draws dominate
             if max_steps_long and draw_retry_threshold > 0:
                 if d / max(1, games) >= draw_retry_threshold:
                     print(f"High draw rate (>{draw_retry_threshold:.0%}). Retrying {left} vs {right} with max_steps={max_steps_long}...")
-                    res = run_pair(left, right, map_path, max_steps_long, games, autobuild, utt_json)
+                    res = run_pair(left, right, map_path, max_steps_long, games, autobuild, utt_json, utt_json_p0, utt_json_p1)
                     lw, rw, d = res["left_wins"], res["right_wins"], res["draws"]
                     print(f"Retry result {left} vs {right}: {lw}-{rw} (draws {d})")
+            
+            # Update standings
+            standings[left]["wins"] += lw
+            standings[left]["losses"] += rw
+            standings[left]["draws"] += d
+            standings[right]["wins"] += rw
+            standings[right]["losses"] += lw
+            standings[right]["draws"] += d
+            
+            # Update points (wins + 0.5*draws)
+            standings[left]["points"] = standings[left]["wins"] + 0.5 * standings[left]["draws"]
+            standings[right]["points"] = standings[right]["wins"] + 0.5 * standings[right]["draws"]
             pair_rows.append({
                 "left": left,
                 "right": right,
@@ -99,17 +115,10 @@ def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
                 "games": games,
                 "map_path": map_path,
                 "utt_json": utt_json or "default",
+                "utt_json_p0": utt_json_p0 or "",
+                "utt_json_p1": utt_json_p1 or "",
                 "max_steps": max_steps_long if (max_steps_long and draw_retry_threshold > 0 and d / max(1, games) >= draw_retry_threshold) else max_steps,
             })
-            standings[left]["wins"] += lw
-            standings[left]["losses"] += rw
-            standings[left]["draws"] += d
-            standings[right]["wins"] += rw
-            standings[right]["losses"] += lw
-            standings[right]["draws"] += d
-            # points: 1 win = 1, 0.5 draw = 0.5 per game
-            standings[left]["points"] += lw + 0.5 * d
-            standings[right]["points"] += rw + 0.5 * d
 
     # Print summary sorted by points
     ordered = sorted(standings.items(), key=lambda kv: kv[1]["points"], reverse=True)
@@ -124,7 +133,7 @@ def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
     pairs_csv = out_path / "round_robin_pairs.csv"
     with pairs_csv.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=[
-            "left", "right", "left_wins", "right_wins", "draws", "games", "map_path", "utt_json"
+            "left", "right", "left_wins", "right_wins", "draws", "games", "map_path", "utt_json", "utt_json_p0", "utt_json_p1", "max_steps"
         ])
         writer.writeheader()
         writer.writerows(pair_rows)
@@ -132,7 +141,7 @@ def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
     standings_csv = out_path / "round_robin_standings.csv"
     with standings_csv.open("w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["ai", "points", "wins", "losses", "draws"]) 
+        writer.writerow(["ai", "points", "wins", "losses", "draws"])
         for name, rec in ordered:
             writer.writerow([name, rec["points"], rec["wins"], rec["losses"], rec["draws"]])
 
@@ -148,31 +157,34 @@ def main():
         "draw_retry_threshold": 0.6,
         "games_per_pair": 5,            # games per pairing
         "autobuild": False,
-        "utt_json": "utts/CustomDemoUTT.json",  # or None
+        "utt_json": None,  # Not used when utt_json_p0/p1 are specified
+        # Asymmetric UTT support - now using custom UTTs!
+        "utt_json_p0": "utts/CustomDemoUTT.json",  # Player 0 UTT
+        "utt_json_p1": "utts/AsymmetricP1UTT.json",  # Player 1 UTT
     }
 
     # Which AIs to include in the round-robin:
     # Use the curated list from microrts_ai.ALL_AIS
     # Full set requested
     requested_ai_names = [
-        "POHeavyRush",
-        "POLightRush",
-        "PORangedRush",
-        "POWorkerRush",
+        #"POHeavyRush",
+        #"POLightRush",
+        #"PORangedRush",
+        #"POWorkerRush",
         "coacAI",
         "droplet",
-        "guidedRojoA3N",
+        #"guidedRojoA3N", #this ai agent is causing problems 
         "izanagi",
-        "lightRushAI",
-        "mayari",
-        "mixedBot",
-        "naiveMCTSAI",
-        "passiveAI",
-        "randomAI",
-        "randomBiasedAI",
-        "rojo",
-        "tiamat",
-        "workerRushAI",
+        #"lightRushAI",
+        #"mayari",
+        #"mixedBot",
+        #"naiveMCTSAI",
+        #"passiveAI",
+        #"randomAI",
+        #"randomBiasedAI",
+        #"rojo",
+        #"tiamat",
+        #"workerRushAI",
     ]
     # Keep only those available in this install
     ai_names = [n for n in requested_ai_names if hasattr(microrts_ai, n)]
@@ -188,6 +200,8 @@ def main():
         out_dir="results",
         max_steps_long=config.get("max_steps_long"),
         draw_retry_threshold=config.get("draw_retry_threshold", 0.0),
+        utt_json_p0=config["utt_json_p0"],
+        utt_json_p1=config["utt_json_p1"],
     )
 
 
