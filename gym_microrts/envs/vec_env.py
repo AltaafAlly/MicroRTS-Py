@@ -55,6 +55,8 @@ class MicroRTSGridModeVecEnv:
         autobuild=True,
         jvm_args=[],
         utt_json=None,
+        utt_json_p0=None,
+        utt_json_p1=None,
     ):
 
         self.num_selfplay_envs = num_selfplay_envs
@@ -75,6 +77,8 @@ class MicroRTSGridModeVecEnv:
             ), "if multiple maps are provided, they should be provided for each environment"
         self.reward_weight = reward_weight
         self.utt_json = utt_json
+        self.utt_json_p0 = utt_json_p0
+        self.utt_json_p1 = utt_json_p1
 
         self.microrts_path = os.path.join(gym_microrts.__path__[0], "microrts")
 
@@ -120,12 +124,24 @@ class MicroRTSGridModeVecEnv:
 
         # start microrts client
         from rts.units import UnitTypeTable
-        if self.utt_json:
-            utt_path = os.path.join(self.microrts_path, self.utt_json)
-            with open(utt_path, "r") as f:
-                self.real_utt = UnitTypeTable.fromJSON(f.read())
+        
+        # Load UTTs for both players
+        if self.utt_json_p0:
+            utt_path_p0 = os.path.join(self.microrts_path, self.utt_json_p0)
+            with open(utt_path_p0, "r") as f:
+                self.real_utt_p0 = UnitTypeTable.fromJSON(f.read())
         else:
-            self.real_utt = UnitTypeTable()
+            self.real_utt_p0 = UnitTypeTable()
+            
+        if self.utt_json_p1:
+            utt_path_p1 = os.path.join(self.microrts_path, self.utt_json_p1)
+            with open(utt_path_p1, "r") as f:
+                self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
+        else:
+            self.real_utt_p1 = self.real_utt_p0  # Use P0's UTT if P1 not specified
+            
+        # For backward compatibility, use P0's UTT as the main one
+        self.real_utt = self.real_utt_p0
         from ai.reward import (
             AttackRewardFunction,
             ProduceBuildingRewardFunction,
@@ -176,17 +192,34 @@ class MicroRTSGridModeVecEnv:
         from ai.core import AI
         from ts import JNIGridnetVecClient as Client
 
-        self.vec_client = Client(
-            self.num_selfplay_envs,
-            self.num_bot_envs,
-            self.max_steps,
-            self.rfs,
-            os.path.expanduser(self.microrts_path),
-            self.map_paths,
-            JArray(AI)([ai2(self.real_utt) for ai2 in self.ai2s]),
-            self.real_utt,
-            self.partial_obs,
-        )
+        # Use asymmetric constructor if UTT parameters are provided
+        if self.utt_json_p0 is not None or self.utt_json_p1 is not None:
+            self.vec_client = Client(
+                self.num_selfplay_envs,
+                self.num_bot_envs,
+                self.max_steps,
+                self.rfs,
+                os.path.expanduser(self.microrts_path),
+                JArray(str)(self.map_paths),
+                JArray(AI)([ai2(self.real_utt_p0) for ai2 in self.ai2s]),
+                self.real_utt_p0,
+                self.real_utt_p1,
+                self.partial_obs,
+            )
+        else:
+            # Use asymmetric constructor with same UTT for both players
+            self.vec_client = Client(
+                self.num_selfplay_envs,
+                self.num_bot_envs,
+                self.max_steps,
+                self.rfs,
+                os.path.expanduser(self.microrts_path),
+                JArray(str)(self.map_paths),
+                JArray(AI)([ai2(self.real_utt) for ai2 in self.ai2s]),
+                self.real_utt,
+                self.real_utt,  # Same UTT for both players
+                self.partial_obs,
+            )
         self.render_client = (
             self.vec_client.selfPlayClients[0] if len(self.vec_client.selfPlayClients) > 0 else self.vec_client.clients[0]
         )
@@ -312,6 +345,8 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         autobuild=True,
         jvm_args=[],
         utt_json=None,
+        utt_json_p0=None,
+        utt_json_p1=None,
     ):
 
         self.ai1s = ai1s
@@ -323,6 +358,11 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         self.render_theme = render_theme
         self.map_paths = map_paths
         self.reward_weight = reward_weight
+        
+        # UTT parameters
+        self.utt_json = utt_json
+        self.utt_json_p0 = utt_json_p0
+        self.utt_json_p1 = utt_json_p1
 
         # read map
         self.microrts_path = os.path.join(gym_microrts.__path__[0], "microrts")
@@ -364,12 +404,24 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
 
         # start microrts client
         from rts.units import UnitTypeTable
-        if hasattr(self, "utt_json") and self.utt_json:
-            utt_path = os.path.join(self.microrts_path, self.utt_json)
-            with open(utt_path, "r") as f:
-                self.real_utt = UnitTypeTable.fromJSON(f.read())
+        
+        # Load UTTs for both players
+        if self.utt_json_p0:
+            utt_path_p0 = os.path.join(self.microrts_path, self.utt_json_p0)
+            with open(utt_path_p0, "r") as f:
+                self.real_utt_p0 = UnitTypeTable.fromJSON(f.read())
         else:
-            self.real_utt = UnitTypeTable()
+            self.real_utt_p0 = UnitTypeTable()
+            
+        if self.utt_json_p1:
+            utt_path_p1 = os.path.join(self.microrts_path, self.utt_json_p1)
+            with open(utt_path_p1, "r") as f:
+                self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
+        else:
+            self.real_utt_p1 = self.real_utt_p0  # Use P0's UTT if P1 not specified
+            
+        # For backward compatibility, use P0's UTT as the main one
+        self.real_utt = self.real_utt_p0
         from ai.reward import (
             AttackRewardFunction,
             ProduceBuildingRewardFunction,
@@ -408,19 +460,48 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         from ai.core import AI
         from ts import JNIGridnetVecClient as Client
 
-        self.vec_client = Client(
-            self.max_steps,
-            self.rfs,
-            os.path.expanduser(self.microrts_path),
-            self.map_paths,
-            JArray(AI)([ai1(self.real_utt) for ai1 in self.ai1s]),
-            JArray(AI)([ai2(self.real_utt) for ai2 in self.ai2s]),
-            self.real_utt,
-            self.partial_obs,
-        )
+        # Use asymmetric constructor if UTT parameters are provided
+        if self.utt_json_p0 is not None or self.utt_json_p1 is not None:
+            self.vec_client = Client(
+                self.max_steps,
+                self.rfs,
+                os.path.expanduser(self.microrts_path),
+                JArray(str)(self.map_paths),
+                JArray(AI)([ai1(self.real_utt_p0) for ai1 in self.ai1s]),
+                JArray(AI)([ai2(self.real_utt_p1) for ai2 in self.ai2s]),
+                self.real_utt_p0,
+                self.real_utt_p1,
+                self.partial_obs,
+            )
+        else:
+            # Use asymmetric constructor with same UTT for both players
+            self.vec_client = Client(
+                self.max_steps,
+                self.rfs,
+                os.path.expanduser(self.microrts_path),
+                JArray(str)(self.map_paths),
+                JArray(AI)([ai1(self.real_utt) for ai1 in self.ai1s]),
+                JArray(AI)([ai2(self.real_utt) for ai2 in self.ai2s]),
+                self.real_utt,
+                self.real_utt,  # Same UTT for both players
+                self.partial_obs,
+            )
         self.render_client = self.vec_client.botClients[0]
-        # get the unit type table
-        self.utt = json.loads(str(self.render_client.sendUTT()))
+        # get the unit type table (prefer dual-UTT if available)
+        try:
+            if hasattr(self.render_client, "sendUTTs"):
+                dual = json.loads(str(self.render_client.sendUTTs()))
+                # Store both for future use; keep self.utt as p0 for backward compatibility
+                self.utt_p0 = dual.get("p0")
+                self.utt_p1 = dual.get("p1")
+                self.utt = self.utt_p0
+            else:
+                self.utt = json.loads(str(self.render_client.sendUTT()))
+                self.utt_p0 = self.utt_p1 = self.utt
+        except Exception:
+            # Fallback to single UTT on any error
+            self.utt = json.loads(str(self.render_client.sendUTT()))
+            self.utt_p0 = self.utt_p1 = self.utt
 
     def reset(self):
         responses = self.vec_client.reset([0 for _ in range(self.num_envs)])
