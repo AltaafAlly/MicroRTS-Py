@@ -1,4 +1,3 @@
-# scripts/ai_vs_ai_final.py
 import os, re, xml.etree.ElementTree as ET
 import numpy as np
 from typing import Any, Dict
@@ -63,7 +62,8 @@ def run_matches(ai1="randomAI", ai2="randomAI",
                 map_path="maps/8x8/basesWorkers8x8A.xml",
                 max_steps=4000,
                 autobuild=True,
-                num_envs=1):
+                num_envs=1,
+                utt_json=None):
     a1 = getattr(microrts_ai, ai1)
     a2 = getattr(microrts_ai, ai2)
 
@@ -73,6 +73,7 @@ def run_matches(ai1="randomAI", ai2="randomAI",
         map_paths=[map_path]*num_envs,
         reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
         autobuild=autobuild,
+        utt_json=utt_json,
     )
 
     # We don't rely on obs shape at all
@@ -114,7 +115,6 @@ def run_matches(ai1="randomAI", ai2="randomAI",
     env.close()
     print(f"\nSummary: {ai1} {a_w} – {b_w} {ai2} | draws {d}")
 
-# --- keep your existing code above unchanged ---
 
 # NEW: one-episode video capture using GridNet env (Python-only, headless)
 def record_one_game(ai2="coacAI", map_path="maps/8x8/basesWorkers8x8A.xml",
@@ -198,14 +198,6 @@ def record_one_game(ai2="coacAI", map_path="maps/8x8/basesWorkers8x8A.xml",
     print(f"[record] Saved video to: {out_dir}/{name_prefix}-episode-0.mp4")
 
 
-if __name__ == "__main__":
-    # 1) run your headless bot-vs-bot sims (unchanged):
-    run_matches(ai1="randomAI", ai2="randomAI", num_games=3)
-
-    # 2) then record exactly one visually comparable game (left=random policy, right=your bot)
-    #    so you can *see* unit movement/attacks on the same map:
-    record_one_game(ai2="randomAI", map_path="maps/8x8/basesWorkers8x8A.xml", max_steps=4000)
-
 
 # ---------- AIs from gym_microrts/microrts_ai.py ----------
 # 'POHeavyRush', 
@@ -220,4 +212,9 @@ if __name__ == "__main__":
 # 'mayari', 
 # 'mixedBot
 # ', 'naiveMCTSAI',
-#  'passiveAI', 'randomAI', 'randomBiasedAI', 'rojo', 'tiamat', 'workerRushAI'
+#  'passiveAI',
+# 'randomAI', 
+#'randomBiasedAI',
+#  'rojo', 
+#  'tiamat', 
+#  'workerRushAI'

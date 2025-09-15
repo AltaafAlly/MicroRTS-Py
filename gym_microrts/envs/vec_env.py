@@ -54,6 +54,7 @@ class MicroRTSGridModeVecEnv:
         cycle_maps=[],
         autobuild=True,
         jvm_args=[],
+        utt_json=None,
     ):
 
         self.num_selfplay_envs = num_selfplay_envs
@@ -73,6 +74,7 @@ class MicroRTSGridModeVecEnv:
                 len(map_paths) == self.num_envs
             ), "if multiple maps are provided, they should be provided for each environment"
         self.reward_weight = reward_weight
+        self.utt_json = utt_json
 
         self.microrts_path = os.path.join(gym_microrts.__path__[0], "microrts")
 
@@ -118,8 +120,12 @@ class MicroRTSGridModeVecEnv:
 
         # start microrts client
         from rts.units import UnitTypeTable
-
-        self.real_utt = UnitTypeTable()
+        if self.utt_json:
+            utt_path = os.path.join(self.microrts_path, self.utt_json)
+            with open(utt_path, "r") as f:
+                self.real_utt = UnitTypeTable.fromJSON(f.read())
+        else:
+            self.real_utt = UnitTypeTable()
         from ai.reward import (
             AttackRewardFunction,
             ProduceBuildingRewardFunction,
@@ -305,6 +311,7 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         reward_weight=np.array([0.0, 1.0, 0.0, 0.0, 0.0, 5.0]),
         autobuild=True,
         jvm_args=[],
+        utt_json=None,
     ):
 
         self.ai1s = ai1s
@@ -357,8 +364,12 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
 
         # start microrts client
         from rts.units import UnitTypeTable
-
-        self.real_utt = UnitTypeTable()
+        if hasattr(self, "utt_json") and self.utt_json:
+            utt_path = os.path.join(self.microrts_path, self.utt_json)
+            with open(utt_path, "r") as f:
+                self.real_utt = UnitTypeTable.fromJSON(f.read())
+        else:
+            self.real_utt = UnitTypeTable()
         from ai.reward import (
             AttackRewardFunction,
             ProduceBuildingRewardFunction,
