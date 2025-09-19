@@ -1,0 +1,4 @@
+left,right,left_wins,right_wins,draws,games,map_path,utt_json,utt_json_p0,utt_json_p1,max_steps
+coacAI,droplet,2,0,0,2,maps/10x10/basesWorkers10x10.xml,default,utts/CustomDemoUTT.json,utts/AsymmetricP1UTT.json,4000
+coacAI,randomAI,2,0,0,2,maps/10x10/basesWorkers10x10.xml,default,utts/CustomDemoUTT.json,utts/AsymmetricP1UTT.json,4000
+droplet,randomAI,2,0,0,2,maps/10x10/basesWorkers10x10.xml,default,utts/CustomDemoUTT.json,utts/AsymmetricP1UTT.json,4000

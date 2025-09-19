@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroRTS UTT Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input input[type=file] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .file-input label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .file-input label:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .status {
+            padding: 10px 20px;
+            margin: 10px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .unit-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .unit-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .unit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .unit-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .unit-id {
+            background: #007bff;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .unit-properties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .property-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .property {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .property-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .property-input {
+            width: 80px;
+            padding: 6px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .property-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .boolean-property {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .array-property {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .array-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .array-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .global-settings {
+            background: #e9ecef;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .global-settings h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .global-property {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .global-property label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .global-property input {
+            width: 100px;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 MicroRTS UTT Editor</h1>
+            <p>Visual Unit Type Table Editor - Edit unit properties with ease</p>
+        </div>
+
+        <div class="controls">
+            <div class="file-input">
+                <input type="file" id="fileInput" accept=".json" />
+                <label for="fileInput">📁 Load UTT File</label>
+            </div>
+            <button class="btn btn-primary" onclick="saveUTT()">💾 Save UTT</button>
+            <button class="btn btn-secondary" onclick="resetToOriginal()">🔄 Reset</button>
+            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+            <div style="margin-left: auto;">
+                <button class="btn btn-secondary" onclick="exportJSON()">📤 Export JSON</button>
+            </div>
+        </div>
+
+        <div id="status" class="hidden"></div>
+
+        <div class="content">
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading UTT file...</p>
+            </div>
+
+            <div id="mainContent" class="hidden">
+                <div class="global-settings">
+                    <h3>🌐 Global Settings</h3>
+                    <div class="global-property">
+                        <label for="moveConflictResolution">Move Conflict Resolution Strategy:</label>
+                        <input type="number" id="moveConflictResolution" min="0" max="10" />
+                    </div>
+                </div>
+
+                <div id="unitGrid" class="unit-grid">
+                    <!-- Unit cards will be generated here -->
+                </div>
+            </div>
+
+            <div id="welcome" class="loading">
+                <h2>Welcome to the UTT Editor! 🎯</h2>
+                <p>Click "Load UTT File" to start editing your Unit Type Table</p>
+                <p>Supported files: CustomDemoUTT.json, AsymmetricP1UTT.json, etc.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>MicroRTS UTT Editor - Made for easy unit configuration</p>
+        </div>
+    </div>
+
+    <script>
+        let originalUTT = null;
+        let currentUTT = null;
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                loadUTTFile(file);
+            }
+        });
+
+        function loadUTTFile(file) {
+            showLoading(true);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const uttData = JSON.parse(e.target.result);
+                    originalUTT = JSON.parse(JSON.stringify(uttData)); // Deep copy
+                    currentUTT = uttData;
+                    renderUTT();
+                    showStatus('UTT file loaded successfully!', 'success');
+                    showLoading(false);
+                } catch (error) {
+                    showStatus('Error loading UTT file: ' + error.message, 'error');
+                    showLoading(false);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function renderUTT() {
+            if (!currentUTT) return;
+
+            // Update global settings
+            document.getElementById('moveConflictResolution').value = currentUTT.moveConflictResolutionStrategy || 2;
+
+            // Render unit cards
+            const unitGrid = document.getElementById('unitGrid');
+            unitGrid.innerHTML = '';
+
+            currentUTT.unitTypes.forEach((unit, index) => {
+                const unitCard = createUnitCard(unit, index);
+                unitGrid.appendChild(unitCard);
+            });
+
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('welcome').classList.add('hidden');
+        }
+
+        function createUnitCard(unit, index) {
+            const card = document.createElement('div');
+            card.className = 'unit-card';
+            card.innerHTML = `
+                <div class="unit-header">
+                    <div class="unit-name">${unit.name}</div>
+                    <div class="unit-id">ID: ${unit.ID}</div>
+                </div>
+                <div class="unit-properties">
+                    <div class="property-group">
+                        <div class="property">
+                            <span class="property-label">Cost:</span>
+                            <input type="number" class="property-input" value="${unit.cost}" 
+                                   onchange="updateUnitProperty(${index}, 'cost', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">HP:</span>
+                            <input type="number" class="property-input" value="${unit.hp}" 
+                                   onchange="updateUnitProperty(${index}, 'hp', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Min Damage:</span>
+                            <input type="number" class="property-input" value="${unit.minDamage}" 
+                                   onchange="updateUnitProperty(${index}, 'minDamage', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Max Damage:</span>
+                            <input type="number" class="property-input" value="${unit.maxDamage}" 
+                                   onchange="updateUnitProperty(${index}, 'maxDamage', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Attack Range:</span>
+                            <input type="number" class="property-input" value="${unit.attackRange}" 
+                                   onchange="updateUnitProperty(${index}, 'attackRange', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Sight Radius:</span>
+                            <input type="number" class="property-input" value="${unit.sightRadius}" 
+                                   onchange="updateUnitProperty(${index}, 'sightRadius', this.value)" />
+                        </div>
+                    </div>
+                    <div class="property-group">
+                        <div class="property">
+                            <span class="property-label">Produce Time:</span>
+                            <input type="number" class="property-input" value="${unit.produceTime}" 
+                                   onchange="updateUnitProperty(${index}, 'produceTime', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Move Time:</span>
+                            <input type="number" class="property-input" value="${unit.moveTime}" 
+                                   onchange="updateUnitProperty(${index}, 'moveTime', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Attack Time:</span>
+                            <input type="number" class="property-input" value="${unit.attackTime}" 
+                                   onchange="updateUnitProperty(${index}, 'attackTime', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Harvest Time:</span>
+                            <input type="number" class="property-input" value="${unit.harvestTime}" 
+                                   onchange="updateUnitProperty(${index}, 'harvestTime', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Return Time:</span>
+                            <input type="number" class="property-input" value="${unit.returnTime}" 
+                                   onchange="updateUnitProperty(${index}, 'returnTime', this.value)" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Harvest Amount:</span>
+                            <input type="number" class="property-input" value="${unit.harvestAmount}" 
+                                   onchange="updateUnitProperty(${index}, 'harvestAmount', this.value)" />
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                    <div class="property-group">
+                        <div class="property">
+                            <span class="property-label">Is Resource:</span>
+                            <div class="boolean-property">
+                                <input type="checkbox" class="checkbox" ${unit.isResource ? 'checked' : ''} 
+                                       onchange="updateUnitProperty(${index}, 'isResource', this.checked)" />
+                            </div>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Is Stockpile:</span>
+                            <div class="boolean-property">
+                                <input type="checkbox" class="checkbox" ${unit.isStockpile ? 'checked' : ''} 
+                                       onchange="updateUnitProperty(${index}, 'isStockpile', this.checked)" />
+                            </div>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Can Harvest:</span>
+                            <div class="boolean-property">
+                                <input type="checkbox" class="checkbox" ${unit.canHarvest ? 'checked' : ''} 
+                                       onchange="updateUnitProperty(${index}, 'canHarvest', this.checked)" />
+                            </div>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Can Move:</span>
+                            <div class="boolean-property">
+                                <input type="checkbox" class="checkbox" ${unit.canMove ? 'checked' : ''} 
+                                       onchange="updateUnitProperty(${index}, 'canMove', this.checked)" />
+                            </div>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Can Attack:</span>
+                            <div class="boolean-property">
+                                <input type="checkbox" class="checkbox" ${unit.canAttack ? 'checked' : ''} 
+                                       onchange="updateUnitProperty(${index}, 'canAttack', this.checked)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div class="property">
+                            <span class="property-label">Produces:</span>
+                            <input type="text" class="array-input" value="${unit.produces.join(', ')}" 
+                                   onchange="updateUnitArrayProperty(${index}, 'produces', this.value)" 
+                                   placeholder="e.g., Worker, Base" />
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Produced By:</span>
+                            <input type="text" class="array-input" value="${unit.producedBy.join(', ')}" 
+                                   onchange="updateUnitArrayProperty(${index}, 'producedBy', this.value)" 
+                                   placeholder="e.g., Base, Worker" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function updateUnitProperty(index, property, value) {
+            if (currentUTT && currentUTT.unitTypes[index]) {
+                // Convert string to appropriate type
+                if (typeof currentUTT.unitTypes[index][property] === 'number') {
+                    currentUTT.unitTypes[index][property] = parseInt(value) || 0;
+                } else if (typeof currentUTT.unitTypes[index][property] === 'boolean') {
+                    currentUTT.unitTypes[index][property] = value;
+                } else {
+                    currentUTT.unitTypes[index][property] = value;
+                }
+            }
+        }
+
+        function updateUnitArrayProperty(index, property, value) {
+            if (currentUTT && currentUTT.unitTypes[index]) {
+                // Split by comma and trim whitespace
+                const array = value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+                currentUTT.unitTypes[index][property] = array;
+            }
+        }
+
+        function updateGlobalProperty(property, value) {
+            if (currentUTT) {
+                currentUTT[property] = parseInt(value) || 0;
+            }
+        }
+
+        // Global settings change handler
+        document.getElementById('moveConflictResolution').addEventListener('change', function(e) {
+            updateGlobalProperty('moveConflictResolutionStrategy', e.target.value);
+        });
+
+        function saveUTT() {
+            if (!currentUTT) {
+                showStatus('No UTT data to save!', 'error');
+                return;
+            }
+
+            const dataStr = JSON.stringify(currentUTT, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'modified_utt.json';
+            link.click();
+            
+            showStatus('UTT saved successfully!', 'success');
+        }
+
+        function resetToOriginal() {
+            if (originalUTT) {
+                currentUTT = JSON.parse(JSON.stringify(originalUTT)); // Deep copy
+                renderUTT();
+                showStatus('Reset to original values!', 'success');
+            } else {
+                showStatus('No original data to reset to!', 'error');
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all data?')) {
+                currentUTT = null;
+                originalUTT = null;
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('welcome').classList.remove('hidden');
+                document.getElementById('fileInput').value = '';
+                showStatus('All data cleared!', 'success');
+            }
+        }
+
+        function exportJSON() {
+            if (!currentUTT) {
+                showStatus('No data to export!', 'error');
+                return;
+            }
+
+            const dataStr = JSON.stringify(currentUTT, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'utt_export.json';
+            link.click();
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.classList.remove('hidden');
+            
+            setTimeout(() => {
+                status.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Drag and drop support
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/json') {
+                loadUTTFile(files[0]);
+            }
+        });
+    </script>
+</body>
+</html>
