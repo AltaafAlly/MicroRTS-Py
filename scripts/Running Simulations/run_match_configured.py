@@ -167,24 +167,24 @@ def main():
     # Use the curated list from microrts_ai.ALL_AIS
     # Full set requested
     requested_ai_names = [
-        #"POHeavyRush",
-        #"POLightRush",
-        #"PORangedRush",
-        #"POWorkerRush",
+        "POHeavyRush",
+        "POLightRush",
+        "PORangedRush",
+        "POWorkerRush",
         "coacAI",
         "droplet",
         #"guidedRojoA3N", #this ai agent is causing problems 
         "izanagi",
-        #"lightRushAI",
-        #"mayari",
-        #"mixedBot",
-        #"naiveMCTSAI",
-        #"passiveAI",
-        #"randomAI",
-        #"randomBiasedAI",
-        #"rojo",
-        #"tiamat",
-        #"workerRushAI",
+        "lightRushAI",
+        "mayari",
+        "mixedBot",
+        "naiveMCTSAI",
+        "passiveAI",
+        "randomAI",
+        "randomBiasedAI",
+        "rojo",
+        "tiamat",
+        "workerRushAI",
     ]
     # Keep only those available in this install
     ai_names = [n for n in requested_ai_names if hasattr(microrts_ai, n)]
