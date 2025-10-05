@@ -1,0 +1,23 @@
+{
+  "population_size": 1,
+  "generations": 1,
+  "crossover_rate": 0.7,
+  "mutation_rate": 0.1,
+  "mutation_strength": 0.1,
+  "tournament_size": 3,
+  "elite_size": 2,
+  "fitness_alpha": 0.4,
+  "fitness_beta": 0.3,
+  "fitness_gamma": 0.3,
+  "target_duration": 200,
+  "duration_tolerance": 50,
+  "use_real_microrts": true,
+  "max_steps": 50,
+  "map_path": "/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/maps/8x8/basesWorkers8x8L.xml",
+  "games_per_evaluation": 1,
+  "max_generations_without_improvement": 5,
+  "target_fitness": 0.9,
+  "verbose": true,
+  "save_best_individuals": true,
+  "save_generation_stats": true
+}

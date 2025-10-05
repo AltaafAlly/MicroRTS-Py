@@ -1,0 +1,164 @@
+{
+  "best_individual": {
+    "globalParameters": {
+      "moveConflictResolutionStrategy": 0
+    },
+    "unitTypes": {
+      "Worker": {
+        "cost": 2,
+        "produceTime": 5,
+        "hp": 15,
+        "minDamage": 1,
+        "maxDamage": 1,
+        "attackRange": 1,
+        "attackTime": 3,
+        "moveTime": 2,
+        "sightRadius": 2,
+        "harvestTime": 3,
+        "returnTime": 2,
+        "harvestAmount": 6
+      },
+      "Light": {
+        "cost": 8,
+        "produceTime": 3,
+        "hp": 10,
+        "minDamage": 8,
+        "maxDamage": 9,
+        "attackRange": 1,
+        "attackTime": 5,
+        "moveTime": 4,
+        "sightRadius": 3,
+        "harvestTime": 0,
+        "returnTime": 0,
+        "harvestAmount": 0
+      },
+      "Heavy": {
+        "cost": 36,
+        "produceTime": 9,
+        "hp": 31,
+        "minDamage": 29,
+        "maxDamage": 24,
+        "attackRange": 3,
+        "attackTime": 8,
+        "moveTime": 5,
+        "sightRadius": 5,
+        "harvestTime": 0,
+        "returnTime": 0,
+        "harvestAmount": 0
+      },
+      "Ranged": {
+        "cost": 29,
+        "produceTime": 8,
+        "hp": 17,
+        "minDamage": 17,
+        "maxDamage": 17,
+        "attackRange": 4,
+        "attackTime": 3,
+        "moveTime": 3,
+        "sightRadius": 4,
+        "harvestTime": 0,
+        "returnTime": 0,
+        "harvestAmount": 0
+      },
+      "Base": {
+        "cost": 87,
+        "produceTime": 16,
+        "hp": 261,
+        "minDamage": 0,
+        "maxDamage": 0,
+        "attackRange": 0,
+        "attackTime": 0,
+        "moveTime": 0,
+        "sightRadius": 5,
+        "harvestTime": 0,
+        "returnTime": 0,
+        "harvestAmount": 0
+      },
+      "Barracks": {
+        "cost": 26,
+        "produceTime": 10,
+        "hp": 67,
+        "minDamage": 0,
+        "maxDamage": 0,
+        "attackRange": 0,
+        "attackTime": 0,
+        "moveTime": 0,
+        "sightRadius": 4,
+        "harvestTime": 0,
+        "returnTime": 0,
+        "harvestAmount": 0
+      }
+    }
+  },
+  "best_fitness": {
+    "balance": 0.6666666666666666,
+    "duration": 0.8453333333333334,
+    "strategy_diversity": 0.8182084311089485,
+    "overall_fitness": 0.7657291959993512
+  },
+  "generation_stats": [
+    {
+      "generation": 0,
+      "best_fitness": 0.6359953564861095,
+      "avg_fitness": 0.5231067584845046,
+      "worst_fitness": 0.4289584366338622,
+      "best_balance": 0.3333333333333333,
+      "best_duration": 0.8973333333333333,
+      "best_diversity": 0.8619067187154161,
+      "population_diversity": 0.36776864348312077,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.0013866424560546875
+    },
+    {
+      "generation": 1,
+      "best_fitness": 0.6929899151425636,
+      "avg_fitness": 0.5500797270381093,
+      "worst_fitness": 0.449707158410614,
+      "best_balance": 0.6666666666666666,
+      "best_duration": 0.9093333333333333,
+      "best_diversity": 0.880718766265397,
+      "population_diversity": 0.30658416862560195,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.0012135505676269531
+    },
+    {
+      "generation": 2,
+      "best_fitness": 0.7422439974026459,
+      "avg_fitness": 0.6001373918851118,
+      "worst_fitness": 0.45069461891618656,
+      "best_balance": 0.6666666666666666,
+      "best_duration": 0.9066666666666666,
+      "best_diversity": 0.8386610539216002,
+      "population_diversity": 0.3378237855390837,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.0011699199676513672
+    },
+    {
+      "generation": 3,
+      "best_fitness": 0.7657291959993512,
+      "avg_fitness": 0.5962176571349974,
+      "worst_fitness": 0.4166813035058528,
+      "best_balance": 0.6666666666666666,
+      "best_duration": 0.9093333333333333,
+      "best_diversity": 0.8222673035395044,
+      "population_diversity": 0.26183307545387263,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.0012254714965820312
+    },
+    {
+      "generation": 4,
+      "best_fitness": 0.7509569793655089,
+      "avg_fitness": 0.5589561405814435,
+      "worst_fitness": 0.4499290208253177,
+      "best_balance": 0.6666666666666666,
+      "best_duration": 0.8453333333333334,
+      "best_diversity": 0.8610067899170559,
+      "population_diversity": 0.2418197211233882,
+      "convergence_rate": -0.01929169830668809,
+      "time_elapsed": 0.0011277198791503906
+    }
+  ],
+  "total_generations": 5,
+  "total_time": 0.015011072158813477,
+  "convergence_generation": null
+}

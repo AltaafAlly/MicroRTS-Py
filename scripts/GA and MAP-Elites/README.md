@@ -1,59 +1,89 @@
-# UTT Evolution with Genetic Algorithm and MAP-Elites
+# MicroRTS Genetic Algorithm - Complete Rewrite
 
-This project implements a genetic algorithm and MAP-Elites algorithm for evolving Unit Type Table (UTT) configurations in MicroRTS. The system uses AI-based fitness evaluation to determine the quality of evolved UTT configurations.
+This project implements a **completely redesigned genetic algorithm** for evolving balanced MicroRTS game configurations. The new system focuses on evolving **unit parameters and global game settings** to achieve fair, engaging, and strategically diverse gameplay through AI vs AI evaluation.
+
+## 🆕 What's New
+
+This is a **complete rewrite** of the previous GA implementation with the following improvements:
+
+- **Cleaner Architecture**: Modular design with separate components for chromosomes, fitness evaluation, genetic operators, and configuration management
+- **Better Fitness Function**: Three-component fitness based on balance, duration, and strategy diversity
+- **Realistic Simulation**: AI vs AI match simulation for more accurate fitness evaluation
+- **Comprehensive Configuration**: Evolves unit stats, costs, timing, and global game parameters
+- **Robust Validation**: Built-in configuration validation and error checking
+- **Easy Experimentation**: Command-line interface with predefined configurations
 
 ## 🚀 Quick Start
 
 ### Basic GA Evolution
 ```bash
-python run_utt_evolution.py --generations 10 --population 20 --ai randomBiasedAI
+python run_ga.py --config fast
 ```
 
-### MAP-Elites Evolution
+### Custom Parameters
 ```bash
-python run_utt_evolution.py --algorithm map-elites --generations 10 --population 20 --ai workerRushAI
+python run_ga.py --generations 15 --population 30 --mutation-rate 0.15
 ```
 
-### Multi-Objective Fitness (Faster)
+### Comprehensive Run with Results Saving
 ```bash
-python run_utt_evolution.py --fitness-type multi-objective --generations 20 --population 30
+python run_ga.py --config comprehensive --save-results --experiment-name "balance_test"
+```
+
+### Example Usage
+```bash
+python example_usage.py
 ```
 
 ## 📁 Project Structure
 
 ```
 GA and MAP-Elites/
-├── core/                           # Core framework
-│   ├── utt_genetic_algorithm.py   # GA implementation
-│   ├── utt_map_elites.py          # MAP-Elites implementation
-│   ├── improved_fitness_evaluator.py # AI-based fitness evaluation
-│   ├── utt_utils.py               # Utility functions
-│   └── utt_evolution_config.json  # Configuration file
-├── run_utt_evolution.py           # Main experiment script
-├── main.py                        # Alternative entry point
+├── core/                           # New GA framework
+│   ├── ga_chromosome.py           # Chromosome representation and encoding
+│   ├── ga_fitness_evaluator.py    # Three-component fitness evaluation
+│   ├── ga_genetic_operators.py    # Selection, crossover, mutation operators
+│   ├── ga_algorithm.py            # Main GA implementation
+│   ├── ga_config_manager.py       # Configuration management and conversion
+│   └── __init__.py
+├── run_ga.py                      # Main runner script
+├── example_usage.py               # Example usage and demonstrations
+├── experiments/                   # Experiment results storage
 └── README.md                      # This file
 ```
 
-## 🧬 Core Components
+**Note**: This is a clean implementation with all legacy files removed. The new system is completely self-contained and ready to use.
 
-### 1. Genetic Algorithm (`utt_genetic_algorithm.py`)
-- **UTTGeneEncoder**: Encodes/decodes UTT parameters to/from genome
-- **Individual**: Represents a single UTT configuration
-- **GeneticAlgorithm**: Main GA implementation with selection, crossover, mutation
+## 🧬 Core Components (New Implementation)
 
-### 2. MAP-Elites (`utt_map_elites.py`)
-- **MAPElitesAlgorithm**: Quality-diversity evolution
-- **BehaviorDescriptorExtractor**: Extracts behavior descriptors for archive
-- **MAPElitesArchive**: Manages the archive of diverse solutions
+### 1. Chromosome Representation (`ga_chromosome.py`)
+- **MicroRTSChromosome**: Complete game configuration as a chromosome
+- **UnitParameters**: Evolvable parameters for each unit type
+- **GlobalParameters**: Global game settings that can be evolved
+- **Genome Encoding**: Conversion between chromosome and genetic representation
 
-### 3. Fitness Evaluation (`improved_fitness_evaluator.py`)
-- **AIGameSimulationFitness**: Real AI vs AI game evaluation
-- **MultiObjectiveFitness**: Fast design-principle-based evaluation
+### 2. Fitness Evaluation (`ga_fitness_evaluator.py`)
+- **FitnessEvaluator**: Three-component fitness function
+- **MicroRTSMatchSimulator**: AI vs AI match simulation
+- **MatchResult**: Detailed match outcome analysis
+- **FitnessComponents**: Balance, duration, and strategy diversity metrics
 
-### 4. Utilities (`utt_utils.py`)
-- **UTTGenerator**: Creates and modifies UTT configurations
-- **UTTAnalyzer**: Analyzes UTT properties and statistics
-- **UTTVisualizer**: Creates visualizations of UTT configurations
+### 3. Genetic Operators (`ga_genetic_operators.py`)
+- **SelectionOperator**: Tournament, rank-based, and elitism selection
+- **CrossoverOperator**: Single-point, uniform, and arithmetic crossover
+- **MutationOperator**: Gaussian and adaptive mutation
+- **GeneticOperators**: Coordinated genetic operations
+
+### 4. Main Algorithm (`ga_algorithm.py`)
+- **MicroRTSGeneticAlgorithm**: Complete GA implementation
+- **GAConfig**: Comprehensive configuration management
+- **GAResults**: Evolution results and statistics
+- **GenerationStats**: Per-generation performance metrics
+
+### 5. Configuration Management (`ga_config_manager.py`)
+- **MicroRTSConfigConverter**: Convert between GA and MicroRTS formats
+- **ExperimentManager**: Experiment storage and retrieval
+- **ConfigValidator**: Configuration validation and error checking
 
 ## 🎯 What Gets Evolved
 
@@ -87,75 +117,137 @@ The system supports various AI agents for fitness evaluation:
 - `lightRushAI` - Light unit rush
 - `heavyRushAI` - Heavy unit rush
 
-## 📊 Command Line Options
+## 🧠 Fitness Function
+
+The new GA uses a **three-component fitness function**:
+
+```
+Fitness = α × Balance + β × Duration + γ × StrategyDiversity
+```
+
+### Components:
+
+1. **Balance (α = 0.4)**: Measures fairness between AI agents
+   - Rewards close matches and draws
+   - Penalizes one-sided victories
+   - Range: 0-1 (higher is more balanced)
+
+2. **Duration (β = 0.3)**: Evaluates match length appropriateness
+   - Target duration: 200 steps
+   - Gaussian penalty for being too fast/slow
+   - Range: 0-1 (higher is better duration)
+
+3. **Strategy Diversity (γ = 0.3)**: Measures tactical variation
+   - Action entropy across matches
+   - Unit type diversity
+   - Range: 0-1 (higher is more diverse)
+
+## 📊 Command Line Options (New Implementation)
 
 ```bash
-python run_utt_evolution.py [OPTIONS]
+python run_ga.py [OPTIONS]
 
-Algorithm Options:
-  --algorithm {ga,map-elites}    Evolution algorithm (default: ga)
+Algorithm Configuration:
+  --config {default,fast,comprehensive}  Predefined configuration preset
+  --generations INT              Number of generations
+  --population INT               Population size
+  --crossover-rate FLOAT         Crossover probability (0-1)
+  --mutation-rate FLOAT          Mutation probability (0-1)
+  --mutation-strength FLOAT      Mutation strength (0-1)
 
-Evolution Parameters:
-  --generations INT              Number of generations (default: 5)
-  --population INT               Population size (default: 10)
-  --mutation-rate FLOAT          Mutation rate (default: 0.3)
-  --crossover-rate FLOAT         Crossover rate (default: 0.7)
+Selection Parameters:
+  --tournament-size INT          Tournament selection size
+  --elite-size INT               Number of elite individuals
 
 Fitness Evaluation:
-  --fitness-type {ai,multi-objective}  Fitness type (default: ai)
-  --ai STRING                    AI agent for evaluation (default: randomBiasedAI)
-  --games-per-eval INT           Games per evaluation (default: 2)
-  --max-steps INT                Max steps per game (default: 300)
+  --fitness-alpha FLOAT          Balance component weight (0-1)
+  --fitness-beta FLOAT           Duration component weight (0-1)
+  --fitness-gamma FLOAT          Strategy diversity weight (0-1)
+  --target-duration INT          Target match duration in steps
+  --duration-tolerance INT       Acceptable duration deviation
 
-Map Settings:
-  --map STRING                   Map size (default: 8x8)
+Termination Criteria:
+  --max-generations-without-improvement INT  Max generations without improvement
+  --target-fitness FLOAT         Target fitness value to reach (0-1)
 
-Output:
-  --save-results                 Save results to file
-  --visualize                    Create visualizations
+Output and Storage:
+  --save-results                 Save results to experiment directory
+  --experiment-name STRING       Name for the experiment
+  --output-dir STRING            Base directory for experiment storage
+  --verbose                      Enable verbose output
+  --quiet                        Disable verbose output
+
+Experiment Management:
+  --list-experiments             List all available experiments
+  --load-experiment PATH         Load and display results from previous experiment
+  --compare-experiments PATH...  Compare multiple experiments
+
+Analysis and Visualization:
+  --analyze-best                 Analyze the best individual configuration
+  --export-config PATH           Export best configuration to MicroRTS format
+  --validate-config              Validate the best configuration
 ```
 
-## 🔬 Example Experiments
+## 🔬 Example Experiments (New Implementation)
 
-### 1. Quick Test (5 minutes)
+### 1. Quick Test (2-3 minutes)
 ```bash
-python run_utt_evolution.py --generations 3 --population 8 --ai randomBiasedAI
+python run_ga.py --config fast
 ```
 
-### 2. Comprehensive GA Run (30 minutes)
+### 2. Balanced Configuration (10-15 minutes)
 ```bash
-python run_utt_evolution.py --generations 10 --population 20 --ai workerRushAI --games-per-eval 3
+python run_ga.py --generations 10 --population 20 --fitness-alpha 0.5 --fitness-beta 0.3 --fitness-gamma 0.2
 ```
 
-### 3. MAP-Elites Diversity Exploration (1 hour)
+### 3. Comprehensive Run (30-45 minutes)
 ```bash
-python run_utt_evolution.py --algorithm map-elites --generations 15 --population 30 --ai lightRushAI
+python run_ga.py --config comprehensive --save-results --experiment-name "comprehensive_test"
 ```
 
-### 4. Multi-AI Evaluation
+### 4. Custom Focus on Duration (15-20 minutes)
 ```bash
-# Test against multiple AI strategies
-python run_utt_evolution.py --ai randomBiasedAI --generations 5
-python run_utt_evolution.py --ai workerRushAI --generations 5
-python run_utt_evolution.py --ai lightRushAI --generations 5
+python run_ga.py --generations 12 --population 25 --fitness-alpha 0.3 --fitness-beta 0.5 --fitness-gamma 0.2 --target-duration 250
 ```
 
-## 🎮 How It Works
+### 5. High Diversity Focus (20-25 minutes)
+```bash
+python run_ga.py --generations 15 --population 30 --fitness-alpha 0.3 --fitness-beta 0.2 --fitness-gamma 0.5 --mutation-rate 0.15
+```
 
-1. **Initialization**: Create random population of UTT configurations
-2. **Evaluation**: Test each UTT by playing AI vs AI games
-3. **Selection**: Choose best-performing UTTs as parents
-4. **Crossover**: Combine parent UTTs to create offspring
-5. **Mutation**: Randomly modify UTT parameters
-6. **Replacement**: Replace old population with new generation
-7. **Repeat**: Continue for specified number of generations
+### 6. Experiment Management
+```bash
+# List all experiments
+python run_ga.py --list-experiments
 
-## 📈 Expected Results
+# Load and analyze previous results
+python run_ga.py --load-experiment experiments/comprehensive_test_1234567890
 
-- **Fitness Improvement**: Better UTTs should achieve higher fitness scores
-- **Strategy Specialization**: UTTs may evolve to counter specific AI strategies
-- **Balanced Configurations**: MAP-Elites should find diverse, high-quality solutions
-- **Performance Differences**: Different UTTs should show varying performance against different AIs
+# Export best configuration
+python run_ga.py --load-experiment experiments/comprehensive_test_1234567890 --export-config best_config.json --validate-config
+```
+
+## 🎮 How It Works (New Implementation)
+
+1. **Initialization**: Create random population of MicroRTS game configurations
+2. **Evaluation**: Test each configuration via AI vs AI match simulation
+3. **Fitness Calculation**: Compute balance, duration, and strategy diversity scores
+4. **Selection**: Choose best-performing configurations as parents (tournament selection)
+5. **Crossover**: Combine parent configurations to create offspring
+6. **Mutation**: Randomly modify configuration parameters
+7. **Elitism**: Preserve best individuals across generations
+8. **Replacement**: Replace old population with new generation
+9. **Convergence Check**: Stop if target fitness reached or no improvement
+10. **Repeat**: Continue until termination criteria met
+
+## 📈 Expected Results (New Implementation)
+
+- **Fitness Improvement**: Better configurations should achieve higher overall fitness scores
+- **Balanced Gameplay**: Evolved configurations should produce more fair matches between AIs
+- **Appropriate Duration**: Matches should converge toward target duration (200 steps)
+- **Strategic Diversity**: Evolved configurations should encourage varied tactical approaches
+- **Parameter Optimization**: Unit costs, stats, and timing should be optimized for balance
+- **Convergence**: Algorithm should converge to stable, high-quality solutions
 
 ## 🛠️ Requirements
 
