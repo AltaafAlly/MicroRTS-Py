@@ -14,7 +14,8 @@ import numpy as np
 
 from .ga_chromosome import MicroRTSChromosome, create_population
 from .ga_fitness_evaluator import FitnessEvaluator, FitnessComponents, evaluate_population_fitness
-from .ga_real_microrts_evaluator import RealMicroRTSFitnessEvaluator, evaluate_population_fitness_real
+# Removed ga_real_microrts_evaluator - has UTT loading bug
+from .ga_working_evaluator import WorkingGAEvaluator, evaluate_population_fitness_working
 from .ga_genetic_operators import GeneticOperators, SelectionConfig
 
 
@@ -44,6 +45,7 @@ class GAConfig:
     
     # Real MicroRTS settings
     use_real_microrts: bool = True  # Use real MicroRTS instead of simulation
+    use_working_evaluator: bool = False  # Use working UTT evaluator
     max_steps: int = 300  # Max steps per game
     map_path: str = "maps/8x8/basesWorkers8x8L.xml"  # Map to use
     games_per_evaluation: int = 3  # Games per chromosome evaluation
@@ -140,16 +142,27 @@ class MicroRTSGeneticAlgorithm:
         self.config = config or GAConfig()
         
         # Initialize components
-        if self.config.use_real_microrts:
-            self.fitness_evaluator = RealMicroRTSFitnessEvaluator(
+        if self.config.use_working_evaluator:
+            # Use the working UTT evaluator that bypasses the UTT loading bug
+            self.fitness_evaluator = WorkingGAEvaluator(
                 alpha=self.config.fitness_alpha,
                 beta=self.config.fitness_beta,
                 gamma=self.config.fitness_gamma,
-                target_duration=self.config.target_duration,
-                duration_tolerance=self.config.duration_tolerance,
                 max_steps=self.config.max_steps,
                 map_path=self.config.map_path,
-                games_per_evaluation=self.config.games_per_evaluation
+                games_per_eval=self.config.games_per_evaluation
+            )
+        elif self.config.use_real_microrts:
+            # Real MicroRTS evaluator removed due to UTT loading bug
+            # Use working evaluator instead
+            print("⚠️  Real MicroRTS evaluator has UTT loading bug. Using working evaluator instead.")
+            self.fitness_evaluator = WorkingGAEvaluator(
+                alpha=self.config.fitness_alpha,
+                beta=self.config.fitness_beta,
+                gamma=self.config.fitness_gamma,
+                max_steps=self.config.max_steps,
+                map_path=self.config.map_path,
+                games_per_eval=self.config.games_per_evaluation
             )
         else:
             self.fitness_evaluator = FitnessEvaluator(
@@ -197,8 +210,9 @@ class MicroRTSGeneticAlgorithm:
         start_time = time.time()
         
         try:
-            if self.config.use_real_microrts:
-                self.fitness_scores = evaluate_population_fitness_real(self.population, self.fitness_evaluator)
+            if self.config.use_working_evaluator or self.config.use_real_microrts:
+                # Both use the working evaluator now
+                self.fitness_scores = evaluate_population_fitness_working(self.population, self.fitness_evaluator)
             else:
                 self.fitness_scores = evaluate_population_fitness(self.population, self.fitness_evaluator)
         except Exception as e:

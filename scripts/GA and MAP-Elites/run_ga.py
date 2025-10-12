@@ -22,6 +22,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'core'))
 
 from core.ga_algorithm import MicroRTSGeneticAlgorithm, GAConfig, create_default_ga, create_fast_ga, create_comprehensive_ga
 from core.ga_config_manager import ExperimentManager, MicroRTSConfigConverter, ConfigValidator
+from core.ga_working_evaluator import WorkingGAEvaluator, evaluate_population_fitness_working
 
 
 def create_argument_parser() -> argparse.ArgumentParser:
@@ -80,6 +81,8 @@ Examples:
                                help='Use real MicroRTS matches instead of simulation')
     microrts_group.add_argument('--use-simulation', action='store_true',
                                help='Use simulation instead of real MicroRTS matches')
+    microrts_group.add_argument('--use-working-evaluator', action='store_true',
+                               help='Use the working UTT evaluator (bypasses UTT loading bug)')
     microrts_group.add_argument('--max-steps', type=int, help='Maximum steps per game')
     microrts_group.add_argument('--map-path', type=str, help='Path to map file')
     microrts_group.add_argument('--games-per-eval', type=int, help='Games per chromosome evaluation')
@@ -171,6 +174,8 @@ def create_ga_config(args) -> GAConfig:
     # Real MicroRTS settings
     if args.use_simulation:
         config.use_real_microrts = False
+    if args.use_working_evaluator:
+        config.use_working_evaluator = True
     if args.max_steps is not None:
         config.max_steps = args.max_steps
     if args.map_path is not None:

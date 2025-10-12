@@ -169,22 +169,22 @@ def main():
     requested_ai_names = [
         "POHeavyRush",
         "POLightRush",
-        "PORangedRush",
-        "POWorkerRush",
-        "coacAI",
-        "droplet",
-        #"guidedRojoA3N", #this ai agent is causing problems 
-        "izanagi",
-        "lightRushAI",
-        "mayari",
-        "mixedBot",
-        "naiveMCTSAI",
-        "passiveAI",
-        "randomAI",
-        "randomBiasedAI",
-        "rojo",
-        "tiamat",
-        "workerRushAI",
+        #"PORangedRush",
+        #"POWorkerRush",
+        #"coacAI",
+        #"droplet",
+        ##"guidedRojoA3N", #this ai agent is causing problems 
+        #"izanagi",
+        #"lightRushAI",
+        #"mayari",
+        #"mixedBot",
+        #"naiveMCTSAI",
+        #"passiveAI",
+        #"randomAI",
+        #"randomBiasedAI",
+        #"rojo",
+        #"tiamat",
+        #"workerRushAI",
     ]
     # Keep only those available in this install
     ai_names = [n for n in requested_ai_names if hasattr(microrts_ai, n)]

@@ -63,7 +63,7 @@ class UnitParameters:
 class GlobalParameters:
     """Represents global game parameters that can be evolved."""
     
-    moveConflictResolutionStrategy: int = 0  # 0-3 for different strategies
+    moveConflictResolutionStrategy: int = 1  # 1-3 for different strategies
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for easy serialization."""
@@ -216,6 +216,8 @@ class MicroRTSChromosome:
             for param_name, (min_val, max_val) in bounds.items():
                 if min_val == max_val == 0:  # Not applicable parameter
                     params[param_name] = 0
+                elif min_val == max_val:  # Fixed value
+                    params[param_name] = min_val
                 else:
                     params[param_name] = random.randint(min_val, max_val)
             
@@ -240,16 +242,17 @@ class MicroRTSChromosome:
                     value = getattr(unit, param_name)
                     min_val, max_val = bounds[param_name]
                     
-                    if min_val == max_val:
-                        # If min and max are the same, use 0.5 as the normalized value
-                        genome.append(0.5)
+                    if min_val == max_val == 0:  # Not applicable parameter
+                        genome.append(0.0)  # Use 0.0 for not applicable
+                    elif min_val == max_val:  # Fixed value
+                        genome.append(0.5)  # Use 0.5 for fixed values
                     else:
                         # Normalize to [0, 1]
                         normalized = (value - min_val) / (max_val - min_val)
                         genome.append(normalized)
         
-        # Add global parameters
-        genome.append(self.global_params.moveConflictResolutionStrategy / 3.0)
+        # Add global parameters (normalize 1-3 to 0-1)
+        genome.append((self.global_params.moveConflictResolutionStrategy - 1) / 2.0)
         
         return genome
     
@@ -273,8 +276,10 @@ class MicroRTSChromosome:
             params = {}
             
             for param_name, (min_val, max_val) in bounds.items():
-                if min_val == max_val == 0:
+                if min_val == max_val == 0:  # Not applicable parameter
                     params[param_name] = 0
+                elif min_val == max_val:  # Fixed value
+                    params[param_name] = min_val
                 else:
                     # Denormalize from [0, 1]
                     normalized = genome[genome_idx]
@@ -284,9 +289,10 @@ class MicroRTSChromosome:
             
             unit_params[unit_type] = UnitParameters(**params)
         
-        # Reconstruct global parameters
+        # Reconstruct global parameters (convert 0-1 back to 1-3)
+        move_strategy = max(1, min(3, int(genome[genome_idx] * 2) + 1))  # Ensure 1-3 range
         global_params = GlobalParameters(
-            moveConflictResolutionStrategy=int(genome[genome_idx] * 3)
+            moveConflictResolutionStrategy=move_strategy
         )
         
         return cls(unit_params, global_params)

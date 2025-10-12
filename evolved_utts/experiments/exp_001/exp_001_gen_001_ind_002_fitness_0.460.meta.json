@@ -1,0 +1,16 @@
+{
+  "experiment_id": "exp_001",
+  "generation": 1,
+  "individual_id": 2,
+  "fitness": {
+    "overall_fitness": 0.46041160647328316,
+    "balance": 0.5976167021899756,
+    "duration": 0.9073125141081291,
+    "strategy_diversity": 0.0644948749703854
+  },
+  "created_at": "2025-10-12T17:58:12.303930",
+  "description": "Random individual 2 from generation 1",
+  "parent_individuals": [],
+  "mutation_count": 0,
+  "utt_filename": "exp_001_gen_001_ind_002_fitness_0.460.json"
+}
