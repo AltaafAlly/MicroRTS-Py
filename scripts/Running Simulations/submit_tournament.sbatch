@@ -55,40 +55,54 @@ cd "${RUN_DIR}"
 # This ensures the Java classes are in the right location
 cd "${BASE_REPO}"
 
-# Check if microrts.jar exists, if not try to build it
+# Check Java version and build microrts.jar if needed
+echo "Java version on cluster:"
+java -version
+
 echo "Checking for microrts.jar..."
 if [ ! -f "${BASE_REPO}/gym_microrts/microrts/microrts.jar" ]; then
-    echo "microrts.jar not found, trying to build it..."
+    echo "microrts.jar not found, building it..."
     cd "${BASE_REPO}/gym_microrts/microrts"
     
-    # Try different build methods
-    if [ -f "build.sh" ]; then
-        bash build.sh
-    elif [ -f "build.xml" ]; then
-        ant compile
+    # Try to build with available build system
+    if [ -f "build.xml" ] && [ -d "src" ]; then
+        echo "Found build.xml and src directory, trying to compile with javac..."
+        # Find all Java source files and compile them
+        find src -name "*.java" > sources.txt
+        mkdir -p bin
+        javac -cp "lib/*" -d bin @sources.txt
+        rm sources.txt
+        
+        # Create JAR file
+        jar cf microrts.jar -C bin .
+        echo "Built microrts.jar successfully"
     else
-        echo "No build script found, trying to find existing jar files..."
-        find . -name "*.jar" -type f
+        echo "Cannot build microrts.jar - missing build.xml or src directory"
+        echo "Available files:"
+        ls -la
+        exit 1
     fi
-    echo "Build attempt completed."
 else
-    echo "microrts.jar already exists."
+    echo "microrts.jar exists, checking Java version compatibility..."
+    # Check if the JAR was compiled with a newer Java version
+    file_info=$(file "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "")
+    if [[ "$file_info" == *"Java archive"* ]]; then
+        echo "JAR file found, but may need recompilation for cluster Java version"
+        # Try to rebuild anyway to ensure compatibility
+        cd "${BASE_REPO}/gym_microrts/microrts"
+        if [ -f "build.xml" ] && [ -d "src" ]; then
+            echo "Rebuilding microrts.jar for cluster Java version..."
+            find src -name "*.java" > sources.txt
+            mkdir -p bin
+            javac -cp "lib/*" -d bin @sources.txt
+            rm sources.txt
+            jar cf microrts.jar -C bin .
+            echo "Rebuilt microrts.jar for cluster compatibility"
+        else
+            echo "Cannot rebuild - missing build.xml or src directory"
+        fi
+    fi
 fi
-
-# Set Java classpath for MicroRTS (using jar files like locally)
-# Use the microrts.jar and lib directory
-export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/microrts.jar:${BASE_REPO}/gym_microrts/microrts/lib/*"
-
-# Also set it as an environment variable for the Python script
-export MICRORTS_JAR="${BASE_REPO}/gym_microrts/microrts/microrts.jar"
-
-# Debug: Print the classpath and check what actually exists
-echo "CLASSPATH set to: $CLASSPATH"
-echo "MICRORTS_JAR set to: $MICRORTS_JAR"
-echo "Checking if microrts.jar exists:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "microrts.jar not found"
-echo "Checking lib directory:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
