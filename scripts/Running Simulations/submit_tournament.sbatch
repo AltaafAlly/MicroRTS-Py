@@ -107,6 +107,14 @@ fi
 # Go back to repository root for running the tournament script
 cd "${BASE_REPO}"
 
+# Set environment variables for the Python script to find the JAR files
+export MICRORTS_JAR="${BASE_REPO}/gym_microrts/microrts/microrts.jar"
+export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/microrts.jar:${BASE_REPO}/gym_microrts/microrts/lib/*"
+
+echo "Environment variables set:"
+echo "MICRORTS_JAR=${MICRORTS_JAR}"
+echo "CLASSPATH=${CLASSPATH}"
+
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
 ANALYZE_SCRIPT="scripts/Running Simulations/analyze_tournament_results.py"
