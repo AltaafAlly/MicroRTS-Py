@@ -110,6 +110,23 @@ cd "${BASE_REPO}"
 echo "JAR file ready at: ${BASE_REPO}/gym_microrts/microrts/microrts.jar"
 echo "Letting gym_microrts vec_env.py handle JVM startup..."
 
+# Debug: Check if JAR files exist at expected locations
+echo "Checking JAR file locations:"
+ls -la "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "microrts.jar not found"
+ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
+
+# Check what gym_microrts.__path__[0] resolves to
+echo "Testing Python path resolution:"
+python -c "
+import gym_microrts
+import os
+microrts_path = os.path.join(gym_microrts.__path__[0], 'microrts')
+print(f'gym_microrts.__path__[0]: {gym_microrts.__path__[0]}')
+print(f'microrts_path: {microrts_path}')
+print(f'microrts.jar exists: {os.path.exists(os.path.join(microrts_path, \"microrts.jar\"))}')
+print(f'lib directory exists: {os.path.exists(os.path.join(microrts_path, \"lib\"))}')
+"
+
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
 ANALYZE_SCRIPT="scripts/Running Simulations/analyze_tournament_results.py"
