@@ -73,8 +73,30 @@ if [ ! -f "${BASE_REPO}/gym_microrts/microrts/microrts.jar" ]; then
         javac -cp "lib/*" -d bin @sources.txt
         rm sources.txt
         
-        # Create JAR file
-        jar cf microrts.jar -C bin .
+        # Create a fat JAR that includes all dependencies
+        echo "Creating fat JAR with all dependencies..."
+        
+        # Create a temporary directory for the fat JAR
+        mkdir -p fat_jar_temp
+        
+        # Extract all JAR files into the temp directory
+        echo "Extracting microrts.jar..."
+        jar xf microrts.jar -C fat_jar_temp/
+        
+        # Extract all lib JAR files
+        for lib_jar in lib/*.jar; do
+            if [ -f "$lib_jar" ]; then
+                echo "Extracting $lib_jar..."
+                jar xf "$lib_jar" -C fat_jar_temp/
+            fi
+        done
+        
+        # Create the fat JAR
+        echo "Creating fat microrts.jar..."
+        jar cf microrts.jar -C fat_jar_temp .
+        
+        # Clean up
+        rm -rf fat_jar_temp
         echo "Built microrts.jar successfully"
     else
         echo "Cannot build microrts.jar - missing build.xml or src directory"
@@ -96,7 +118,30 @@ else
             mkdir -p bin
             javac -cp "lib/*" -d bin @sources.txt
             rm sources.txt
-            jar cf microrts.jar -C bin .
+            # Create a fat JAR that includes all dependencies
+            echo "Creating fat JAR with all dependencies..."
+            
+            # Create a temporary directory for the fat JAR
+            mkdir -p fat_jar_temp
+            
+            # Extract all JAR files into the temp directory
+            echo "Extracting microrts.jar..."
+            jar xf microrts.jar -C fat_jar_temp/
+            
+            # Extract all lib JAR files
+            for lib_jar in lib/*.jar; do
+                if [ -f "$lib_jar" ]; then
+                    echo "Extracting $lib_jar..."
+                    jar xf "$lib_jar" -C fat_jar_temp/
+                fi
+            done
+            
+            # Create the fat JAR
+            echo "Creating fat microrts.jar..."
+            jar cf microrts.jar -C fat_jar_temp .
+            
+            # Clean up
+            rm -rf fat_jar_temp
             echo "Rebuilt microrts.jar for cluster compatibility"
         else
             echo "Cannot rebuild - missing build.xml or src directory"
