@@ -55,26 +55,26 @@ cd "${RUN_DIR}"
 # This ensures the Java classes are in the right location
 cd "${BASE_REPO}"
 
-# Set Java classpath for MicroRTS (using original repository)
-# Use the source directory instead of jar file
-export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/src:${BASE_REPO}/gym_microrts/microrts/lib/*"
+# Build the Java classes first (Apache Ant project)
+echo "Building MicroRTS Java classes..."
+cd "${BASE_REPO}/gym_microrts/microrts"
+ant compile
+echo "Build completed."
+
+# Set Java classpath for MicroRTS (using compiled classes)
+# Use the build directory where compiled classes are stored
+export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/build:${BASE_REPO}/gym_microrts/microrts/lib/*"
 
 # Also set it as an environment variable for the Python script
-export MICRORTS_SRC="${BASE_REPO}/gym_microrts/microrts/src"
+export MICRORTS_BUILD="${BASE_REPO}/gym_microrts/microrts/build"
 
 # Debug: Print the classpath and check what actually exists
 echo "CLASSPATH set to: $CLASSPATH"
-echo "MICRORTS_SRC set to: $MICRORTS_SRC"
-echo "Checking what's in the microrts directory:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/"
-echo "Checking if src directory exists:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/src" 2>/dev/null || echo "src directory not found"
-echo "Checking if lib directory exists:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
+echo "MICRORTS_BUILD set to: $MICRORTS_BUILD"
+echo "Checking if build directory exists:"
+ls -la "${BASE_REPO}/gym_microrts/microrts/build" 2>/dev/null || echo "build directory not found"
 echo "Looking for compiled classes:"
-find "${BASE_REPO}/gym_microrts/microrts/" -name "*.class" -type f | head -10
-echo "Looking for jar files:"
-find "${BASE_REPO}/gym_microrts/microrts/" -name "*.jar" -type f
+find "${BASE_REPO}/gym_microrts/microrts/build" -name "*.class" -type f | head -10
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
