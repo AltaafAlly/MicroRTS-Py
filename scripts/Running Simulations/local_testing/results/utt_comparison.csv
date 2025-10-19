@@ -5,9 +5,9 @@ default_original,coacAI,25.0,25,0,0,1.0
 default_original,naiveMCTSAI,17.0,17,8,0,0.68
 default_original,passiveAI,0.0,0,25,0,0.0
 default_original,randomBiasedAI,5.0,5,20,0,0.2
-custom_demo,workerRushAI,19.0,19,6,0,0.76
+custom_demo,workerRushAI,20.0,20,5,0,0.8
 custom_demo,lightRushAI,20.0,20,5,0,0.8
 custom_demo,coacAI,20.0,20,5,0,0.8
 custom_demo,naiveMCTSAI,10.0,10,15,0,0.4
 custom_demo,passiveAI,0.0,0,25,0,0.0
-custom_demo,randomBiasedAI,6.0,6,19,0,0.24
+custom_demo,randomBiasedAI,5.0,5,20,0,0.2

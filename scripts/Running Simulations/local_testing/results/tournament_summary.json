@@ -1,8 +1,8 @@
 {
   "tournament_info": {
-    "start_time": "2025-10-19T19:25:03.902840",
-    "end_time": "2025-10-19T19:27:44.361447",
-    "duration_minutes": 2.6743101666666664,
+    "start_time": "2025-10-19T19:55:41.718632",
+    "end_time": "2025-10-19T19:58:47.114598",
+    "duration_minutes": 3.0899327833333334,
     "utt_configurations": [
       "default_original",
       "custom_demo"
@@ -71,9 +71,16 @@
     "custom_demo": {
       "total_games": 150,
       "overall_draw_rate": 0.0,
-      "top_performer": "lightRushAI",
+      "top_performer": "workerRushAI",
       "bottom_performer": "passiveAI",
       "ranking": [
+        {
+          "ai": "workerRushAI",
+          "points": 20.0,
+          "wins": 20,
+          "losses": 5,
+          "draws": 0
+        },
         {
           "ai": "lightRushAI",
           "points": 20.0,
@@ -89,13 +96,6 @@
           "draws": 0
         },
         {
-          "ai": "workerRushAI",
-          "points": 19.0,
-          "wins": 19,
-          "losses": 6,
-          "draws": 0
-        },
-        {
           "ai": "naiveMCTSAI",
           "points": 10.0,
           "wins": 10,
@@ -104,9 +104,9 @@
         },
         {
           "ai": "randomBiasedAI",
-          "points": 6.0,
-          "wins": 6,
-          "losses": 19,
+          "points": 5.0,
+          "wins": 5,
+          "losses": 20,
           "draws": 0
         }
       ]

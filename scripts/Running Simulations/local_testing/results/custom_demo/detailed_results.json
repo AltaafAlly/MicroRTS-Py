@@ -4,13 +4,13 @@
     "utt_json_p0": "utts/CustomDemoUTT.json",
     "utt_json_p1": "utts/CustomDemoUTT.json"
   },
-  "timestamp": "2025-10-19T19:27:22.656043",
+  "timestamp": "2025-10-19T19:58:24.734340",
   "standings": {
     "workerRushAI": {
-      "wins": 19,
-      "losses": 6,
+      "wins": 20,
+      "losses": 5,
       "draws": 0,
-      "points": 19.0
+      "points": 20.0
     },
     "lightRushAI": {
       "wins": 20,
@@ -37,10 +37,10 @@
       "points": 0.0
     },
     "randomBiasedAI": {
-      "wins": 6,
-      "losses": 19,
+      "wins": 5,
+      "losses": 20,
       "draws": 0,
-      "points": 6.0
+      "points": 5.0
     }
   },
   "pair_results": [
@@ -105,8 +105,8 @@
       "total_pairs": 15
     },
     {
-      "left_wins": 4,
-      "right_wins": 1,
+      "left_wins": 5,
+      "right_wins": 0,
       "draws": 0,
       "ai_left": "workerRushAI",
       "ai_right": "randomBiasedAI",
@@ -278,14 +278,21 @@
     "overall_draw_rate": 0.0,
     "average_draw_rate_per_pair": 0.0,
     "win_rates": {
-      "workerRushAI": 0.76,
+      "workerRushAI": 0.8,
       "lightRushAI": 0.8,
       "coacAI": 0.8,
       "naiveMCTSAI": 0.4,
       "passiveAI": 0.0,
-      "randomBiasedAI": 0.24
+      "randomBiasedAI": 0.2
     },
     "ranking": [
+      {
+        "ai": "workerRushAI",
+        "points": 20.0,
+        "wins": 20,
+        "losses": 5,
+        "draws": 0
+      },
       {
         "ai": "lightRushAI",
         "points": 20.0,
@@ -301,13 +308,6 @@
         "draws": 0
       },
       {
-        "ai": "workerRushAI",
-        "points": 19.0,
-        "wins": 19,
-        "losses": 6,
-        "draws": 0
-      },
-      {
         "ai": "naiveMCTSAI",
         "points": 10.0,
         "wins": 10,
@@ -316,9 +316,9 @@
       },
       {
         "ai": "randomBiasedAI",
-        "points": 6.0,
-        "wins": 6,
-        "losses": 19,
+        "points": 5.0,
+        "wins": 5,
+        "losses": 20,
         "draws": 0
       },
       {
@@ -329,7 +329,7 @@
         "draws": 0
       }
     ],
-    "top_performer": "lightRushAI",
+    "top_performer": "workerRushAI",
     "bottom_performer": "passiveAI"
   }
 }

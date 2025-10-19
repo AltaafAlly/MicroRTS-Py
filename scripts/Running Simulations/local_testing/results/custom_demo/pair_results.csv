@@ -3,7 +3,7 @@ left_wins,right_wins,draws,ai_left,ai_right,utt_config,games,map_path,pair_numbe
 0,5,0,workerRushAI,coacAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,2,15
 5,0,0,workerRushAI,naiveMCTSAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,3,15
 5,0,0,workerRushAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,4,15
-4,1,0,workerRushAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,5,15
+5,0,0,workerRushAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,5,15
 5,0,0,lightRushAI,coacAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,6,15
 5,0,0,lightRushAI,naiveMCTSAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,7,15
 5,0,0,lightRushAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,8,15
