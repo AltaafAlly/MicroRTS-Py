@@ -48,6 +48,9 @@ RUN_DIR="${HOME_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}"
 
 mkdir -p "${RUN_DIR}"
 
+# Set Java classpath for MicroRTS (after RUN_DIR is defined)
+export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
+
 echo "Working directory: ${RUN_DIR}"
 cd "${RUN_DIR}"
 
