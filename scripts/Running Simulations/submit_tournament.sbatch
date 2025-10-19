@@ -55,11 +55,25 @@ cd "${RUN_DIR}"
 # This ensures the Java classes are in the right location
 cd "${BASE_REPO}"
 
-# Build the Java classes using the build script (like locally)
-echo "Building MicroRTS Java classes..."
-cd "${BASE_REPO}/gym_microrts/microrts"
-bash build.sh
-echo "Build completed."
+# Check if microrts.jar exists, if not try to build it
+echo "Checking for microrts.jar..."
+if [ ! -f "${BASE_REPO}/gym_microrts/microrts/microrts.jar" ]; then
+    echo "microrts.jar not found, trying to build it..."
+    cd "${BASE_REPO}/gym_microrts/microrts"
+    
+    # Try different build methods
+    if [ -f "build.sh" ]; then
+        bash build.sh
+    elif [ -f "build.xml" ]; then
+        ant compile
+    else
+        echo "No build script found, trying to find existing jar files..."
+        find . -name "*.jar" -type f
+    fi
+    echo "Build attempt completed."
+else
+    echo "microrts.jar already exists."
+fi
 
 # Set Java classpath for MicroRTS (using jar files like locally)
 # Use the microrts.jar and lib directory
