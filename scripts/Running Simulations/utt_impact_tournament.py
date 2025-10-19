@@ -36,34 +36,25 @@ class UTTImpactTournament:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         # Strategic baseline AI agents for comprehensive analysis
+        # Optimized selection: 6 diverse agents covering different strategies
         self.baseline_ais = [
             # Rush strategies (aggressive)
             "workerRushAI",      # Classic worker rush
             "lightRushAI",       # Light unit rush
-            "POHeavyRush",       # Heavy unit rush (partial obs)
-            "PORangedRush",      # Ranged unit rush (partial obs)
             
             # Balanced strategies
             "coacAI",            # Strong balanced AI
             "naiveMCTSAI",       # Monte Carlo Tree Search
-            "mixedBot",          # Mixed strategy bot
             
             # Defensive/economic strategies
             "passiveAI",         # Defensive baseline
             "randomBiasedAI",    # Biased random (slightly strategic)
-            
-            # Advanced strategies
-            "izanagi",           # Advanced AI
-            "droplet",           # Sophisticated bot
-            "tiamat",            # Complex strategy AI
         ]
         
-        # UTT configurations to test
+        # UTT configurations to test - Focused comparison
         self.utt_configs = {
-            "default_original": {"utt_json_p0": None, "utt_json_p1": None},  # Default original UTT
-            "default_finetuned": {"utt_json_p0": None, "utt_json_p1": None},  # Default finetuned UTT (same as original for now)
+            "default_original": {"utt_json_p0": None, "utt_json_p1": None},  # Default original UTT (baseline)
             "custom_demo": {"utt_json_p0": "utts/CustomDemoUTT.json", "utt_json_p1": "utts/CustomDemoUTT.json"},  # Your custom UTT
-            "asymmetric_p1": {"utt_json_p0": None, "utt_json_p1": "utts/AsymmetricP1UTT.json"},  # Asymmetric UTT
         }
         
         # Tournament settings
