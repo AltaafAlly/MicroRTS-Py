@@ -41,7 +41,7 @@ def test_jvm_startup():
             ai1s=[microrts_ai.workerRushAI],
             ai2s=[microrts_ai.lightRushAI],
             max_steps=100,  # Very short test
-            map_paths="maps/8x8/basesWorkers8x8A.xml"
+            map_paths=["maps/8x8/basesWorkers8x8A.xml"]  # Make it a list
         )
         print("✅ JVM started and environment created successfully")
         
@@ -75,7 +75,7 @@ def test_utt_loading():
             ai1s=[microrts_ai.workerRushAI],
             ai2s=[microrts_ai.lightRushAI],
             max_steps=50,
-            map_paths="maps/8x8/basesWorkers8x8A.xml",
+            map_paths=["maps/8x8/basesWorkers8x8A.xml"],  # Make it a list
             utt_json_p0="utts/CustomDemoUTT.json",
             utt_json_p1="utts/CustomDemoUTT.json"
         )
@@ -106,7 +106,7 @@ def run_single_match():
             ai1s=[microrts_ai.workerRushAI],
             ai2s=[microrts_ai.lightRushAI],
             max_steps=200,  # Short match
-            map_paths="maps/8x8/basesWorkers8x8A.xml"
+            map_paths=["maps/8x8/basesWorkers8x8A.xml"]  # Make it a list
         )
         
         # Run a short match
