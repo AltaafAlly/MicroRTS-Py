@@ -2,11 +2,11 @@
 #SBATCH --job-name=utt_tournament
 #SBATCH --output=/gluster/%u/utt_tournament_logs/utt_tournament_%j.out
 #SBATCH --error=/gluster/%u/utt_tournament_logs/utt_tournament_%j.err
-#SBATCH --time=24:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=2G
 ## Choose partition: stampede for CPU jobs, bigbatch for larger RAM/GPU, biggpu only for mature GPU jobs.
 ## Replace with 'bigbatch' or 'biggpu' only if you need those nodes.
 #SBATCH --partition=stampede
