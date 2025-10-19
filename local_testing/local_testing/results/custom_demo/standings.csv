@@ -1,0 +1,7 @@
+ai,points,wins,losses,draws,win_rate
+workerRushAI,19.0,19,6,0,0.76
+lightRushAI,20.0,20,5,0,0.8
+coacAI,20.0,20,5,0,0.8
+naiveMCTSAI,10.0,10,15,0,0.4
+passiveAI,0.0,0,25,0,0.0
+randomBiasedAI,6.0,6,19,0,0.24

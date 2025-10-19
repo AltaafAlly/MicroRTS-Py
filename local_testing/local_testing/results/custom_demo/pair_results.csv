@@ -1,0 +1,16 @@
+left_wins,right_wins,draws,ai_left,ai_right,utt_config,games,map_path,pair_number,total_pairs
+5,0,0,workerRushAI,lightRushAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,1,15
+0,5,0,workerRushAI,coacAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,2,15
+5,0,0,workerRushAI,naiveMCTSAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,3,15
+5,0,0,workerRushAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,4,15
+4,1,0,workerRushAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,5,15
+5,0,0,lightRushAI,coacAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,6,15
+5,0,0,lightRushAI,naiveMCTSAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,7,15
+5,0,0,lightRushAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,8,15
+5,0,0,lightRushAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,9,15
+5,0,0,coacAI,naiveMCTSAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,10,15
+5,0,0,coacAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,11,15
+5,0,0,coacAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,12,15
+5,0,0,naiveMCTSAI,passiveAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,13,15
+5,0,0,naiveMCTSAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,14,15
+0,5,0,passiveAI,randomBiasedAI,"{'utt_json_p0': 'utts/CustomDemoUTT.json', 'utt_json_p1': 'utts/CustomDemoUTT.json'}",5,maps/8x8/basesWorkers8x8A.xml,15,15

@@ -1,0 +1,40 @@
+{
+  "custom_demo": {
+    "workerRushAI": {
+      "baseline_points": 18.0,
+      "utt_points": 19.0,
+      "point_change": 1.0,
+      "percent_change": 5.555555555555555
+    },
+    "lightRushAI": {
+      "baseline_points": 10.0,
+      "utt_points": 20.0,
+      "point_change": 10.0,
+      "percent_change": 100.0
+    },
+    "coacAI": {
+      "baseline_points": 25.0,
+      "utt_points": 20.0,
+      "point_change": -5.0,
+      "percent_change": -20.0
+    },
+    "naiveMCTSAI": {
+      "baseline_points": 17.0,
+      "utt_points": 10.0,
+      "point_change": -7.0,
+      "percent_change": -41.17647058823529
+    },
+    "passiveAI": {
+      "baseline_points": 0.0,
+      "utt_points": 0.0,
+      "point_change": 0.0,
+      "percent_change": 0.0
+    },
+    "randomBiasedAI": {
+      "baseline_points": 5.0,
+      "utt_points": 6.0,
+      "point_change": 1.0,
+      "percent_change": 20.0
+    }
+  }
+}

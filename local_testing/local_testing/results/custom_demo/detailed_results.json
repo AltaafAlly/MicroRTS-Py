@@ -1,0 +1,335 @@
+{
+  "utt_name": "custom_demo",
+  "utt_config": {
+    "utt_json_p0": "utts/CustomDemoUTT.json",
+    "utt_json_p1": "utts/CustomDemoUTT.json"
+  },
+  "timestamp": "2025-10-19T19:27:22.656043",
+  "standings": {
+    "workerRushAI": {
+      "wins": 19,
+      "losses": 6,
+      "draws": 0,
+      "points": 19.0
+    },
+    "lightRushAI": {
+      "wins": 20,
+      "losses": 5,
+      "draws": 0,
+      "points": 20.0
+    },
+    "coacAI": {
+      "wins": 20,
+      "losses": 5,
+      "draws": 0,
+      "points": 20.0
+    },
+    "naiveMCTSAI": {
+      "wins": 10,
+      "losses": 15,
+      "draws": 0,
+      "points": 10.0
+    },
+    "passiveAI": {
+      "wins": 0,
+      "losses": 25,
+      "draws": 0,
+      "points": 0.0
+    },
+    "randomBiasedAI": {
+      "wins": 6,
+      "losses": 19,
+      "draws": 0,
+      "points": 6.0
+    }
+  },
+  "pair_results": [
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "workerRushAI",
+      "ai_right": "lightRushAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 1,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 0,
+      "right_wins": 5,
+      "draws": 0,
+      "ai_left": "workerRushAI",
+      "ai_right": "coacAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 2,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "workerRushAI",
+      "ai_right": "naiveMCTSAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 3,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "workerRushAI",
+      "ai_right": "passiveAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 4,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 4,
+      "right_wins": 1,
+      "draws": 0,
+      "ai_left": "workerRushAI",
+      "ai_right": "randomBiasedAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 5,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "lightRushAI",
+      "ai_right": "coacAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 6,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "lightRushAI",
+      "ai_right": "naiveMCTSAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 7,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "lightRushAI",
+      "ai_right": "passiveAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 8,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "lightRushAI",
+      "ai_right": "randomBiasedAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 9,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "coacAI",
+      "ai_right": "naiveMCTSAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 10,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "coacAI",
+      "ai_right": "passiveAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 11,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "coacAI",
+      "ai_right": "randomBiasedAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 12,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "naiveMCTSAI",
+      "ai_right": "passiveAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 13,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 5,
+      "right_wins": 0,
+      "draws": 0,
+      "ai_left": "naiveMCTSAI",
+      "ai_right": "randomBiasedAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 14,
+      "total_pairs": 15
+    },
+    {
+      "left_wins": 0,
+      "right_wins": 5,
+      "draws": 0,
+      "ai_left": "passiveAI",
+      "ai_right": "randomBiasedAI",
+      "utt_config": {
+        "utt_json_p0": "utts/CustomDemoUTT.json",
+        "utt_json_p1": "utts/CustomDemoUTT.json"
+      },
+      "games": 5,
+      "map_path": "maps/8x8/basesWorkers8x8A.xml",
+      "pair_number": 15,
+      "total_pairs": 15
+    }
+  ],
+  "statistics": {
+    "total_games": 150,
+    "total_wins": 75,
+    "total_losses": 75,
+    "total_draws": 0,
+    "overall_draw_rate": 0.0,
+    "average_draw_rate_per_pair": 0.0,
+    "win_rates": {
+      "workerRushAI": 0.76,
+      "lightRushAI": 0.8,
+      "coacAI": 0.8,
+      "naiveMCTSAI": 0.4,
+      "passiveAI": 0.0,
+      "randomBiasedAI": 0.24
+    },
+    "ranking": [
+      {
+        "ai": "lightRushAI",
+        "points": 20.0,
+        "wins": 20,
+        "losses": 5,
+        "draws": 0
+      },
+      {
+        "ai": "coacAI",
+        "points": 20.0,
+        "wins": 20,
+        "losses": 5,
+        "draws": 0
+      },
+      {
+        "ai": "workerRushAI",
+        "points": 19.0,
+        "wins": 19,
+        "losses": 6,
+        "draws": 0
+      },
+      {
+        "ai": "naiveMCTSAI",
+        "points": 10.0,
+        "wins": 10,
+        "losses": 15,
+        "draws": 0
+      },
+      {
+        "ai": "randomBiasedAI",
+        "points": 6.0,
+        "wins": 6,
+        "losses": 19,
+        "draws": 0
+      },
+      {
+        "ai": "passiveAI",
+        "points": 0.0,
+        "wins": 0,
+        "losses": 25,
+        "draws": 0
+      }
+    ],
+    "top_performer": "lightRushAI",
+    "bottom_performer": "passiveAI"
+  }
+}

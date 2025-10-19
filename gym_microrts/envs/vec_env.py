@@ -117,12 +117,6 @@ class MicroRTSGridModeVecEnv:
                 "lib/bots/TiamatBot.jar",
                 "lib/bots/UMSBot.jar",
                 "lib/bots/mayariBot.jar",  # "MindSeal.jar"
-                # Add missing library dependencies
-                "lib/jdom.jar",
-                "lib/hamcrest-all-1.3.jar",
-                "lib/junit-4.12.jar",
-                "lib/minimal-json-0.9.4.jar",
-                "lib/weka.jar",
             ]
             for jar in jars:
                 jpype.addClassPath(os.path.join(self.microrts_path, jar))
@@ -403,12 +397,6 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
                 "lib/bots/TiamatBot.jar",
                 "lib/bots/UMSBot.jar",
                 "lib/bots/mayariBot.jar",  # "MindSeal.jar"
-                # Add missing library dependencies
-                "lib/jdom.jar",
-                "lib/hamcrest-all-1.3.jar",
-                "lib/junit-4.12.jar",
-                "lib/minimal-json-0.9.4.jar",
-                "lib/weka.jar",
             ]
             for jar in jars:
                 jpype.addClassPath(os.path.join(self.microrts_path, jar))
