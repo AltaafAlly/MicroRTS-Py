@@ -40,8 +40,13 @@ if not jpype.isJVMStarted():
             if lib_files:
                 classpath += ":" + ":".join(str(f) for f in lib_files)
         
-        os.environ["CLASSPATH"] = classpath
-        print(f"Set CLASSPATH to: {classpath}")
+        # Start JVM with the correct classpath
+        jpype.startJVM(classpath=classpath)
+        print(f"Started JVM with classpath: {classpath}")
+    else:
+        print(f"Warning: microrts.jar not found at {microrts_jar}")
+        # Try to start JVM anyway
+        jpype.startJVM()
 
 from gym_microrts.envs.vec_env import MicroRTSBotVecEnv
 from gym_microrts import microrts_ai
