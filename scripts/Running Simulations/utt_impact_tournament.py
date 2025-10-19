@@ -28,38 +28,25 @@ import numpy as np
 # Set Java classpath before importing MicroRTS
 import jpype
 if not jpype.isJVMStarted():
-    # Try multiple possible locations for microrts.jar
-    possible_paths = [
-        # Relative to current script
-        Path(__file__).parent / ".." / ".." / "gym_microrts" / "microrts" / "microrts.jar",
-        # Absolute path from working directory
-        Path.cwd() / "gym_microrts" / "microrts" / "microrts.jar",
-        # From environment variable if set
-        Path(os.environ.get("MICRORTS_JAR", "")) if os.environ.get("MICRORTS_JAR") else None,
-    ]
+    # Use the environment variable set by the batch script
+    microrts_jar_path = os.environ.get("MICRORTS_JAR")
     
-    microrts_jar = None
-    for path in possible_paths:
-        if path and path.exists():
-            microrts_jar = path
-            break
-    
-    if microrts_jar:
-        classpath = str(microrts_jar.resolve())
-        lib_dir = microrts_jar.parent / "lib"
+    if microrts_jar_path and Path(microrts_jar_path).exists():
+        classpath = str(Path(microrts_jar_path).resolve())
+        lib_dir = Path(microrts_jar_path).parent / "lib"
         
         if lib_dir.exists():
             lib_files = list(lib_dir.glob("*.jar"))
             if lib_files:
                 classpath += ":" + ":".join(str(f.resolve()) for f in lib_files)
         
-        print(f"Found microrts.jar at: {microrts_jar}")
+        print(f"Found microrts.jar at: {microrts_jar_path}")
         print(f"Starting JVM with classpath: {classpath}")
         
         # Start JVM with the correct classpath
         jpype.startJVM(classpath=classpath)
     else:
-        print("Warning: microrts.jar not found in any expected location")
+        print(f"Warning: microrts.jar not found at {microrts_jar_path}")
         print("Trying to start JVM with default classpath...")
         # Try to start JVM anyway
         jpype.startJVM()

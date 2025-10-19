@@ -61,9 +61,13 @@ export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/
 # Also set it as an environment variable for the Python script
 export MICRORTS_JAR="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar"
 
-# Debug: Print the classpath
+# Debug: Print the classpath and check if files exist
 echo "CLASSPATH set to: $CLASSPATH"
 echo "MICRORTS_JAR set to: $MICRORTS_JAR"
+echo "Checking if microrts.jar exists:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/microrts.jar"
+echo "Checking lib directory:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/lib/"
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="code/scripts/Running Simulations/utt_impact_tournament.py"
