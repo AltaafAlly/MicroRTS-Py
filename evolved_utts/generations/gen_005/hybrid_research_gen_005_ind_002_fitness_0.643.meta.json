@@ -1,0 +1,16 @@
+{
+  "experiment_id": "hybrid_research",
+  "generation": 5,
+  "individual_id": 2,
+  "fitness": {
+    "overall_fitness": 0.6428214592753063,
+    "balance": 0.5333333333333333,
+    "duration": 0.6147885541721559,
+    "strategy_diversity": 0.8168385323010874
+  },
+  "created_at": "2025-10-12T20:13:35.983419",
+  "description": "Best UTT #2 from hybrid GA evolution",
+  "parent_individuals": [],
+  "mutation_count": 0,
+  "utt_filename": "hybrid_research_gen_005_ind_002_fitness_0.643.json"
+}

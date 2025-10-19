@@ -187,7 +187,8 @@ public class FEStatePane extends JPanel {
                                       new UnitTypeTable(UnitTypeTable.VERSION_ORIGINAL_FINETUNED, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_ALTERNATING),
-                                      new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),   
+                                      new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),
+                                      loadCustomUTT("utts/CustomDemoUTT.json")   
     };
     public static String unitTypeTableNames[] = {"Original-Both",
                                    "Original-Alternating",
@@ -197,7 +198,8 @@ public class FEStatePane extends JPanel {
                                    "Finetuned-Random",
                                    "Nondeterministic-Both",
                                    "Nondeterministic-Alternating",
-                                   "Nondeterministic-Random"};
+                                   "Nondeterministic-Random",
+                                   "Custom Demo UTT"};
 
     JFormattedTextField mapWidthField;
     JFormattedTextField mapHeightField;
@@ -1037,5 +1039,34 @@ public class FEStatePane extends JPanel {
         }
         
         jPanel.revalidate();
+    }
+    
+    /**
+     * Helper method to load a custom UTT from JSON file
+     * @param filePath path to the JSON UTT file
+     * @return UnitTypeTable loaded from JSON, or default UTT if loading fails
+     */
+    private static UnitTypeTable loadCustomUTT(String filePath) {
+        try {
+            java.io.File file = new java.io.File(filePath);
+            if (!file.exists()) {
+                System.err.println("UTT file not found: " + filePath + ", using default UTT");
+                return new UnitTypeTable(UnitTypeTable.VERSION_ORIGINAL_FINETUNED, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH);
+            }
+            
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(file));
+            StringBuilder jsonContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonContent.append(line);
+            }
+            reader.close();
+            
+            return UnitTypeTable.fromJSON(jsonContent.toString());
+        } catch (Exception e) {
+            System.err.println("Error loading custom UTT from " + filePath + ": " + e.getMessage());
+            System.err.println("Using default UTT instead");
+            return new UnitTypeTable(UnitTypeTable.VERSION_ORIGINAL_FINETUNED, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH);
+        }
     }
 }

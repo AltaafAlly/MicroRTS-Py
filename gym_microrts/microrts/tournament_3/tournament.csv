@@ -1,0 +1,19 @@
+tournaments.RoundRobinTournament
+AIs
+	UCT(100, -1, 100, 10, RandomBiasedAI, SimpleSqrtEvaluationFunction3)
+	UCTUnitActions(100, -1, 100, 10, RandomBiasedAI, SimpleSqrtEvaluationFunction3)
+	UCTUnitActions(100, -1, 100, 10, RandomBiasedAI, SimpleSqrtEvaluationFunction3)
+maps
+	/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/maps/8x8/bases8x8.xml
+iterations	10
+maxGameLength	3000
+timeBudget	100
+iterationsBudget	-1
+pregameAnalysisBudget	1000	1000
+preAnalysis	true
+fullObservability	true
+timeoutCheck	true
+runGC	false
+iteration	map	ai1	ai2	time	winner	crashed	timedout
+0	0	0	1	9	0	-1	1
+0	0	0	2	197	1	-1	0
