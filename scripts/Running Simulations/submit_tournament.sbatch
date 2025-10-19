@@ -1,15 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=utt_tournament
-#SBATCH --output=/gluster/%u/utt_tournament_logs/utt_tournament_%j.out
-#SBATCH --error=/gluster/%u/utt_tournament_logs/utt_tournament_%j.err
+#SBATCH --output=/home-mscluster/%u/utt_tournament_%j.out
+#SBATCH --error=/home-mscluster/%u/utt_tournament_%j.err
 #SBATCH --time=12:00:00
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=2048
-## Choose partition: stampede for CPU jobs, bigbatch for larger RAM/GPU, biggpu only for mature GPU jobs.
-## Replace with 'bigbatch' or 'biggpu' only if you need those nodes.
-#SBATCH --partition=stampede
+#SBATCH --partition=bigbatch
 
 set -euo pipefail
 
@@ -43,17 +37,13 @@ export JAVA_HOME=${JAVA_HOME:-${CONDA_PREFIX}}
 export PATH="$JAVA_HOME/bin:$PATH"
 
 # --- Set paths & run dir ---
-# NOTE: use /gluster for fast IO while the job runs; results copied to /datasets at the end for safekeeping.
-BASE_REPO="$HOME/projects/MicroRTS-Py-Research"  # <-- Your actual repository path
-GLUSTER_BASE="/gluster/${USER}/microrts_runs" # fast network scratch
-DATASETS_BASE="/datasets/${USER}/microrts_archive" # long-term storage
+BASE_REPO="$HOME/src/MicroRTS-Py"  # <-- Your actual repository path on cluster
+HOME_BASE="/home-mscluster/${USER}/microrts_runs" # home directory storage
 
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-RUN_DIR="${GLUSTER_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}"
+RUN_DIR="${HOME_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}"
 
 mkdir -p "${RUN_DIR}"
-mkdir -p "/gluster/${USER}/utt_tournament_logs"
-mkdir -p "${DATASETS_BASE}"
 
 echo "Working directory: ${RUN_DIR}"
 cd "${RUN_DIR}"
@@ -86,8 +76,5 @@ python "${ANALYZE_SCRIPT}" \
 
 echo "Analysis completed at $(date)"
 
-# Copy final results to persistent dataset area (rsync so it resumes if interrupted)
-echo "Syncing results to datasets for long-term storage..."
-rsync -av --delete "${RUN_DIR}/results" "${DATASETS_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}/"
-
-echo "All done. Final results copied to ${DATASETS_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}/"
+# Results are already in the home directory, no need to copy
+echo "All done. Results saved to ${RUN_DIR}/results"
