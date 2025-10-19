@@ -55,26 +55,26 @@ cd "${RUN_DIR}"
 # This ensures the Java classes are in the right location
 cd "${BASE_REPO}"
 
-# Build the Java classes first (Apache Ant project)
+# Build the Java classes using the build script (like locally)
 echo "Building MicroRTS Java classes..."
 cd "${BASE_REPO}/gym_microrts/microrts"
-ant compile
+bash build.sh
 echo "Build completed."
 
-# Set Java classpath for MicroRTS (using compiled classes)
-# Use the build directory where compiled classes are stored
-export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/build:${BASE_REPO}/gym_microrts/microrts/lib/*"
+# Set Java classpath for MicroRTS (using jar files like locally)
+# Use the microrts.jar and lib directory
+export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/microrts.jar:${BASE_REPO}/gym_microrts/microrts/lib/*"
 
 # Also set it as an environment variable for the Python script
-export MICRORTS_BUILD="${BASE_REPO}/gym_microrts/microrts/build"
+export MICRORTS_JAR="${BASE_REPO}/gym_microrts/microrts/microrts.jar"
 
 # Debug: Print the classpath and check what actually exists
 echo "CLASSPATH set to: $CLASSPATH"
-echo "MICRORTS_BUILD set to: $MICRORTS_BUILD"
-echo "Checking if build directory exists:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/build" 2>/dev/null || echo "build directory not found"
-echo "Looking for compiled classes:"
-find "${BASE_REPO}/gym_microrts/microrts/build" -name "*.class" -type f | head -10
+echo "MICRORTS_JAR set to: $MICRORTS_JAR"
+echo "Checking if microrts.jar exists:"
+ls -la "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "microrts.jar not found"
+echo "Checking lib directory:"
+ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
