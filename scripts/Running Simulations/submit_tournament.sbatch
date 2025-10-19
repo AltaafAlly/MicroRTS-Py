@@ -51,30 +51,34 @@ mkdir -p "${RUN_DIR}"
 echo "Working directory: ${RUN_DIR}"
 cd "${RUN_DIR}"
 
-# Copy code (or bind) - small repo copy is optional; you can instead run from $BASE_REPO.
-# This avoids accidental edits to the repo during a run and improves I/O locality.
-rsync -av --exclude='.git' "${BASE_REPO}/" "${RUN_DIR}/code/"
+# Run from the original repository instead of copying
+# This ensures the Java classes are in the right location
+cd "${BASE_REPO}"
 
-# Set Java classpath for MicroRTS (after code is copied)
+# Set Java classpath for MicroRTS (using original repository)
 # Use the source directory instead of jar file
-export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/src:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
+export CLASSPATH="${BASE_REPO}/gym_microrts/microrts/src:${BASE_REPO}/gym_microrts/microrts/lib/*"
 
 # Also set it as an environment variable for the Python script
-export MICRORTS_SRC="${RUN_DIR}/code/gym_microrts/microrts/src"
+export MICRORTS_SRC="${BASE_REPO}/gym_microrts/microrts/src"
 
 # Debug: Print the classpath and check what actually exists
 echo "CLASSPATH set to: $CLASSPATH"
 echo "MICRORTS_SRC set to: $MICRORTS_SRC"
 echo "Checking what's in the microrts directory:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/"
+ls -la "${BASE_REPO}/gym_microrts/microrts/"
 echo "Checking if src directory exists:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/src" 2>/dev/null || echo "src directory not found"
+ls -la "${BASE_REPO}/gym_microrts/microrts/src" 2>/dev/null || echo "src directory not found"
 echo "Checking if lib directory exists:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
+ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
+echo "Looking for compiled classes:"
+find "${BASE_REPO}/gym_microrts/microrts/" -name "*.class" -type f | head -10
+echo "Looking for jar files:"
+find "${BASE_REPO}/gym_microrts/microrts/" -name "*.jar" -type f
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
-TOURNAMENT_SCRIPT="code/scripts/Running Simulations/utt_impact_tournament.py"
-ANALYZE_SCRIPT="code/scripts/Running Simulations/analyze_tournament_results.py"
+TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
+ANALYZE_SCRIPT="scripts/Running Simulations/analyze_tournament_results.py"
 
 # If your paths actually have spaces, use the quoted form (as below).
 echo "Starting UTT Impact Tournament at $(date)"
