@@ -36,6 +36,9 @@ conda activate microrts39
 export JAVA_HOME=${JAVA_HOME:-${CONDA_PREFIX}}
 export PATH="$JAVA_HOME/bin:$PATH"
 
+# Install minimal dependencies for headless mode
+pip install Pillow --quiet
+
 # --- Set paths & run dir ---
 BASE_REPO="$HOME/src/MicroRTS-Py"  # <-- Your actual repository path on cluster
 HOME_BASE="/home-mscluster/${USER}/microrts_runs" # home directory storage
