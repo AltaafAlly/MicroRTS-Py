@@ -56,16 +56,17 @@ cd "${RUN_DIR}"
 rsync -av --exclude='.git' "${BASE_REPO}/" "${RUN_DIR}/code/"
 
 # Set Java classpath for MicroRTS (after code is copied)
-export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
+# Use the source directory instead of jar file
+export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/src:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
 
 # Also set it as an environment variable for the Python script
-export MICRORTS_JAR="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar"
+export MICRORTS_SRC="${RUN_DIR}/code/gym_microrts/microrts/src"
 
 # Debug: Print the classpath and check if files exist
 echo "CLASSPATH set to: $CLASSPATH"
-echo "MICRORTS_JAR set to: $MICRORTS_JAR"
-echo "Checking if microrts.jar exists:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/microrts.jar"
+echo "MICRORTS_SRC set to: $MICRORTS_SRC"
+echo "Checking if microrts src directory exists:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/src"
 echo "Checking lib directory:"
 ls -la "${RUN_DIR}/code/gym_microrts/microrts/lib/"
 
