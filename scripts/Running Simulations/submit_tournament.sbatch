@@ -104,6 +104,9 @@ else
     fi
 fi
 
+# Go back to repository root for running the tournament script
+cd "${BASE_REPO}"
+
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
 ANALYZE_SCRIPT="scripts/Running Simulations/analyze_tournament_results.py"
