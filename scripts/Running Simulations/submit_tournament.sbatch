@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
+#SBATCH --mem=2048
 ## Choose partition: stampede for CPU jobs, bigbatch for larger RAM/GPU, biggpu only for mature GPU jobs.
 ## Replace with 'bigbatch' or 'biggpu' only if you need those nodes.
 #SBATCH --partition=stampede
