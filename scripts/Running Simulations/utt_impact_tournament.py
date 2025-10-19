@@ -28,23 +28,39 @@ import numpy as np
 # Set Java classpath before importing MicroRTS
 import jpype
 if not jpype.isJVMStarted():
-    # Try to find the microrts.jar file
-    current_dir = Path(__file__).parent
-    microrts_jar = current_dir / ".." / ".." / "gym_microrts" / "microrts" / "microrts.jar"
-    lib_dir = current_dir / ".." / ".." / "gym_microrts" / "microrts" / "lib"
+    # Try multiple possible locations for microrts.jar
+    possible_paths = [
+        # Relative to current script
+        Path(__file__).parent / ".." / ".." / "gym_microrts" / "microrts" / "microrts.jar",
+        # Absolute path from working directory
+        Path.cwd() / "gym_microrts" / "microrts" / "microrts.jar",
+        # From environment variable if set
+        Path(os.environ.get("MICRORTS_JAR", "")) if os.environ.get("MICRORTS_JAR") else None,
+    ]
     
-    if microrts_jar.exists():
-        classpath = str(microrts_jar)
+    microrts_jar = None
+    for path in possible_paths:
+        if path and path.exists():
+            microrts_jar = path
+            break
+    
+    if microrts_jar:
+        classpath = str(microrts_jar.resolve())
+        lib_dir = microrts_jar.parent / "lib"
+        
         if lib_dir.exists():
             lib_files = list(lib_dir.glob("*.jar"))
             if lib_files:
-                classpath += ":" + ":".join(str(f) for f in lib_files)
+                classpath += ":" + ":".join(str(f.resolve()) for f in lib_files)
+        
+        print(f"Found microrts.jar at: {microrts_jar}")
+        print(f"Starting JVM with classpath: {classpath}")
         
         # Start JVM with the correct classpath
         jpype.startJVM(classpath=classpath)
-        print(f"Started JVM with classpath: {classpath}")
     else:
-        print(f"Warning: microrts.jar not found at {microrts_jar}")
+        print("Warning: microrts.jar not found in any expected location")
+        print("Trying to start JVM with default classpath...")
         # Try to start JVM anyway
         jpype.startJVM()
 
