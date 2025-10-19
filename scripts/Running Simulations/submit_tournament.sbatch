@@ -4,6 +4,8 @@
 #SBATCH --error=/home-mscluster/%u/utt_tournament_%j.err
 #SBATCH --time=12:00:00
 #SBATCH --partition=bigbatch
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
 
 set -euo pipefail
 
