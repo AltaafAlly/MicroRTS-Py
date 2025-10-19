@@ -13,8 +13,8 @@ import time
 from pathlib import Path
 from datetime import datetime
 
-# Add the scripts directory to the path so we can import the tournament class
-sys.path.append(str(Path(__file__).parent.parent / "scripts" / "Running Simulations"))
+# Add the parent directory to the path so we can import the tournament class
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utt_impact_tournament import UTTImpactTournament
 
@@ -25,7 +25,7 @@ def main():
     print(f"Started at: {datetime.now()}")
     
     # Create output directory
-    output_dir = Path("local_testing/results")
+    output_dir = Path("results")
     output_dir.mkdir(parents=True, exist_ok=True)
     
     print(f"Output directory: {output_dir.absolute()}")

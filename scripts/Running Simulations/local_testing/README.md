@@ -22,14 +22,14 @@ python run_local_tournament.py
 - Uses **shorter game length** (1000 steps vs 5000 on cluster)
 - Tests the **same UTT configurations** as the cluster version
 - Uses the **same AI agents** as the cluster version
-- Saves results to `local_testing/results/`
+- Saves results to `results/`
 
 ## Configuration
 
 The local version uses these settings (vs cluster):
 - **Games per match**: 3 (vs 15)
 - **Max steps**: 1000 (vs 5000)
-- **Output directory**: `local_testing/results/`
+- **Output directory**: `results/`
 - **Verbose logging**: Enabled
 
 ## Expected Runtime
@@ -60,7 +60,7 @@ ls -la ../gym_microrts/microrts/microrts.jar
 
 ## Results
 
-Results are saved to `local_testing/results/` with the same format as the cluster version:
+Results are saved to `results/` with the same format as the cluster version:
 - `tournament_results.json` - Detailed results
 - `tournament_summary.txt` - Human-readable summary
 - Individual match logs

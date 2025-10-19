@@ -32,4 +32,4 @@ python run_local_tournament.py
 
 echo ""
 echo "Tournament completed!"
-echo "Check the results in: local_testing/results/"
+echo "Check the results in: results/"

@@ -18,7 +18,11 @@ The tournament system is designed to:
 - **`test_tournament.py`** - Quick test script to verify everything works
 
 ### Cluster Execution
-- **`submit_tournament.sh`** - SLURM job submission script for cluster execution
+- **`cluster/`** - Folder containing cluster-specific scripts and configurations
+  - **`submit_tournament.sbatch`** - SLURM batch script for tournament execution
+  - **`test_cluster.sbatch`** - SLURM batch script for cluster compatibility testing
+  - **`simple_cluster_test.py`** - Basic cluster compatibility test
+  - **`run_manual_test.sh`** - Manual cluster test runner
 - **`analyze_tournament_results.py`** - Post-tournament analysis and visualization
 
 ## 🚀 Quick Start
@@ -40,7 +44,11 @@ python scripts/Running\ Simulations/utt_impact_tournament.py \
 
 ### 3. Submit to Cluster
 ```bash
-sbatch scripts/Running\ Simulations/submit_tournament.sh
+# Test cluster compatibility first
+sbatch scripts/Running\ Simulations/cluster/test_cluster.sbatch
+
+# Run full tournament
+sbatch scripts/Running\ Simulations/cluster/submit_tournament.sbatch
 ```
 
 ## 🎮 Tournament Configuration
