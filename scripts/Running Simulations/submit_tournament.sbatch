@@ -62,13 +62,15 @@ export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/src:${RUN_DIR}/code/gym_
 # Also set it as an environment variable for the Python script
 export MICRORTS_SRC="${RUN_DIR}/code/gym_microrts/microrts/src"
 
-# Debug: Print the classpath and check if files exist
+# Debug: Print the classpath and check what actually exists
 echo "CLASSPATH set to: $CLASSPATH"
 echo "MICRORTS_SRC set to: $MICRORTS_SRC"
-echo "Checking if microrts src directory exists:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/src"
-echo "Checking lib directory:"
-ls -la "${RUN_DIR}/code/gym_microrts/microrts/lib/"
+echo "Checking what's in the microrts directory:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/"
+echo "Checking if src directory exists:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/src" 2>/dev/null || echo "src directory not found"
+echo "Checking if lib directory exists:"
+ls -la "${RUN_DIR}/code/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="code/scripts/Running Simulations/utt_impact_tournament.py"
