@@ -58,6 +58,13 @@ rsync -av --exclude='.git' "${BASE_REPO}/" "${RUN_DIR}/code/"
 # Set Java classpath for MicroRTS (after code is copied)
 export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
 
+# Also set it as an environment variable for the Python script
+export MICRORTS_JAR="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar"
+
+# Debug: Print the classpath
+echo "CLASSPATH set to: $CLASSPATH"
+echo "MICRORTS_JAR set to: $MICRORTS_JAR"
+
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="code/scripts/Running Simulations/utt_impact_tournament.py"
 ANALYZE_SCRIPT="code/scripts/Running Simulations/analyze_tournament_results.py"
