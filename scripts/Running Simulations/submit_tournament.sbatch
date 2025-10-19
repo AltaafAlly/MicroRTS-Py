@@ -48,15 +48,15 @@ RUN_DIR="${HOME_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}"
 
 mkdir -p "${RUN_DIR}"
 
-# Set Java classpath for MicroRTS (after RUN_DIR is defined)
-export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
-
 echo "Working directory: ${RUN_DIR}"
 cd "${RUN_DIR}"
 
 # Copy code (or bind) - small repo copy is optional; you can instead run from $BASE_REPO.
 # This avoids accidental edits to the repo during a run and improves I/O locality.
 rsync -av --exclude='.git' "${BASE_REPO}/" "${RUN_DIR}/code/"
+
+# Set Java classpath for MicroRTS (after code is copied)
+export CLASSPATH="${RUN_DIR}/code/gym_microrts/microrts/microrts.jar:${RUN_DIR}/code/gym_microrts/microrts/lib/*"
 
 # Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
 TOURNAMENT_SCRIPT="code/scripts/Running Simulations/utt_impact_tournament.py"

@@ -24,6 +24,25 @@ from datetime import datetime
 import argparse
 
 import numpy as np
+
+# Set Java classpath before importing MicroRTS
+import jpype
+if not jpype.isJVMStarted():
+    # Try to find the microrts.jar file
+    current_dir = Path(__file__).parent
+    microrts_jar = current_dir / ".." / ".." / "gym_microrts" / "microrts" / "microrts.jar"
+    lib_dir = current_dir / ".." / ".." / "gym_microrts" / "microrts" / "lib"
+    
+    if microrts_jar.exists():
+        classpath = str(microrts_jar)
+        if lib_dir.exists():
+            lib_files = list(lib_dir.glob("*.jar"))
+            if lib_files:
+                classpath += ":" + ":".join(str(f) for f in lib_files)
+        
+        os.environ["CLASSPATH"] = classpath
+        print(f"Set CLASSPATH to: {classpath}")
+
 from gym_microrts.envs.vec_env import MicroRTSBotVecEnv
 from gym_microrts import microrts_ai
 
