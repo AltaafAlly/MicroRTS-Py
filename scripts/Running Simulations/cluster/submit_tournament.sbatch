@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=utt_tournament
-#SBATCH --output=/home-mscluster/%u/utt_tournament_%j.out
-#SBATCH --error=/home-mscluster/%u/utt_tournament_%j.err
+#SBATCH --output=/home-mscluster/%u/job_logs/utt_tournament_%j.out
+#SBATCH --error=/home-mscluster/%u/job_logs/utt_tournament_%j.err
 #SBATCH --time=12:00:00
 #SBATCH --partition=bigbatch
 #SBATCH --cpus-per-task=1
@@ -10,192 +10,44 @@ set -euo pipefail
 
 echo "Job started on $(hostname) at $(date)"
 echo "SLURM_JOBID=${SLURM_JOB_ID}"
-echo "User=${USER}"
 
-# --------------------------------------------------
-# Optional: load modules if your cluster provides them.
-# On mscluster you generally manage Python via conda in your home.
-# If your cluster has module support and you prefer modules, keep them.
-# Otherwise you can omit the module lines.
-# --------------------------------------------------
-# module load python/3.9
-# module load java/11
+# Create job logs directory if it doesn't exist
+mkdir -p /home-mscluster/${USER}/job_logs
 
-# Activate conda environment (adjust path if your conda is elsewhere)
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    source "$HOME/miniconda3/etc/profile.d/conda.sh"
-elif [ -f "$HOME/miniconda/etc/profile.d/conda.sh" ]; then
-    source "$HOME/miniconda/etc/profile.d/conda.sh"
-else
-    echo "WARNING: conda.sh not found in expected locations. Make sure conda is installed."
-fi
-
-# Activate the environment you created (use microrts39 or microrts depending on what you named it)
+# Activate conda environment
+source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate microrts39
 
-# Ensure Java is visible in the job environment (if using conda-installed openjdk, CONDA_PREFIX will point to env)
-export JAVA_HOME=${JAVA_HOME:-${CONDA_PREFIX}}
+# Set Java environment
+export JAVA_HOME=${CONDA_PREFIX}
 export PATH="$JAVA_HOME/bin:$PATH"
 
-# Install minimal dependencies for headless mode
-pip install Pillow --quiet
-
-# --- Set paths & run dir ---
-BASE_REPO="$HOME/src/MicroRTS-Py"  # <-- Your actual repository path on cluster
-HOME_BASE="/home-mscluster/${USER}/microrts_runs" # home directory storage
-
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-RUN_DIR="${HOME_BASE}/utt_tournament_${TIMESTAMP}_job${SLURM_JOB_ID}"
+# Set paths
+BASE_REPO="$HOME/Research/MicroRTS-Py-Research"
+RUN_DIR="/home-mscluster/${USER}/microrts_runs/utt_tournament_$(date +%Y%m%d_%H%M%S)_job${SLURM_JOB_ID}"
 
 mkdir -p "${RUN_DIR}"
+cd "${BASE_REPO}"
 
 echo "Working directory: ${RUN_DIR}"
-cd "${RUN_DIR}"
+echo "Repository: ${BASE_REPO}"
 
-# Run from the original repository instead of copying
-# This ensures the Java classes are in the right location
-cd "${BASE_REPO}"
-
-# Check Java version and build microrts.jar if needed
-echo "Java version on cluster:"
-java -version
-
-echo "Checking for microrts.jar..."
-if [ ! -f "${BASE_REPO}/gym_microrts/microrts/microrts.jar" ]; then
-    echo "microrts.jar not found, building it..."
-    cd "${BASE_REPO}/gym_microrts/microrts"
-    
-    # Try to build with available build system
-    if [ -f "build.xml" ] && [ -d "src" ]; then
-        echo "Found build.xml and src directory, trying to compile with javac..."
-        # Find all Java source files and compile them
-        find src -name "*.java" > sources.txt
-        mkdir -p bin
-        javac -cp "lib/*" -d bin @sources.txt
-        rm sources.txt
-        
-        # Create a fat JAR that includes all dependencies
-        echo "Creating fat JAR with all dependencies..."
-        
-        # Create a temporary directory for the fat JAR
-        mkdir -p fat_jar_temp
-        
-        # Extract all JAR files into the temp directory
-        echo "Extracting microrts.jar..."
-        jar xf microrts.jar -C fat_jar_temp/
-        
-        # Extract all lib JAR files
-        for lib_jar in lib/*.jar; do
-            if [ -f "$lib_jar" ]; then
-                echo "Extracting $lib_jar..."
-                jar xf "$lib_jar" -C fat_jar_temp/
-            fi
-        done
-        
-        # Create the fat JAR
-        echo "Creating fat microrts.jar..."
-        jar cf microrts.jar -C fat_jar_temp .
-        
-        # Clean up
-        rm -rf fat_jar_temp
-        echo "Built microrts.jar successfully"
-    else
-        echo "Cannot build microrts.jar - missing build.xml or src directory"
-        echo "Available files:"
-        ls -la
-        exit 1
-    fi
-else
-    echo "microrts.jar exists, checking Java version compatibility..."
-    # Check if the JAR was compiled with a newer Java version
-    file_info=$(file "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "")
-    if [[ "$file_info" == *"Java archive"* ]]; then
-        echo "JAR file found, but may need recompilation for cluster Java version"
-        # Try to rebuild anyway to ensure compatibility
-        cd "${BASE_REPO}/gym_microrts/microrts"
-        if [ -f "build.xml" ] && [ -d "src" ]; then
-            echo "Rebuilding microrts.jar for cluster Java version..."
-            find src -name "*.java" > sources.txt
-            mkdir -p bin
-            javac -cp "lib/*" -d bin @sources.txt
-            rm sources.txt
-            # Create a fat JAR that includes all dependencies
-            echo "Creating fat JAR with all dependencies..."
-            
-            # Create a temporary directory for the fat JAR
-            mkdir -p fat_jar_temp
-            
-            # Extract all JAR files into the temp directory
-            echo "Extracting microrts.jar..."
-            jar xf microrts.jar -C fat_jar_temp/
-            
-            # Extract all lib JAR files
-            for lib_jar in lib/*.jar; do
-                if [ -f "$lib_jar" ]; then
-                    echo "Extracting $lib_jar..."
-                    jar xf "$lib_jar" -C fat_jar_temp/
-                fi
-            done
-            
-            # Create the fat JAR
-            echo "Creating fat microrts.jar..."
-            jar cf microrts.jar -C fat_jar_temp .
-            
-            # Clean up
-            rm -rf fat_jar_temp
-            echo "Rebuilt microrts.jar for cluster compatibility"
-        else
-            echo "Cannot rebuild - missing build.xml or src directory"
-        fi
-    fi
-fi
-
-# Go back to repository root for running the tournament script
-cd "${BASE_REPO}"
-
-echo "JAR file ready at: ${BASE_REPO}/gym_microrts/microrts/microrts.jar"
-echo "Letting gym_microrts vec_env.py handle JVM startup..."
-
-# Debug: Check if JAR files exist at expected locations
-echo "Checking JAR file locations:"
-ls -la "${BASE_REPO}/gym_microrts/microrts/microrts.jar" 2>/dev/null || echo "microrts.jar not found"
-ls -la "${BASE_REPO}/gym_microrts/microrts/lib/" 2>/dev/null || echo "lib directory not found"
-
-# Check what gym_microrts.__path__[0] resolves to
-echo "Testing Python path resolution:"
-python -c "
-import gym_microrts
-import os
-microrts_path = os.path.join(gym_microrts.__path__[0], 'microrts')
-print(f'gym_microrts.__path__[0]: {gym_microrts.__path__[0]}')
-print(f'microrts_path: {microrts_path}')
-print(f'microrts.jar exists: {os.path.exists(os.path.join(microrts_path, \"microrts.jar\"))}')
-print(f'lib directory exists: {os.path.exists(os.path.join(microrts_path, \"lib\"))}')
-"
-
-# Make sure script paths contain no unescaped spaces — better to rename folders with spaces.
-TOURNAMENT_SCRIPT="scripts/Running Simulations/utt_impact_tournament.py"
-ANALYZE_SCRIPT="scripts/Running Simulations/analyze_tournament_results.py"
-
-# If your paths actually have spaces, use the quoted form (as below).
+# Run tournament
 echo "Starting UTT Impact Tournament at $(date)"
-python "${TOURNAMENT_SCRIPT}" \
+python "scripts/Running Simulations/utt_impact_tournament.py" \
     --output-dir "${RUN_DIR}/results" \
     --games 15 \
     --max-steps 5000 \
     2>&1 | tee "${RUN_DIR}/utt_tournament_stdout.log"
 
 echo "Tournament completed at $(date)"
-echo "Results currently in: ${RUN_DIR}/results"
 
-# Run post-tournament analysis (if desired)
+# Run analysis
 echo "Running post-tournament analysis..."
-python "${ANALYZE_SCRIPT}" \
+python "scripts/Running Simulations/analyze_tournament_results.py" \
     --input-dir "${RUN_DIR}/results" \
     --output-dir "${RUN_DIR}/results/analysis" \
     2>&1 | tee "${RUN_DIR}/analysis_stdout.log"
 
 echo "Analysis completed at $(date)"
-
-# Results are already in the home directory, no need to copy
-echo "All done. Results saved to ${RUN_DIR}/results"
+echo "Results saved to ${RUN_DIR}/results"
