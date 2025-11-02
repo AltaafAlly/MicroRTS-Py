@@ -215,17 +215,33 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 # Balance: closer to 50-50 is better
                 total_games = result['left_wins'] + result['right_wins'] + result['draws']
                 if total_games > 0:
-                    win_ratio = result['left_wins'] / total_games
-                    balance = 1.0 - abs(win_ratio - 0.5) * 2  # 0.5 = perfect balance
+                    if result['left_wins'] == 0 and result['right_wins'] == 0:
+                        # All draws - this is actually balanced!
+                        balance = 1.0
+                    else:
+                        win_ratio = result['left_wins'] / total_games
+                        balance = 1.0 - abs(win_ratio - 0.5) * 2  # 0.5 = perfect balance
                     balance_scores.append(balance)
                 
-                # Duration: assume reasonable duration for now
-                duration_scores.append(0.7)  # Placeholder
+                # Duration: calculate based on match length
+                # For now, use a simple heuristic based on total games
+                duration_score = min(1.0, total_games / 3.0)  # Normalize by expected games
+                duration_scores.append(duration_score)
         
         # Calculate averages
         balance = sum(balance_scores) / len(balance_scores) if balance_scores else 0.5
         duration = sum(duration_scores) / len(duration_scores) if duration_scores else 0.5
-        diversity = 0.3  # Placeholder for now
+        
+        # Diversity: calculate based on variation in results
+        if len(match_results) > 1:
+            # Calculate variance in balance scores
+            if balance_scores:
+                variance = sum((score - balance) ** 2 for score in balance_scores) / len(balance_scores)
+                diversity = min(1.0, variance * 4)  # Scale variance to 0-1
+            else:
+                diversity = 0.3
+        else:
+            diversity = 0.3
         
         # Calculate overall fitness
         overall = (self.alpha * balance + 

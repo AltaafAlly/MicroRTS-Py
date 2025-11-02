@@ -106,32 +106,32 @@ class MicroRTSChromosome:
             'sightRadius': (0, 0)
         },
         'Worker': {
-            'cost': (1, 10),
-            'produceTime': (1, 5),
-            'hp': (1, 20),
-            'minDamage': (1, 5),
-            'maxDamage': (1, 5),
-            'attackRange': (1, 3),
-            'attackTime': (1, 5),
-            'moveTime': (1, 3),
-            'sightRadius': (1, 5),
-            'harvestTime': (1, 5),
-            'returnTime': (1, 3),
-            'harvestAmount': (1, 10)
+            'cost': (2, 6),      # More reasonable cost range
+            'produceTime': (2, 4), # Faster production
+            'hp': (5, 15),       # More survivable
+            'minDamage': (2, 4), # Effective damage
+            'maxDamage': (2, 4), # Effective damage
+            'attackRange': (1, 2), # Close combat
+            'attackTime': (2, 4), # Reasonable attack speed
+            'moveTime': (1, 2),  # Fast movement
+            'sightRadius': (2, 4), # Good vision
+            'harvestTime': (2, 4), # Efficient harvesting
+            'returnTime': (1, 2), # Quick return
+            'harvestAmount': (3, 8) # Good harvest amount
         },
         'Light': {
-            'cost': (5, 20),
-            'produceTime': (2, 8),
-            'hp': (10, 50),
-            'minDamage': (5, 15),
-            'maxDamage': (5, 15),
-            'attackRange': (1, 4),
-            'attackTime': (2, 8),
-            'moveTime': (1, 4),
-            'sightRadius': (2, 6),
-            'harvestTime': (0, 0),  # Not applicable
-            'returnTime': (0, 0),   # Not applicable
-            'harvestAmount': (0, 0) # Not applicable
+            'cost': (8, 15),     # More reasonable cost
+            'produceTime': (3, 6), # Faster production
+            'hp': (15, 30),     # More survivable
+            'minDamage': (6, 12), # Effective damage
+            'maxDamage': (6, 12), # Effective damage
+            'attackRange': (1, 3), # Good range
+            'attackTime': (3, 6), # Reasonable attack speed
+            'moveTime': (1, 3),  # Fast movement
+            'sightRadius': (3, 5), # Good vision
+            'harvestTime': (1, 1), # Fixed: Java requires positive bounds
+            'returnTime': (1, 1), # Fixed: Java requires positive bounds
+            'harvestAmount': (1, 1) # Fixed: Java requires positive bounds
         },
         'Heavy': {
             'cost': (15, 40),
@@ -143,9 +143,9 @@ class MicroRTSChromosome:
             'attackTime': (3, 10),
             'moveTime': (2, 6),
             'sightRadius': (2, 5),
-            'harvestTime': (0, 0),  # Not applicable
-            'returnTime': (0, 0),   # Not applicable
-            'harvestAmount': (0, 0) # Not applicable
+            'harvestTime': (1, 1),  # Fixed: Java requires positive bounds
+            'returnTime': (1, 1),   # Fixed: Java requires positive bounds
+            'harvestAmount': (1, 1) # Fixed: Java requires positive bounds
         },
         'Ranged': {
             'cost': (10, 30),
@@ -157,37 +157,37 @@ class MicroRTSChromosome:
             'attackTime': (2, 6),
             'moveTime': (1, 3),
             'sightRadius': (3, 8),
-            'harvestTime': (0, 0),  # Not applicable
-            'returnTime': (0, 0),   # Not applicable
-            'harvestAmount': (0, 0) # Not applicable
+            'harvestTime': (1, 1),  # Fixed: Java requires positive bounds
+            'returnTime': (1, 1),   # Fixed: Java requires positive bounds
+            'harvestAmount': (1, 1) # Fixed: Java requires positive bounds
         },
         'Base': {
             'cost': (50, 100),
             'produceTime': (10, 30),
             'hp': (100, 300),
-            'minDamage': (0, 0),    # Not applicable
-            'maxDamage': (0, 0),    # Not applicable
-            'attackRange': (0, 0),  # Not applicable
-            'attackTime': (0, 0),   # Not applicable
-            'moveTime': (0, 0),     # Not applicable
+            'minDamage': (1, 1),    # Fixed: Java requires positive bounds
+            'maxDamage': (1, 1),    # Fixed: Java requires positive bounds
+            'attackRange': (1, 1),  # Fixed: Java requires positive bounds
+            'attackTime': (1, 1),   # Fixed: Java requires positive bounds
+            'moveTime': (1, 1),     # Fixed: Java requires positive bounds
             'sightRadius': (3, 8),
-            'harvestTime': (0, 0),  # Not applicable
-            'returnTime': (0, 0),   # Not applicable
-            'harvestAmount': (0, 0) # Not applicable
+            'harvestTime': (1, 1),  # Fixed: Java requires positive bounds
+            'returnTime': (1, 1),   # Fixed: Java requires positive bounds
+            'harvestAmount': (1, 1) # Fixed: Java requires positive bounds
         },
         'Barracks': {
             'cost': (20, 50),
             'produceTime': (5, 15),
             'hp': (50, 150),
-            'minDamage': (0, 0),    # Not applicable
-            'maxDamage': (0, 0),    # Not applicable
-            'attackRange': (0, 0),  # Not applicable
-            'attackTime': (0, 0),   # Not applicable
-            'moveTime': (0, 0),     # Not applicable
+            'minDamage': (1, 1),    # Fixed: Java requires positive bounds
+            'maxDamage': (1, 1),    # Fixed: Java requires positive bounds
+            'attackRange': (1, 1),  # Fixed: Java requires positive bounds
+            'attackTime': (1, 1),   # Fixed: Java requires positive bounds
+            'moveTime': (1, 1),     # Fixed: Java requires positive bounds
             'sightRadius': (2, 6),
-            'harvestTime': (0, 0),  # Not applicable
-            'returnTime': (0, 0),   # Not applicable
-            'harvestAmount': (0, 0) # Not applicable
+            'harvestTime': (1, 1),  # Fixed: Java requires positive bounds
+            'returnTime': (1, 1),   # Fixed: Java requires positive bounds
+            'harvestAmount': (1, 1) # Fixed: Java requires positive bounds
         }
     }
     

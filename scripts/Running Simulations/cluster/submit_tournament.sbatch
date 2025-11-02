@@ -109,7 +109,7 @@ echo "Working directory: $(pwd)"
 echo "Python version: $(python --version)"
 echo "Java version: $(java -version 2>&1 | head -1)"
 
-# Create a wrapper script similar to local testing
+# Create a wrapper script similar to local testing with timing tracking
 cat > "${RUN_DIR}/run_tournament.py" << 'EOF'
 #!/usr/bin/env python3
 import os
@@ -128,7 +128,8 @@ def main():
     print("=" * 60)
     print("CLUSTER UTT IMPACT TOURNAMENT")
     print("=" * 60)
-    print(f"Started at: {datetime.now()}")
+    tournament_start_time = datetime.now()
+    print(f"Started at: {tournament_start_time}")
     
     # Get output directory from environment
     output_dir = os.environ.get('TOURNAMENT_OUTPUT_DIR', 'results')
@@ -140,7 +141,7 @@ def main():
     # Create tournament instance
     tournament = UTTImpactTournament(output_dir=str(output_path))
     
-    # Use cluster settings (15 games, 5000 steps)
+    # Use cluster settings (5 games, 5000 steps)
     tournament.tournament_config["games_per_pair"] = 5
     tournament.tournament_config["max_steps"] = 5000
     tournament.tournament_config["max_steps_long"] = 10000
@@ -148,14 +149,88 @@ def main():
     print(f"Testing {len(tournament.utt_configs)} UTT configurations")
     print(f"Using {len(tournament.baseline_ais)} AI agents")
     
+    # Track match timings
+    match_timings = []
+    
+    # Monkey patch the run_pair method to track timing
+    original_run_pair = tournament.run_pair
+    
+    def timed_run_pair(ai_left, ai_right, utt_config, pair_num, total_pairs):
+        match_start = time.time()
+        result = original_run_pair(ai_left, ai_right, utt_config, pair_num, total_pairs)
+        match_end = time.time()
+        match_duration = match_end - match_start
+        
+        # Store timing information
+        match_timings.append({
+            'pair_number': pair_num,
+            'total_pairs': total_pairs,
+            'ai_left': ai_left,
+            'ai_right': ai_right,
+            'utt_config': utt_config.get('utt_json_p0', 'default'),
+            'left_wins': result.get('left_wins', 0),
+            'right_wins': result.get('right_wins', 0),
+            'draws': result.get('draws', 0),
+            'total_games': result.get('left_wins', 0) + result.get('right_wins', 0) + result.get('draws', 0),
+            'match_time_seconds': match_duration,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        print(f"[TIMING] Match {pair_num}/{total_pairs} ({ai_left} vs {ai_right}): {match_duration:.2f} seconds")
+        
+        return result
+    
+    tournament.run_pair = timed_run_pair
+    
     try:
         # Run the tournament
         tournament.run_full_tournament()
         
+        # Save match timings
+        timings_file = output_path / "match_timings.json"
+        with open(timings_file, 'w') as f:
+            json.dump(match_timings, f, indent=2)
+        
+        # Also save as CSV for easy viewing
+        import csv
+        csv_file = output_path / "match_timings.csv"
+        if match_timings:
+            with open(csv_file, 'w', newline='') as f:
+                fieldnames = [
+                    'pair_number', 'total_pairs', 'ai_left', 'ai_right', 'utt_config',
+                    'left_wins', 'right_wins', 'draws', 'total_games',
+                    'match_time_seconds', 'match_time_formatted', 'timestamp'
+                ]
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                for timing in match_timings:
+                    # Format time nicely (HH:MM:SS or seconds)
+                    match_time_sec = timing['match_time_seconds']
+                    if match_time_sec >= 3600:
+                        hours = int(match_time_sec // 3600)
+                        minutes = int((match_time_sec % 3600) // 60)
+                        seconds = int(match_time_sec % 60)
+                        formatted = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+                    elif match_time_sec >= 60:
+                        minutes = int(match_time_sec // 60)
+                        seconds = int(match_time_sec % 60)
+                        formatted = f"{minutes:02d}:{seconds:02d}"
+                    else:
+                        formatted = f"{match_time_sec:.2f}s"
+                    
+                    row = timing.copy()
+                    row['match_time_formatted'] = formatted
+                    writer.writerow({k: row.get(k, '') for k in fieldnames})
+        
+        tournament_end_time = datetime.now()
+        total_duration = (tournament_end_time - tournament_start_time).total_seconds()
+        
         print("\n" + "=" * 60)
         print("TOURNAMENT COMPLETED SUCCESSFULLY!")
         print("=" * 60)
+        print(f"Total tournament time: {total_duration:.2f} seconds ({total_duration/60:.2f} minutes)")
         print(f"Results saved to: {output_path.absolute()}")
+        print(f"Match timings saved to: {timings_file} and {csv_file}")
         
     except Exception as e:
         print(f"\nERROR: Tournament failed with error: {e}")
@@ -179,7 +254,7 @@ python "${RUN_DIR}/run_tournament.py" 2>&1 | tee "${RUN_DIR}/utt_tournament_stdo
 echo "Tournament completed at $(date)"
 
 # Run analysis if the tournament succeeded
-if [ -f "${RUN_DIR}/results/tournament_results.json" ]; then
+if [ -f "${RUN_DIR}/results/tournament_results.json" ] || [ -f "${RUN_DIR}/results/match_timings.csv" ]; then
     echo "Running post-tournament analysis..."
     python "scripts/Running Simulations/analyze_tournament_results.py" \
         --input-dir "${RUN_DIR}/results" \
@@ -187,8 +262,22 @@ if [ -f "${RUN_DIR}/results/tournament_results.json" ]; then
         2>&1 | tee "${RUN_DIR}/analysis_stdout.log"
     
     echo "Analysis completed at $(date)"
+    
+    # Check if match timings file exists and report
+    if [ -f "${RUN_DIR}/results/match_timings.csv" ]; then
+        echo ""
+        echo "Match timings summary:"
+        echo "======================"
+        echo "Match timings file: ${RUN_DIR}/results/match_timings.csv"
+        echo "Match timings JSON: ${RUN_DIR}/results/match_timings.json"
+        echo ""
+        echo "First few matches (showing timing):"
+        head -5 "${RUN_DIR}/results/match_timings.csv" || echo "Unable to display match timings"
+    fi
 else
     echo "Tournament failed - skipping analysis"
 fi
 
+echo ""
 echo "Results saved to ${RUN_DIR}/results"
+echo "Match timings file: ${RUN_DIR}/results/match_timings.csv"
