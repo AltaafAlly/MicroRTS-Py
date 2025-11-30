@@ -1,8 +1,8 @@
 {
   "tournament_info": {
-    "start_time": "2025-10-19T19:55:41.718632",
-    "end_time": "2025-10-19T19:58:47.114598",
-    "duration_minutes": 3.0899327833333334,
+    "start_time": "2025-11-30T13:44:18.401398",
+    "end_time": "2025-11-30T13:44:52.674246",
+    "duration_minutes": 0.5712141666666667,
     "utt_configurations": [
       "default_original",
       "custom_demo"
@@ -19,94 +19,94 @@
       "map_path": "maps/8x8/basesWorkers8x8A.xml",
       "max_steps": 5000,
       "max_steps_long": 10000,
-      "games_per_pair": 5,
+      "games_per_pair": 1,
       "draw_retry_threshold": 0.5,
       "autobuild": false
     }
   },
   "results_summary": {
     "default_original": {
-      "total_games": 150,
+      "total_games": 30,
       "overall_draw_rate": 0.0,
       "top_performer": "coacAI",
       "bottom_performer": "passiveAI",
       "ranking": [
         {
           "ai": "coacAI",
-          "points": 25.0,
-          "wins": 25,
+          "points": 5.0,
+          "wins": 5,
           "losses": 0,
           "draws": 0
         },
         {
           "ai": "workerRushAI",
-          "points": 18.0,
-          "wins": 18,
-          "losses": 7,
+          "points": 4.0,
+          "wins": 4,
+          "losses": 1,
           "draws": 0
         },
         {
           "ai": "naiveMCTSAI",
-          "points": 17.0,
-          "wins": 17,
-          "losses": 8,
+          "points": 3.0,
+          "wins": 3,
+          "losses": 2,
           "draws": 0
         },
         {
           "ai": "lightRushAI",
-          "points": 10.0,
-          "wins": 10,
-          "losses": 15,
+          "points": 2.0,
+          "wins": 2,
+          "losses": 3,
           "draws": 0
         },
         {
           "ai": "randomBiasedAI",
-          "points": 5.0,
-          "wins": 5,
-          "losses": 20,
+          "points": 1.0,
+          "wins": 1,
+          "losses": 4,
           "draws": 0
         }
       ]
     },
     "custom_demo": {
-      "total_games": 150,
+      "total_games": 30,
       "overall_draw_rate": 0.0,
       "top_performer": "workerRushAI",
       "bottom_performer": "passiveAI",
       "ranking": [
         {
           "ai": "workerRushAI",
-          "points": 20.0,
-          "wins": 20,
-          "losses": 5,
+          "points": 4.0,
+          "wins": 4,
+          "losses": 1,
           "draws": 0
         },
         {
           "ai": "lightRushAI",
-          "points": 20.0,
-          "wins": 20,
-          "losses": 5,
+          "points": 4.0,
+          "wins": 4,
+          "losses": 1,
           "draws": 0
         },
         {
           "ai": "coacAI",
-          "points": 20.0,
-          "wins": 20,
-          "losses": 5,
+          "points": 4.0,
+          "wins": 4,
+          "losses": 1,
           "draws": 0
         },
         {
           "ai": "naiveMCTSAI",
-          "points": 10.0,
-          "wins": 10,
-          "losses": 15,
+          "points": 2.0,
+          "wins": 2,
+          "losses": 3,
           "draws": 0
         },
         {
           "ai": "randomBiasedAI",
-          "points": 5.0,
-          "wins": 5,
-          "losses": 20,
+          "points": 1.0,
+          "wins": 1,
+          "losses": 4,
           "draws": 0
         }
       ]

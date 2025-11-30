@@ -123,6 +123,8 @@ public class JNIGridnetClient {
         mapPath = a_mapPath;
         rfs = a_rfs;
         utt = a_utt;
+        uttP0 = a_utt; // Initialize for asymmetric UTT support
+        uttP1 = a_utt; // Initialize for asymmetric UTT support
         partialObs = partial_obs;
         maxAttackRadius = utt.getMaxAttackRange() * 2 + 1;
         ai1 = new JNIAI(100, 0, utt);
@@ -135,6 +137,7 @@ public class JNIGridnetClient {
         }
 
         pgs = PhysicalGameState.load(mapPath, uttP0);
+        gs = new GameState(pgs, uttP0, uttP1);
 
         // initialize storage
         masks = new int[pgs.getHeight()][pgs.getWidth()][1+6+4+4+4+4+uttP0.getUnitTypes().size()+maxAttackRadius*maxAttackRadius];
@@ -279,9 +282,85 @@ public class JNIGridnetClient {
      */
     public String sendUTTs() throws Exception {
         StringWriter w0 = new StringWriter();
-        utt.toJSON(w0);
-        String j = w0.toString();
-        return "{\"p0\":" + j + ",\"p1\":" + j + "}";
+        if (uttP0 != null) {
+            uttP0.toJSON(w0);
+        } else {
+            utt.toJSON(w0);
+        }
+        String j0 = w0.toString();
+        StringWriter w1 = new StringWriter();
+        if (uttP1 != null) {
+            uttP1.toJSON(w1);
+        } else {
+            utt.toJSON(w1);
+        }
+        String j1 = w1.toString();
+        return "{\"p0\":" + j0 + ",\"p1\":" + j1 + "}";
+    }
+
+    /**
+     * Change UTT configuration at runtime during a game.
+     * This method allows changing the Unit Type Table for one or both players
+     * without restarting the game or modifying the Java environment.
+     * 
+     * @param newUttP0Json JSON string for Player 0's new UTT (null to keep current)
+     * @param newUttP1Json JSON string for Player 1's new UTT (null to keep current)
+     * @return true if successful, false otherwise
+     * @throws Exception
+     */
+    public boolean changeUTT(String newUttP0Json, String newUttP1Json) throws Exception {
+        try {
+            UnitTypeTable newUttP0 = uttP0 != null ? uttP0 : utt;
+            UnitTypeTable newUttP1 = uttP1 != null ? uttP1 : utt;
+            
+            // Parse new UTTs if provided
+            if (newUttP0Json != null && !newUttP0Json.isEmpty()) {
+                newUttP0 = UnitTypeTable.fromJSON(newUttP0Json);
+            }
+            if (newUttP1Json != null && !newUttP1Json.isEmpty()) {
+                newUttP1 = UnitTypeTable.fromJSON(newUttP1Json);
+            }
+            
+            // Clone game state with new UTTs
+            GameState newGs = gs.cloneChangingUTTs(newUttP0, newUttP1);
+            if (newGs == null) {
+                return false; // cloneChangingUTTs failed (e.g., unit type mismatch)
+            }
+            
+            // Update UTT references
+            utt = newUttP0; // For backward compatibility
+            uttP0 = newUttP0;
+            uttP1 = newUttP1;
+            
+            // Update game state
+            gs = newGs;
+            
+            // Update masks array size if needed (in case unit types changed)
+            int newMaxAttackRadius = uttP0.getMaxAttackRange() * 2 + 1;
+            if (newMaxAttackRadius != maxAttackRadius || masks[0][0].length != (1+6+4+4+4+4+uttP0.getUnitTypes().size()+newMaxAttackRadius*newMaxAttackRadius)) {
+                maxAttackRadius = newMaxAttackRadius;
+                masks = new int[pgs.getHeight()][pgs.getWidth()][1+6+4+4+4+4+uttP0.getUnitTypes().size()+maxAttackRadius*maxAttackRadius];
+            }
+            
+            // Update AI with new UTT (if it supports it)
+            if (ai1 instanceof ai.jni.JNIAI) {
+                ((ai.jni.JNIAI) ai1).setUTT(uttP0);
+            }
+            
+            // Update partial observation state if needed
+            if (partialObs) {
+                player1gs = new PartiallyObservableGameState(gs, 0);
+                player2gs = new PartiallyObservableGameState(gs, 1);
+            } else {
+                player1gs = gs;
+                player2gs = gs;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public Response reset(int player) throws Exception {

@@ -155,7 +155,7 @@ def main():
         "max_steps_long": 12000,
         # Trigger retry when draw ratio >= threshold (0.0 disables retry)
         "draw_retry_threshold": 0.6,
-        "games_per_pair": 5,            # games per pairing
+        "games_per_pair": 1,            # games per pairing
         "autobuild": False,
         "utt_json": None,  # Not used when utt_json_p0/p1 are specified
         # Asymmetric UTT support - now using custom UTTs!
@@ -167,24 +167,24 @@ def main():
     # Use the curated list from microrts_ai.ALL_AIS
     # Full set requested
     requested_ai_names = [
-        "POHeavyRush",
-        "POLightRush",
-        "PORangedRush",
-        "POWorkerRush",
+        #"POHeavyRush",
+        #"POLightRush",
+        #"PORangedRush",
+        #"POWorkerRush",
         "coacAI",
         "droplet",
         #"guidedRojoA3N", #this ai agent is causing problems 
-        "izanagi",
-        "lightRushAI",
-        "mayari",
-        "mixedBot",
-        "naiveMCTSAI",
-        "passiveAI",
-        "randomAI",
-        "randomBiasedAI",
-        "rojo",
-        "tiamat",
-        "workerRushAI",
+        #"izanagi",
+        #"lightRushAI",
+        #"mayari",
+        #"mixedBot",
+        #"naiveMCTSAI",
+        #"passiveAI",
+        #"randomAI",
+        #"randomBiasedAI",
+        #"rojo",
+        #"tiamat",
+        #"workerRushAI",
     ]
     # Keep only those available in this install
     ai_names = [n for n in requested_ai_names if hasattr(microrts_ai, n)]

@@ -34,7 +34,7 @@ def main():
     tournament = UTTImpactTournament(output_dir=str(output_dir))
     
     # Override config for local testing (shorter/faster)
-    tournament.tournament_config["games_per_pair"] = 5  
+    tournament.tournament_config["games_per_pair"] = 1  
     tournament.tournament_config["max_steps"] = 5000    
     tournament.tournament_config["max_steps_long"] = 10000  
     

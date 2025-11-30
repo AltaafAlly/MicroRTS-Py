@@ -408,4 +408,55 @@ public class JNIGridnetVecClient {
             }
         }
     }
+
+    /**
+     * Change UTT configuration at runtime for all clients.
+     * This method allows changing the Unit Type Table for one or both players
+     * without restarting the game or modifying the Java environment.
+     * 
+     * @param newUttP0Json JSON string for Player 0's new UTT (null to keep current)
+     * @param newUttP1Json JSON string for Player 1's new UTT (null to keep current)
+     * @return true if successful for all clients, false otherwise
+     * @throws Exception
+     */
+    public boolean changeUTT(String newUttP0Json, String newUttP1Json) throws Exception {
+        boolean allSuccess = true;
+        
+        // Update bot clients
+        if (botClients != null) {
+            for (int i = 0; i < botClients.length; i++) {
+                boolean success = botClients[i].changeUTT(newUttP0Json, newUttP1Json);
+                if (!success) {
+                    allSuccess = false;
+                }
+            }
+        }
+        
+        // Update self-play clients
+        if (selfPlayClients != null) {
+            for (int i = 0; i < selfPlayClients.length; i++) {
+                boolean success = selfPlayClients[i].changeUTT(newUttP0Json, newUttP1Json);
+                if (!success) {
+                    allSuccess = false;
+                }
+            }
+        }
+        
+        // Update regular clients
+        if (clients != null) {
+            for (int i = 0; i < clients.length; i++) {
+                boolean success = clients[i].changeUTT(newUttP0Json, newUttP1Json);
+                if (!success) {
+                    allSuccess = false;
+                }
+            }
+        }
+        
+        // Update main UTT reference if successful
+        if (allSuccess && newUttP0Json != null && !newUttP0Json.isEmpty()) {
+            utt = UnitTypeTable.fromJSON(newUttP0Json);
+        }
+        
+        return allSuccess;
+    }
 }

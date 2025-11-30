@@ -81,6 +81,14 @@ public class JNIBotClient {
         if (micrortsPath.length() != 0) {
             this.mapPath = Paths.get(micrortsPath, mapPath).toString();
         }
+
+        pgs = PhysicalGameState.load(mapPath, uttP0);
+        gs = new GameState(pgs, uttP0, uttP1);
+
+        // initialize storage
+        rewards = new double[rfs.length];
+        dones = new boolean[rfs.length];
+        response = new Response(null, null, null, null);
     }
     
     /**
@@ -180,14 +188,88 @@ public class JNIBotClient {
      */
     public String sendUTTs() throws Exception {
         StringWriter w0 = new StringWriter();
-        uttP0.toJSON(w0);
+        if (uttP0 != null) {
+            uttP0.toJSON(w0);
+        } else {
+            utt.toJSON(w0);
+        }
         String j0 = w0.toString();
         
         StringWriter w1 = new StringWriter();
-        uttP1.toJSON(w1);
+        if (uttP1 != null) {
+            uttP1.toJSON(w1);
+        } else {
+            utt.toJSON(w1);
+        }
         String j1 = w1.toString();
         
         return "{\"p0\":" + j0 + ",\"p1\":" + j1 + "}";
+    }
+
+    /**
+     * Change UTT configuration at runtime during a game.
+     * This method allows changing the Unit Type Table for one or both players
+     * without restarting the game or modifying the Java environment.
+     * 
+     * @param newUttP0Json JSON string for Player 0's new UTT (null to keep current)
+     * @param newUttP1Json JSON string for Player 1's new UTT (null to keep current)
+     * @return true if successful, false otherwise
+     * @throws Exception
+     */
+    public boolean changeUTT(String newUttP0Json, String newUttP1Json) throws Exception {
+        try {
+            UnitTypeTable newUttP0 = uttP0 != null ? uttP0 : utt;
+            UnitTypeTable newUttP1 = uttP1 != null ? uttP1 : utt;
+            
+            // Parse new UTTs if provided
+            if (newUttP0Json != null && !newUttP0Json.isEmpty()) {
+                newUttP0 = UnitTypeTable.fromJSON(newUttP0Json);
+            }
+            if (newUttP1Json != null && !newUttP1Json.isEmpty()) {
+                newUttP1 = UnitTypeTable.fromJSON(newUttP1Json);
+            }
+            
+            // Clone game state with new UTTs
+            GameState newGs = gs.cloneChangingUTTs(newUttP0, newUttP1);
+            if (newGs == null) {
+                return false; // cloneChangingUTTs failed (e.g., unit type mismatch)
+            }
+            
+            // Update UTT references
+            utt = newUttP0; // For backward compatibility
+            uttP0 = newUttP0;
+            uttP1 = newUttP1;
+            
+            // Update game state
+            gs = newGs;
+            
+            // Update AI references with new UTTs
+            // AIs that cache UTT need to be updated
+            try {
+                // Try to call reset(UnitTypeTable) method which most AIs have
+                java.lang.reflect.Method resetMethod = ai1.getClass().getMethod("reset", UnitTypeTable.class);
+                resetMethod.invoke(ai1, uttP0);
+            } catch (Exception e) {
+                // If reset(UnitTypeTable) doesn't exist, try JNIAI.setUTT
+                if (ai1 instanceof ai.jni.JNIAI) {
+                    ((ai.jni.JNIAI) ai1).setUTT(uttP0);
+                }
+            }
+            
+            try {
+                java.lang.reflect.Method resetMethod = ai2.getClass().getMethod("reset", UnitTypeTable.class);
+                resetMethod.invoke(ai2, uttP1);
+            } catch (Exception e) {
+                if (ai2 instanceof ai.jni.JNIAI) {
+                    ((ai.jni.JNIAI) ai2).setUTT(uttP1);
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**

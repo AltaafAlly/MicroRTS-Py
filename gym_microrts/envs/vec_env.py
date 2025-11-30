@@ -329,6 +329,56 @@ class MicroRTSGridModeVecEnv:
         action_type_and_parameter_mask = action_mask[:, :, :, 1:].reshape(self.num_envs, self.height * self.width, -1)
         return action_type_and_parameter_mask
 
+    def change_utt(self, utt_json_p0=None, utt_json_p1=None):
+        """
+        Change UTT configuration at runtime during a game.
+        This allows changing the Unit Type Table for one or both players
+        without restarting the game or modifying the Java environment.
+        
+        Args:
+            utt_json_p0: Path to JSON file for Player 0's new UTT, or None to keep current
+            utt_json_p1: Path to JSON file for Player 1's new UTT, or None to keep current
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        import json
+        from rts.units import UnitTypeTable
+        
+        new_utt_p0_json = None
+        new_utt_p1_json = None
+        
+        # Load UTT JSON files if provided
+        if utt_json_p0 is not None:
+            utt_path_p0 = os.path.join(self.microrts_path, utt_json_p0)
+            with open(utt_path_p0, "r") as f:
+                new_utt_p0_json = f.read()
+        
+        if utt_json_p1 is not None:
+            utt_path_p1 = os.path.join(self.microrts_path, utt_json_p1)
+            with open(utt_path_p1, "r") as f:
+                new_utt_p1_json = f.read()
+        
+        # Call Java method to change UTT
+        success = self.vec_client.changeUTT(new_utt_p0_json, new_utt_p1_json)
+        
+        if success:
+            # Update Python-side UTT references
+            if new_utt_p0_json:
+                self.real_utt_p0 = UnitTypeTable.fromJSON(new_utt_p0_json)
+                self.real_utt = self.real_utt_p0  # For backward compatibility
+            if new_utt_p1_json:
+                self.real_utt_p1 = UnitTypeTable.fromJSON(new_utt_p1_json)
+            
+            # Update UTT dictionary for observation/action spaces
+            self.utt = json.loads(str(self.render_client.sendUTT()))
+            
+            # Note: Action space dimensions might need updating if unit types changed
+            # This is a limitation - action space is fixed at initialization
+            # Consider resetting the environment if unit types changed significantly
+        
+        return success
+
 
 class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
     metadata = {"render.modes": ["human", "rgb_array"], "video.frames_per_second": 150}
@@ -512,10 +562,73 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         self.actions = actions
 
     def step_wait(self):
-        responses = self.vec_client.gameStep(self.actions, [0 for _ in range(self.num_envs)])
+        # For bot clients, gameStep only needs player IDs, not actions (both AIs play automatically)
+        # Pass empty 3D array for actions (required by signature) and player IDs
+        import numpy as np
+        from jpype import JArray, JInt
+        empty_actions = JArray(JArray(JArray(JInt)))([[[]] for _ in range(self.num_envs)])
+        responses = self.vec_client.gameStep(empty_actions, [0 for _ in range(self.num_envs)])
         raw_obs, reward, done = np.ones((self.num_envs, 2)), np.array(responses.reward), np.array(responses.done)
         infos = [{"raw_rewards": item} for item in reward]
         return raw_obs, reward @ self.reward_weight, done[:, 0], infos
+
+    def change_utt(self, utt_json_p0=None, utt_json_p1=None):
+        """
+        Change UTT configuration at runtime during a game.
+        This allows changing the Unit Type Table for one or both players
+        without restarting the game or modifying the Java environment.
+        
+        Args:
+            utt_json_p0: Path to JSON file for Player 0's new UTT, or None to keep current
+            utt_json_p1: Path to JSON file for Player 1's new UTT, or None to keep current
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        import json
+        from rts.units import UnitTypeTable
+        
+        new_utt_p0_json = None
+        new_utt_p1_json = None
+        
+        # Load UTT JSON files if provided
+        if utt_json_p0 is not None:
+            utt_path_p0 = os.path.join(self.microrts_path, utt_json_p0)
+            with open(utt_path_p0, "r") as f:
+                new_utt_p0_json = f.read()
+        
+        if utt_json_p1 is not None:
+            utt_path_p1 = os.path.join(self.microrts_path, utt_json_p1)
+            with open(utt_path_p1, "r") as f:
+                new_utt_p1_json = f.read()
+        
+        # Call Java method to change UTT
+        success = self.vec_client.changeUTT(new_utt_p0_json, new_utt_p1_json)
+        
+        if success:
+            # Update Python-side UTT references
+            if new_utt_p0_json:
+                self.real_utt_p0 = UnitTypeTable.fromJSON(new_utt_p0_json)
+                self.real_utt = self.real_utt_p0  # For backward compatibility
+            if new_utt_p1_json:
+                self.real_utt_p1 = UnitTypeTable.fromJSON(new_utt_p1_json)
+            
+            # Update UTT dictionary for observation/action spaces
+            try:
+                if hasattr(self.render_client, "sendUTTs"):
+                    dual = json.loads(str(self.render_client.sendUTTs()))
+                    self.utt_p0 = dual.get("p0")
+                    self.utt_p1 = dual.get("p1")
+                    self.utt = self.utt_p0
+                else:
+                    self.utt = json.loads(str(self.render_client.sendUTT()))
+                    self.utt_p0 = self.utt_p1 = self.utt
+            except Exception:
+                # Fallback to single UTT on any error
+                self.utt = json.loads(str(self.render_client.sendUTT()))
+                self.utt_p0 = self.utt_p1 = self.utt
+        
+        return success
 
 
 class MicroRTSGridModeSharedMemVecEnv(MicroRTSGridModeVecEnv):

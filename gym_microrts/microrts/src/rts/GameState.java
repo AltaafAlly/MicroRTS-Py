@@ -137,19 +137,17 @@ public class GameState {
     }
 
     /**
-     * Placeholder for future asymmetric UTT support: returns player 0's UTT.
-     * Currently identical to {@link #getUnitTypeTable()}.
+     * Returns player 0's UTT (for asymmetric UTT support).
      */
     public UnitTypeTable getUnitTypeTableP0() {
-        return utt;
+        return uttP0 != null ? uttP0 : utt;
     }
 
     /**
-     * Placeholder for future asymmetric UTT support: returns player 1's UTT.
-     * Currently identical to {@link #getUnitTypeTable()}.
+     * Returns player 1's UTT (for asymmetric UTT support).
      */
     public UnitTypeTable getUnitTypeTableP1() {
-        return utt;
+        return uttP1 != null ? uttP1 : utt;
     }
 
     /**

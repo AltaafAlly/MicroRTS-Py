@@ -31,6 +31,15 @@ public class JNIAI extends AIWithComputationBudget implements JNIInterface {
         utt = a_utt;
         maxAttackRadius = utt.getMaxAttackRange() * 2 + 1;
     }
+    
+    /**
+     * Update the UTT for this AI at runtime.
+     * @param newUtt The new UnitTypeTable to use
+     */
+    public void setUTT(UnitTypeTable newUtt) {
+        utt = newUtt;
+        maxAttackRadius = utt.getMaxAttackRange() * 2 + 1;
+    }
 
     @Override
     public double computeReward(final int maxplayer, final int minplayer, final GameState gs) throws Exception {
