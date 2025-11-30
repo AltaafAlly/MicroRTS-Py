@@ -17,16 +17,20 @@ from gym_microrts import microrts_ai
 
 def main():
     # ===== CONFIGURATION - Change these values to test different scenarios =====
-    # AI for Player 0 (will get favorable UTT)
+    # AI Agents
     ai1_name = "workerRushAI"  # Options: "lightRushAI", "workerRushAI", etc.
-    ai1_utt_file = "utts/FavorWorkerRushUTT.json"  # Favorable UTT for ai1_name
-    # For workerRushAI, use: "utts/FavorWorkerRushUTT.json"
-    
-    # AI for Player 1 (opponent, keeps neutral UTT)
     opponent_ai_name = "coacAI"  # Options: passiveAI, randomAI, workerRushAI, lightRushAI, coacAI, etc.
     
-    change_utt = True  # Set to False for control (no UTT change)
+    # Initial UTTs (set at game start)
+    initial_utt_p0 = "utts/TestUnitTypeTable.json"  # Initial UTT for Player 0 (ai1_name)
+    initial_utt_p1 = "utts/TestUnitTypeTable.json"  # Initial UTT for Player 1 (opponent_ai_name)
+    # Options: "utts/TestUnitTypeTable.json", "utts/CustomDemoUTT.json", "utts/FavorWorkerRushUTT.json"
+    
+    # Runtime UTT Change
+    change_utt = True  # Set to True to change UTT during game, False to keep initial UTTs
     utt_change_step = 50  # Step at which to change UTT (e.g., 1, 5, 10, 20, etc.)
+    new_utt_p0 = "utts/FavorWorkerRushUTT.json"  # New UTT for Player 0 at change step (None to keep unchanged)
+    new_utt_p1 = None  # New UTT for Player 1 at change step (None to keep unchanged)
     # ============================================================================
     
     # Get AI functions
@@ -47,26 +51,44 @@ def main():
         }
     }
     
-    utt_desc = utt_descriptions.get(ai1_utt_file, {
-        "name": ai1_utt_file,
-        "light": "Custom UTT",
-        "worker": "Custom UTT"
-    })
+    # Add TestUnitTypeTable description
+    utt_descriptions["utts/TestUnitTypeTable.json"] = {
+        "name": "TestUnitTypeTable",
+        "light": "Light: HP=4, Damage=2, Cost=2, Produce Time=65",
+        "worker": "Worker: HP=1, Damage=1, Cost=1, Produce Time=50"
+    }
     
     print("=" * 70)
     print("Runtime UTT Change: Single Matchup Test")
     print("=" * 70)
     print(f"\nMatch: {ai1_name} (P0) vs {opponent_ai_name} (P1)")
-    print(f"UTT Change: {'YES (at step ' + str(utt_change_step) + ')' if change_utt else 'NO (control)'}")
+    
+    # Show initial UTT configuration
+    initial_desc_p0 = utt_descriptions.get(initial_utt_p0, {"name": "Custom"})
+    initial_desc_p1 = utt_descriptions.get(initial_utt_p1, {"name": "Custom"})
+    print(f"\nInitial UTTs:")
+    print(f"  Player 0 ({ai1_name}): {initial_desc_p0.get('name', initial_utt_p0)}")
+    print(f"  Player 1 ({opponent_ai_name}): {initial_desc_p1.get('name', initial_utt_p1)}")
+    
+    # Show runtime change if enabled
     if change_utt:
-        print(f"\n{ai1_name} gets {utt_desc['name']} at step {utt_change_step}:")
-        if "light" in ai1_name.lower():
-            print(f"  {utt_desc['light']}")
-        elif "worker" in ai1_name.lower():
-            print(f"  {utt_desc['worker']}")
-        print(f"{opponent_ai_name} keeps neutral UTT:")
-        print("  Light: HP=4, Damage=2, Cost=2, Produce Time=65")
-        print("  Worker: HP=1, Damage=1, Cost=1, Produce Time=50")
+        print(f"\nRuntime UTT Change: YES (at step {utt_change_step})")
+        if new_utt_p0:
+            new_desc = utt_descriptions.get(new_utt_p0, {"name": new_utt_p0})
+            print(f"  Player 0 ({ai1_name}) will change to: {new_desc['name']}")
+            if "light" in ai1_name.lower() and "light" in new_desc:
+                print(f"    {new_desc['light']}")
+            elif "worker" in ai1_name.lower() and "worker" in new_desc:
+                print(f"    {new_desc['worker']}")
+        if new_utt_p1:
+            new_desc = utt_descriptions.get(new_utt_p1, {"name": new_utt_p1})
+            print(f"  Player 1 ({opponent_ai_name}) will change to: {new_desc['name']}")
+        if not new_utt_p0 and not new_utt_p1:
+            print("  (No runtime change configured)")
+    else:
+        print(f"\nRuntime UTT Change: NO")
+        print("  Both players keep their initial UTTs throughout the game")
+    
     print("=" * 70)
     
     env = MicroRTSBotVecEnv(
@@ -74,8 +96,8 @@ def main():
         ai2s=[opponent_ai_func],
         map_paths=["maps/8x8/basesWorkers8x8A.xml"],
         max_steps=2000,
-        utt_json_p0="utts/TestUnitTypeTable.json",  # Start neutral
-        utt_json_p1="utts/TestUnitTypeTable.json",  # Start neutral
+        utt_json_p0=initial_utt_p0,  # Initial UTT for Player 0
+        utt_json_p1=initial_utt_p1,  # Initial UTT for Player 1
         autobuild=False,
     )
     
@@ -96,50 +118,59 @@ def main():
         if change_utt and step == utt_change_step and not utt_changed:
             print(f">>> Step {step}: Changing UTT configuration...")
             success = env.change_utt(
-                utt_json_p0=ai1_utt_file,  # Favorable UTT for ai1_name
-                utt_json_p1=None  # Keep P1 unchanged
+                utt_json_p0=new_utt_p0,  # New UTT for Player 0 (None to keep unchanged)
+                utt_json_p1=new_utt_p1   # New UTT for Player 1 (None to keep unchanged)
             )
             if success:
                 print("✓ UTT changed successfully!")
-                print(f"  Player 0 ({ai1_name}) now has {utt_desc['name']}")
-                if "light" in ai1_name.lower():
-                    print(f"    {utt_desc['light']}")
-                elif "worker" in ai1_name.lower():
-                    print(f"    {utt_desc['worker']}")
-                print(f"  Player 1 ({opponent_ai_name}) keeps neutral UTT")
+                if new_utt_p0:
+                    new_desc = utt_descriptions.get(new_utt_p0, {"name": new_utt_p0})
+                    print(f"  Player 0 ({ai1_name}) changed to: {new_desc['name']}")
+                    if "light" in ai1_name.lower() and "light" in new_desc:
+                        print(f"    {new_desc['light']}")
+                    elif "worker" in ai1_name.lower() and "worker" in new_desc:
+                        print(f"    {new_desc['worker']}")
+                if new_utt_p1:
+                    new_desc = utt_descriptions.get(new_utt_p1, {"name": new_utt_p1})
+                    print(f"  Player 1 ({opponent_ai_name}) changed to: {new_desc['name']}")
+                if not new_utt_p0 and not new_utt_p1:
+                    print("  (No changes made)")
                 print()
                 utt_changed = True
             else:
                 print("✗ Failed to change UTT")
         
-        # Print progress every 50 steps and verify UTT is still changed
+        # Print progress every 50 steps and verify UTT is still changed (if runtime change happened)
         if step > 0 and step % 50 == 0:
-            # Verify UTT is still changed
+            # Verify UTT if runtime change was made
             try:
-                utt_check = env.real_utt_p0
-                unit_types = utt_check.getUnitTypes()
-                if "light" in ai1_name.lower():
-                    # Check Light unit for lightRushAI
-                    light_hp = None
-                    for i in range(unit_types.size()):
-                        if unit_types.get(i).name == "Light":
-                            light_hp = unit_types.get(i).hp
-                            break
-                    if light_hp and light_hp >= 50:
-                        print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) [UTT verified: Light HP={light_hp}]")
+                if utt_changed and new_utt_p0:
+                    utt_check = env.real_utt_p0
+                    unit_types = utt_check.getUnitTypes()
+                    if "light" in ai1_name.lower():
+                        # Check Light unit for lightRushAI
+                        light_hp = None
+                        for i in range(unit_types.size()):
+                            if unit_types.get(i).name == "Light":
+                                light_hp = unit_types.get(i).hp
+                                break
+                        if light_hp and light_hp >= 50:
+                            print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) [UTT verified: Light HP={light_hp}]")
+                        else:
+                            print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) ⚠ UTT may have reverted!")
+                    elif "worker" in ai1_name.lower():
+                        # Check Worker unit for workerRushAI
+                        worker_hp = None
+                        for i in range(unit_types.size()):
+                            if unit_types.get(i).name == "Worker":
+                                worker_hp = unit_types.get(i).hp
+                                break
+                        if worker_hp and worker_hp >= 20:
+                            print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) [UTT verified: Worker HP={worker_hp}]")
+                        else:
+                            print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) ⚠ UTT may have reverted!")
                     else:
-                        print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) ⚠ UTT may have reverted!")
-                elif "worker" in ai1_name.lower():
-                    # Check Worker unit for workerRushAI
-                    worker_hp = None
-                    for i in range(unit_types.size()):
-                        if unit_types.get(i).name == "Worker":
-                            worker_hp = unit_types.get(i).hp
-                            break
-                    if worker_hp and worker_hp >= 20:
-                        print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) [UTT verified: Worker HP={worker_hp}]")
-                    else:
-                        print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f}) ⚠ UTT may have reverted!")
+                        print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f})")
                 else:
                     print(f"  Step {step}: Game running... (reward: {rewards[0]:.2f})")
             except:
@@ -196,10 +227,14 @@ def main():
     
     print("=" * 70)
     print(f"\nTo test different scenarios, modify the configuration at the top of this script:")
-    print(f"  - ai1_name: AI that gets favorable UTT (lightRushAI, workerRushAI, etc.)")
-    print(f"  - ai1_utt_file: UTT file for ai1 (utts/CustomDemoUTT.json, utts/FavorWorkerRushUTT.json)")
-    print(f"  - opponent_ai_name: Opponent AI (passiveAI, randomAI, workerRushAI, lightRushAI, coacAI, etc.)")
+    print(f"  - ai1_name: AI for Player 0 (lightRushAI, workerRushAI, etc.)")
+    print(f"  - opponent_ai_name: AI for Player 1 (passiveAI, randomAI, workerRushAI, lightRushAI, coacAI, etc.)")
+    print(f"  - initial_utt_p0: Initial UTT for Player 0 (TestUnitTypeTable.json, CustomDemoUTT.json, etc.)")
+    print(f"  - initial_utt_p1: Initial UTT for Player 1 (TestUnitTypeTable.json, CustomDemoUTT.json, etc.)")
+    print(f"  - change_utt: Enable/disable runtime UTT change (True/False)")
     print(f"  - utt_change_step: Step at which to change UTT (1, 5, 10, 20, etc.)")
+    print(f"  - new_utt_p0: New UTT for Player 0 at change step (None to keep unchanged)")
+    print(f"  - new_utt_p1: New UTT for Player 1 at change step (None to keep unchanged)")
 
 
 if __name__ == "__main__":
