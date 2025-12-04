@@ -1,0 +1,376 @@
+======================================================================
+Runtime UTT Change: Single Matchup Test
+======================================================================
+
+Match: lightRushAI (P0) vs coacAI (P1)
+
+Initial UTTs:
+  Player 0 (lightRushAI): TestUnitTypeTable
+  Player 1 (coacAI): TestUnitTypeTable
+
+Runtime UTT Change: YES (at step 20)
+  Player 0 (lightRushAI) will change to: CustomDemoUTT
+    Light: HP=60, Damage=20, Cost=1, Produce Time=2
+======================================================================
+
+✓ Environment created
+✓ Environment reset
+
+>>> Step 20: Changing UTT configuration...
+✓ UTT changed successfully!
+  Player 0 (lightRushAI) changed to: CustomDemoUTT
+    Light: HP=60, Damage=20, Cost=1, Produce Time=2
+
+  Snapshot at step 20 (right after UTT change):
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 20: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+  Step 20: Game running... (reward: 0.00)
+  Step 30: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 30:
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 40: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 40:
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 50: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 50:
+
+Total units on field: 7 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 4
+  Units & Buildings: 3
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 2 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+    - ID: Worker, Pos: (5, 5), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 60: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 60:
+
+Total units on field: 7 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 4
+  Units & Buildings: 3
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 2 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+    - ID: Worker, Pos: (6, 5), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 70: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 70:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 1
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 4
+  Units & Buildings: 3
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 2 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+    - ID: Worker, Pos: (6, 6), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 80: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 80:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 1
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (3, 2), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 3
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 2 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 90: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 90:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P0) at (2, 0), HP: 100
+
+Player 0 (lightRushAI):
+  Resources: 4
+  Units & Buildings: 4
+  Barracks (Building): 2 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 1
+    - ID: Barracks, Pos: (2, 0), HP: 100/100, Damage: 1, Cost: 1
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 2), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 3
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 2 units
+    - ID: Worker, Pos: (4, 7), HP: 1/1, Damage: 1, Cost: 1
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+  Step 100: Game running... (reward: 0.00) [UTT verified: Light HP=60]
+
+  Snapshot at step 100:
+
+Total units on field: 11 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (3, 3), HP: 60
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P0) at (2, 0), HP: 100
+
+Player 0 (lightRushAI):
+  Resources: 3
+  Units & Buildings: 5
+  Barracks (Building): 2 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 1
+    - ID: Barracks, Pos: (2, 0), HP: 100/100, Damage: 1, Cost: 1
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Light: 1 units
+    - ID: Light, Pos: (3, 3), HP: 60/60, Damage: 20, Cost: 1
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 10/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 4
+  Units & Buildings: 4
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 3 units
+    - ID: Worker, Pos: (3, 7), HP: 1/1, Damage: 1, Cost: 1
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+    - ID: Worker, Pos: (4, 6), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+======================================================================
+MATCH RESULT
+======================================================================
+Winner: lightRushAI (Player 0)
+Final Step: 106
+UTT Changed: True
+
+======================================================================
+GAME STATE SNAPSHOT
+======================================================================
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/200, Damage: 1, Cost: 3
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 1/10, Damage: 5, Cost: 1
+
+Player 1 (coacAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/200, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 6), HP: 1/10, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=60, Damage=20, Cost=1
+  P0 Worker: HP=10, Damage=5, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+======================================================================

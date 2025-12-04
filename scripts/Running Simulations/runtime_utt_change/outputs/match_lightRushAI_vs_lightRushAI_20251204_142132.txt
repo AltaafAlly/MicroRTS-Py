@@ -1,0 +1,664 @@
+======================================================================
+Runtime UTT Change: Single Matchup Test
+======================================================================
+
+Match: lightRushAI (P0) vs lightRushAI (P1)
+
+Initial UTTs:
+  Player 0 (lightRushAI): TestUnitTypeTable
+  Player 1 (lightRushAI): TestUnitTypeTable
+
+Runtime UTT Change: NO
+  Both players keep their initial UTTs throughout the game
+======================================================================
+
+✓ Environment created
+✓ Environment reset
+
+
+  Snapshot at step 50:
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 5), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 100:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 150:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 200:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 250:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 300:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (3, 0), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (3, 0), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+
+Player 1 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 350:
+
+Total units on field: 10 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (4, 5), HP: 4
+  ⚔️  Light (P1) at (3, 4), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 25
+
+Player 0 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (4, 5), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (3, 4), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 400:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P1) at (2, 3), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 3
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (0, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (2, 3), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 450:
+
+Total units on field: 7 (including 2 neutral resources)
+
+  ⚔️  Light (P1) at (0, 2), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 25
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 1
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 25/25, Damage: 1, Cost: 5
+
+Player 1 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (0, 2), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 500:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (1, 3), HP: 4
+  ⚔️  Light (P1) at (2, 4), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (1, 3), HP: 4/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (2, 4), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 550:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (1, 4), HP: 4
+  ⚔️  Light (P1) at (2, 3), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (1, 4), HP: 4/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (2, 3), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 600:
+
+Total units on field: 8 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (1, 4), HP: 4
+  ⚔️  Light (P1) at (1, 3), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (1, 4), HP: 4/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 4
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 1 units
+    - ID: Light, Pos: (1, 3), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 650:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (2, 4), HP: 2
+  ⚔️  Light (P1) at (1, 3), HP: 4
+  ⚔️  Light (P1) at (3, 4), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (2, 4), HP: 2/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 5
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 2 units
+    - ID: Light, Pos: (1, 3), HP: 4/4, Damage: 2, Cost: 2
+    - ID: Light, Pos: (3, 4), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 700:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (0, 3), HP: 2
+  ⚔️  Light (P1) at (1, 4), HP: 4
+  ⚔️  Light (P1) at (2, 5), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (0, 3), HP: 2/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 1
+  Units & Buildings: 5
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 2 units
+    - ID: Light, Pos: (1, 4), HP: 4/4, Damage: 2, Cost: 2
+    - ID: Light, Pos: (2, 5), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 750:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (1, 3), HP: 2
+  ⚔️  Light (P1) at (0, 4), HP: 4
+  ⚔️  Light (P1) at (1, 1), HP: 4
+  🏭 Barracks (P0) at (1, 0), HP: 15
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 2
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (1, 0), HP: 15/25, Damage: 1, Cost: 5
+  Light: 1 units
+    - ID: Light, Pos: (1, 3), HP: 2/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 2
+  Units & Buildings: 5
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 2 units
+    - ID: Light, Pos: (0, 4), HP: 4/4, Damage: 2, Cost: 2
+    - ID: Light, Pos: (1, 1), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 7), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+  Snapshot at step 800:
+
+Total units on field: 9 (including 2 neutral resources)
+
+  ⚔️  Light (P0) at (0, 3), HP: 2
+  ⚔️  Light (P1) at (1, 4), HP: 4
+  ⚔️  Light (P1) at (0, 1), HP: 4
+  ⚔️  Light (P1) at (5, 4), HP: 4
+  🏭 Barracks (P1) at (5, 5), HP: 19
+
+Player 0 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 1
+  Light: 1 units
+    - ID: Light, Pos: (0, 3), HP: 2/4, Damage: 2, Cost: 2
+
+Player 1 (lightRushAI):
+  Resources: 0
+  Units & Buildings: 6
+  Barracks (Building): 1 units
+    - ID: Barracks, Pos: (5, 5), HP: 19/25, Damage: 1, Cost: 5
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Light: 3 units
+    - ID: Light, Pos: (1, 4), HP: 4/4, Damage: 2, Cost: 2
+    - ID: Light, Pos: (0, 1), HP: 4/4, Damage: 2, Cost: 2
+    - ID: Light, Pos: (5, 4), HP: 4/4, Damage: 2, Cost: 2
+  Worker: 1 units
+    - ID: Worker, Pos: (5, 7), HP: 1/1, Damage: 1, Cost: 1, Resources: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+
+
+======================================================================
+MATCH RESULT
+======================================================================
+Winner: lightRushAI (Player 1)
+Final Step: 808
+UTT Changed: N/A (control)
+
+======================================================================
+GAME STATE SNAPSHOT
+======================================================================
+
+Total units on field: 6 (including 2 neutral resources)
+
+  ⚠️  NO COMBAT UNITS on field
+
+Player 0 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (2, 1), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (1, 1), HP: 1/1, Damage: 1, Cost: 1
+
+Player 1 (lightRushAI):
+  Resources: 5
+  Units & Buildings: 2
+  Base (Building): 1 units
+    - ID: Base, Pos: (5, 6), HP: 10/50, Damage: 1, Cost: 10
+  Worker: 1 units
+    - ID: Worker, Pos: (6, 6), HP: 1/1, Damage: 1, Cost: 1
+
+Neutral Resources: 2 resource deposits on map
+
+UTT Verification (from game state):
+  P0 Light: HP=4, Damage=2, Cost=2
+  P0 Worker: HP=1, Damage=1, Cost=1
+  P1 Light: HP=4, Damage=2, Cost=2
+  P1 Worker: HP=1, Damage=1, Cost=1
+======================================================================

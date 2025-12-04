@@ -205,6 +205,14 @@ public class JNIBotClient {
         
         return "{\"p0\":" + j0 + ",\"p1\":" + j1 + "}";
     }
+    
+    /**
+     * Get the current GameState. Useful for inspecting game state from Python.
+     * @return the current GameState
+     */
+    public GameState getGameState() {
+        return gs;
+    }
 
     /**
      * Change UTT configuration at runtime during a game.
