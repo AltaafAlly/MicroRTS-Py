@@ -219,7 +219,20 @@ class MicroRTSChromosome:
                 elif min_val == max_val:  # Fixed value
                     params[param_name] = min_val
                 else:
-                    params[param_name] = random.randint(min_val, max_val)
+                    # Ensure we don't generate invalid values
+                    value = random.randint(min_val, max_val)
+                    # Extra safety: ensure positive parameters are at least 1
+                    positive_params = ['cost', 'hp', 'produceTime', 'moveTime', 'attackTime', 
+                                     'harvestTime', 'returnTime', 'harvestAmount', 'attackRange',
+                                     'minDamage', 'maxDamage']
+                    if param_name in positive_params and value <= 0:
+                        value = max(1, min_val)
+                    params[param_name] = value
+            
+            # Ensure damage values are valid
+            if 'minDamage' in params and 'maxDamage' in params:
+                if params['maxDamage'] < params['minDamage']:
+                    params['maxDamage'] = params['minDamage']
             
             self.unit_params[unit_type] = UnitParameters(**params)
     
@@ -286,6 +299,40 @@ class MicroRTSChromosome:
                     value = int(min_val + normalized * (max_val - min_val))
                     params[param_name] = max(min_val, min(value, max_val))
                 genome_idx += 1
+            
+            # Validate and fix parameters before creating UnitParameters
+            # Ensure all positive parameters are at least 1
+            if 'cost' in params and params['cost'] <= 0:
+                params['cost'] = 1
+            if 'hp' in params and params['hp'] <= 0:
+                params['hp'] = 1
+            if 'produceTime' in params and params['produceTime'] <= 0:
+                params['produceTime'] = 1
+            if 'moveTime' in params and params['moveTime'] <= 0:
+                params['moveTime'] = 1
+            if 'attackTime' in params and params['attackTime'] <= 0:
+                params['attackTime'] = 1
+            if 'harvestTime' in params and params['harvestTime'] <= 0:
+                params['harvestTime'] = 1
+            if 'returnTime' in params and params['returnTime'] <= 0:
+                params['returnTime'] = 1
+            if 'harvestAmount' in params and params['harvestAmount'] <= 0:
+                params['harvestAmount'] = 1
+            if 'attackRange' in params and params['attackRange'] <= 0:
+                params['attackRange'] = 1
+            
+            # Ensure damage values are valid
+            if 'minDamage' in params and params['minDamage'] < 1:
+                params['minDamage'] = 1
+            if 'maxDamage' in params and params['maxDamage'] < 1:
+                params['maxDamage'] = 1
+            if 'minDamage' in params and 'maxDamage' in params:
+                if params['maxDamage'] < params['minDamage']:
+                    params['maxDamage'] = params['minDamage']
+            
+            # sightRadius can be 0, but ensure it's non-negative
+            if 'sightRadius' in params and params['sightRadius'] < 0:
+                params['sightRadius'] = 0
             
             unit_params[unit_type] = UnitParameters(**params)
         
@@ -381,10 +428,44 @@ class MicroRTSChromosome:
         
         for unit_type, params in self.unit_params.items():
             if unit_type in unit_mapping:
+                # Get parameters and validate/fix them for Java compatibility
+                param_dict = params.to_dict()
+                
+                # Ensure all time parameters are positive (Java requirement)
+                time_params = ['produceTime', 'moveTime', 'attackTime', 'harvestTime', 'returnTime']
+                for time_param in time_params:
+                    if time_param in param_dict and param_dict[time_param] <= 0:
+                        param_dict[time_param] = 1
+                
+                # Ensure cost, hp, and other positive parameters are > 0
+                if param_dict.get('cost', 1) <= 0:
+                    param_dict['cost'] = 1
+                if param_dict.get('hp', 1) <= 0:
+                    param_dict['hp'] = 1
+                if param_dict.get('harvestAmount', 1) <= 0:
+                    param_dict['harvestAmount'] = 1
+                
+                # Ensure damage values are valid
+                # minDamage and maxDamage must be >= 1, and maxDamage >= minDamage
+                if param_dict.get('minDamage', 1) < 1:
+                    param_dict['minDamage'] = 1
+                if param_dict.get('maxDamage', 1) < 1:
+                    param_dict['maxDamage'] = 1
+                if param_dict.get('maxDamage', 1) < param_dict.get('minDamage', 1):
+                    param_dict['maxDamage'] = param_dict['minDamage']
+                
+                # Ensure attackRange is positive
+                if param_dict.get('attackRange', 1) <= 0:
+                    param_dict['attackRange'] = 1
+                
+                # sightRadius can be 0 for some units (like Resource), but ensure it's non-negative
+                if param_dict.get('sightRadius', 0) < 0:
+                    param_dict['sightRadius'] = 0
+                
                 unit_config = {
                     'ID': unit_mapping[unit_type]['ID'],
                     'name': unit_type,
-                    **params.to_dict(),
+                    **param_dict,
                     **unit_mapping[unit_type]
                 }
                 config['unitTypes'].append(unit_config)
