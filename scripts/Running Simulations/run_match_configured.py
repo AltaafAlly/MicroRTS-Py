@@ -1,7 +1,7 @@
 import os
 import csv
 from pathlib import Path
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional, Union
 
 import numpy as np
 from gym_microrts.envs.vec_env import MicroRTSBotVecEnv
@@ -12,8 +12,8 @@ from gym_microrts import microrts_ai
 
 
 def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: int,
-             autobuild: bool, utt_json: str | None,
-             utt_json_p0: str | None = None, utt_json_p1: str | None = None) -> Dict[str, int]:
+             autobuild: bool, utt_json: Optional[str],
+             utt_json_p0: Optional[str] = None, utt_json_p1: Optional[str] = None) -> Dict[str, int]:
     a1 = getattr(microrts_ai, ai_left)
     a2 = getattr(microrts_ai, ai_right)
 
@@ -74,10 +74,10 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
 
 
 def round_robin(ai_names: List[str], map_path: str, max_steps: int, games: int,
-                autobuild: bool, utt_json: str | None, out_dir: str = "results",
-                max_steps_long: int | None = None, draw_retry_threshold: float = 0.0,
-                utt_json_p0: str | None = None, utt_json_p1: str | None = None) -> None:
-    standings: Dict[str, Dict[str, int | float]] = {
+                autobuild: bool, utt_json: Optional[str], out_dir: str = "results",
+                max_steps_long: Optional[int] = None, draw_retry_threshold: float = 0.0,
+                utt_json_p0: Optional[str] = None, utt_json_p1: Optional[str] = None) -> None:
+    standings: Dict[str, Dict[str, Union[int, float]]] = {
         name: {"wins": 0, "losses": 0, "draws": 0, "points": 0.0} for name in ai_names
     }
     pair_rows: List[Dict[str, int | str]] = []

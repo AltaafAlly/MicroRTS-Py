@@ -9,8 +9,35 @@ This folder contains scripts for running the Genetic Algorithm (GA) on a compute
 
 ### Manual Test Scripts
 - **`run_ga_manual.sh`** - Shell script to run the GA manually (for testing or local execution)
+- **`sync_to_cluster.sh`** - Script to sync code to the cluster using rsync
 
 ## Usage
+
+### Syncing Code to Cluster
+
+Before running the GA on the cluster, sync your code:
+
+```bash
+# Using the sync script (recommended)
+cd /path/to/MicroRTS-Py-Research
+./scripts/GA\ and\ MAP-Elites/cluster/sync_to_cluster.sh
+
+# Or manually with rsync
+rsync -avz --progress \
+    --exclude='.git/' \
+    --exclude='__pycache__/' \
+    --exclude='*.pyc' \
+    --exclude='experiments/' \
+    --exclude='results/' \
+    --exclude='gym_microrts/microrts/microrts.jar' \
+    ./ username@cluster:~/Research/MicroRTS-Py-Research/
+```
+
+The sync script automatically excludes:
+- Git files, Python cache, compiled files
+- Experiment results and logs
+- JAR files (will be rebuilt on cluster)
+- IDE files and temporary files
 
 ### Local/Manual Testing
 ```bash

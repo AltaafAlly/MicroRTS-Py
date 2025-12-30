@@ -2,7 +2,7 @@
 #SBATCH --job-name=ga_evolution
 #SBATCH --output=/home-mscluster/%u/job_logs/ga_evolution_%j.out
 #SBATCH --error=/home-mscluster/%u/job_logs/ga_evolution_%j.err
-#SBATCH --time=24:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --partition=bigbatch
 #SBATCH --cpus-per-task=1
 
@@ -106,12 +106,15 @@ echo "JAR size: $(du -h gym_microrts/microrts/microrts.jar 2>/dev/null || echo '
 echo "Lib directory: $(ls -la gym_microrts/microrts/lib/ 2>/dev/null | wc -l) files"
 
 # GA Configuration
+# Optimized for 3-day time limit with round-robin tournament (15 pairs)
 # You can customize these parameters or pass them via environment variables
-GENERATIONS=${GA_GENERATIONS:-30}
-POPULATION=${GA_POPULATION:-30}
+GENERATIONS=${GA_GENERATIONS:-20}
+POPULATION=${GA_POPULATION:-25}
 EXPERIMENT_NAME=${GA_EXPERIMENT_NAME:-"cluster_long_run"}
 GAMES_PER_EVAL=${GA_GAMES_PER_EVAL:-3}
-MAX_STEPS=${GA_MAX_STEPS:-1000}
+MAX_STEPS=${GA_MAX_STEPS:-5000}
+MUTATION_RATE=${GA_MUTATION_RATE:-0.15}
+MAX_GENERATIONS_WITHOUT_IMPROVEMENT=${GA_MAX_GEN_NO_IMPROVE:-8}
 
 echo ""
 echo "GA Configuration:"
@@ -121,6 +124,9 @@ echo "Population: ${POPULATION}"
 echo "Experiment Name: ${EXPERIMENT_NAME}"
 echo "Games per evaluation: ${GAMES_PER_EVAL}"
 echo "Max steps per game: ${MAX_STEPS}"
+echo "Round-robin pairs: 15 (all AIs vs each other)"
+echo "Total games per chromosome: $((15 * ${GAMES_PER_EVAL}))"
+echo "Total games per generation: $((15 * ${GAMES_PER_EVAL} * ${POPULATION}))"
 echo ""
 
 # Create experiment output directory in the run directory
@@ -146,6 +152,8 @@ python run_ga.py \
     --use-working-evaluator \
     --games-per-eval ${GAMES_PER_EVAL} \
     --max-steps ${MAX_STEPS} \
+    --mutation-rate ${MUTATION_RATE} \
+    --max-generations-without-improvement ${MAX_GENERATIONS_WITHOUT_IMPROVEMENT} \
     --verbose \
     2>&1 | tee "${RUN_DIR}/ga_stdout.log"
 

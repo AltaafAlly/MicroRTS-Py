@@ -10,7 +10,7 @@ import json
 import time
 import subprocess
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 import tempfile
 
 # Add the project root to the path
@@ -66,20 +66,30 @@ class WorkingGAEvaluator(FitnessEvaluator):
         # Use provided AI agents or default to baseline
         self.ai_agents = ai_agents or self.baseline_ais
         
-        # Comprehensive baseline test pairs (Option 2)
-        # Tests diverse strategy matchups for robust evaluation
-        self.comprehensive_test_pairs = [
-            ("workerRushAI", "lightRushAI"),    # Rush vs Rush
-            ("coacAI", "naiveMCTSAI"),          # Balanced vs Balanced
-            ("workerRushAI", "passiveAI"),      # Rush vs Defensive
-            ("lightRushAI", "coacAI"),          # Rush vs Balanced
-            ("naiveMCTSAI", "passiveAI"),       # Balanced vs Defensive
-            ("randomBiasedAI", "coacAI"),      # Random vs Strong
-        ]
+        # Round-robin: All AI agents play against each other
+        # This gives maximum variety and comprehensive balance assessment
+        # With 6 AIs, this creates 6 choose 2 = 15 unique pairs
+        self.comprehensive_test_pairs = self._generate_round_robin_pairs(self.baseline_ais)
         
         # Create temporary directory for UTT files
         self.temp_dir = Path(tempfile.mkdtemp(prefix="ga_utts_"))
         print(f"Created temporary UTT directory: {self.temp_dir}")
+    
+    def _generate_round_robin_pairs(self, ai_list: List[str]) -> List[Tuple[str, str]]:
+        """
+        Generate all unique pairs for round-robin tournament.
+        
+        Args:
+            ai_list: List of AI agent names
+            
+        Returns:
+            List of (ai1, ai2) tuples for all unique matchups
+        """
+        pairs = []
+        for i in range(len(ai_list)):
+            for j in range(i + 1, len(ai_list)):
+                pairs.append((ai_list[i], ai_list[j]))
+        return pairs
     
     def evaluate_chromosome(self, chromosome: MicroRTSChromosome) -> FitnessComponents:
         """
@@ -141,15 +151,13 @@ class WorkingGAEvaluator(FitnessEvaluator):
     
     def _test_utt_file(self, utt_path: Path) -> List[Dict]:
         """
-        Test a UTT file using the comprehensive baseline approach.
+        Test a UTT file using round-robin tournament approach.
         
-        Uses 6 diverse AI pairs covering different strategies:
-        - Rush vs Rush
-        - Balanced vs Balanced
-        - Rush vs Defensive
-        - Rush vs Balanced
-        - Balanced vs Defensive
-        - Random vs Strong
+        All baseline AI agents play against each other in a round-robin format.
+        With 6 AIs, this creates 15 unique matchups, providing:
+        - Maximum variety in strategy matchups
+        - Comprehensive balance assessment across all AI types
+        - Better diversity measurement
         """
         
         match_results = []
@@ -330,7 +338,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
         # 2. Variance in balance scores across matchups (more variance = more diverse outcomes)
         # 3. Variety in match outcomes (wins, losses, draws)
         
-        ai_diversity = min(1.0, len(all_ai_names) / 6.0)  # Normalize by max 6 baseline AIs
+        ai_diversity = min(1.0, len(all_ai_names) / len(self.baseline_ais))  # Normalize by number of baseline AIs
         
         if len(balance_scores) > 1:
             # Calculate variance in balance scores across different matchups
