@@ -125,6 +125,13 @@ Examples:
     analysis_group.add_argument('--validate-config', action='store_true',
                                help='Validate the best configuration')
     
+    # Checkpointing
+    checkpoint_group = parser.add_argument_group('Checkpointing')
+    checkpoint_group.add_argument('--checkpoint-dir', type=str,
+                                 help='Directory to save checkpoints for resuming')
+    checkpoint_group.add_argument('--resume-from', type=str,
+                                 help='Path to checkpoint file to resume from')
+    
     return parser
 
 
@@ -196,18 +203,24 @@ def create_ga_config(args) -> GAConfig:
 
 
 def run_genetic_algorithm(config: GAConfig, experiment_manager: ExperimentManager, 
-                         experiment_name: str) -> tuple:
+                         experiment_name: str, checkpoint_dir: str = None,
+                         resume_from: str = None) -> tuple:
     """Run the genetic algorithm and return results."""
     
     # Create experiment directory
     experiment_dir = experiment_manager.create_experiment_dir(experiment_name)
     
-    # Save configuration
-    experiment_manager.save_experiment_config(config, experiment_dir)
+    # Set checkpoint directory (use experiment dir if not specified or empty)
+    if not checkpoint_dir:
+        checkpoint_dir = os.path.join(experiment_dir, "checkpoints")
+    
+    # Save configuration (only if not resuming)
+    if not resume_from:
+        experiment_manager.save_experiment_config(config, experiment_dir)
     
     # Create and run GA
     ga = MicroRTSGeneticAlgorithm(config)
-    results = ga.run()
+    results = ga.run(checkpoint_dir=checkpoint_dir, resume_from=resume_from)
     
     # Save results
     experiment_manager.save_experiment_results(results, experiment_dir)
@@ -360,7 +373,11 @@ def main():
     # Run genetic algorithm
     try:
         print("Starting MicroRTS Genetic Algorithm...")
-        results, experiment_dir = run_genetic_algorithm(config, experiment_manager, args.experiment_name)
+        results, experiment_dir = run_genetic_algorithm(
+            config, experiment_manager, args.experiment_name,
+            checkpoint_dir=args.checkpoint_dir,
+            resume_from=args.resume_from
+        )
         
         print(f"\n✅ Evolution completed successfully!")
         print(f"📁 Results saved to: {experiment_dir}")

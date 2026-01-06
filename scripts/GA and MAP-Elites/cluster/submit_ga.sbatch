@@ -106,12 +106,13 @@ echo "JAR size: $(du -h gym_microrts/microrts/microrts.jar 2>/dev/null || echo '
 echo "Lib directory: $(ls -la gym_microrts/microrts/lib/ 2>/dev/null | wc -l) files"
 
 # GA Configuration
-# Optimized for 3-day time limit with round-robin tournament (15 pairs)
+# Optimized for 3-day time limit with checkpointing/resume capability
+# With checkpointing, we can afford more games per evaluation for better fitness estimates
 # You can customize these parameters or pass them via environment variables
 GENERATIONS=${GA_GENERATIONS:-20}
 POPULATION=${GA_POPULATION:-25}
 EXPERIMENT_NAME=${GA_EXPERIMENT_NAME:-"cluster_long_run"}
-GAMES_PER_EVAL=${GA_GAMES_PER_EVAL:-3}
+GAMES_PER_EVAL=${GA_GAMES_PER_EVAL:-5}  # Increased from 3 to 5 for better fitness accuracy
 MAX_STEPS=${GA_MAX_STEPS:-5000}
 MUTATION_RATE=${GA_MUTATION_RATE:-0.15}
 MAX_GENERATIONS_WITHOUT_IMPROVEMENT=${GA_MAX_GEN_NO_IMPROVE:-8}
@@ -133,6 +134,25 @@ echo ""
 EXPERIMENT_OUTPUT_DIR="${RUN_DIR}/experiments"
 mkdir -p "${EXPERIMENT_OUTPUT_DIR}"
 
+# Checkpoint directory for resuming
+# Look for latest checkpoint in any experiment directory
+# This allows automatic resume when you resubmit the job after a time limit
+LATEST_CHECKPOINT=$(find ${EXPERIMENT_OUTPUT_DIR} -name "checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
+
+# Check if we should resume from checkpoint
+RESUME_FLAG=""
+if [ -n "${LATEST_CHECKPOINT}" ] && [ -f "${LATEST_CHECKPOINT}" ]; then
+    echo "=========================================="
+    echo "AUTOMATIC RESUME DETECTED"
+    echo "=========================================="
+    echo "Found checkpoint: ${LATEST_CHECKPOINT}"
+    echo "Resuming from checkpoint automatically..."
+    echo "=========================================="
+    RESUME_FLAG="--resume-from ${LATEST_CHECKPOINT}"
+else
+    echo "No checkpoint found. Starting new run."
+fi
+
 # Run GA
 echo "Starting Genetic Algorithm at $(date)"
 echo "Working directory: $(pwd)"
@@ -143,6 +163,7 @@ echo "Java version: $(java -version 2>&1 | head -1)"
 cd "scripts/GA and MAP-Elites"
 
 # Run GA with cluster-optimized settings
+# Checkpoint directory will be set automatically in experiment dir
 python run_ga.py \
     --generations ${GENERATIONS} \
     --population ${POPULATION} \
@@ -154,8 +175,39 @@ python run_ga.py \
     --max-steps ${MAX_STEPS} \
     --mutation-rate ${MUTATION_RATE} \
     --max-generations-without-improvement ${MAX_GENERATIONS_WITHOUT_IMPROVEMENT} \
+    --checkpoint-dir "" \
+    ${RESUME_FLAG} \
     --verbose \
     2>&1 | tee "${RUN_DIR}/ga_stdout.log"
+
+# Check if evolution completed or if we need to resubmit
+EXIT_CODE=${PIPESTATUS[0]}
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "Job exited with code $EXIT_CODE"
+    echo "This may indicate the job hit the time limit."
+    echo "Use auto_resubmit_ga.sh to automatically continue, or resubmit manually."
+fi
+
+# Check if evolution completed
+if grep -q "EVOLUTION COMPLETED" "${RUN_DIR}/ga_stdout.log" 2>/dev/null; then
+    echo ""
+    echo "=========================================="
+    echo "✅ EVOLUTION COMPLETED SUCCESSFULLY!"
+    echo "=========================================="
+    exit 0
+else
+    echo ""
+    echo "=========================================="
+    echo "⚠️  Job finished but evolution may not be complete"
+    echo "=========================================="
+    echo "Checkpoint saved. Resubmit to continue:"
+    echo "  sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch"
+    echo "Or use auto-resubmit wrapper:"
+    echo "  ./scripts/GA\ and\ MAP-Elites/cluster/auto_resubmit_ga.sh"
+    echo "=========================================="
+    exit 0  # Exit successfully so SLURM doesn't mark as failed
+fi
 
 GA_EXIT_CODE=${PIPESTATUS[0]}
 

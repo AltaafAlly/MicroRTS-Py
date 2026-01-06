@@ -190,6 +190,11 @@ class MicroRTSGeneticAlgorithm:
         # Convergence tracking
         self.generations_without_improvement = 0
         self.last_best_fitness = 0.0
+        
+        # Checkpointing for resume capability
+        self.checkpoint_dir = None
+        self.current_generation = 0
+        self.previous_total_time = 0.0  # Track time from previous runs when resuming
     
     def initialize_population(self) -> None:
         """Initialize the population with random chromosomes."""
@@ -366,35 +371,201 @@ class MicroRTSGeneticAlgorithm:
                 traceback.print_exc()
                 raise
     
-    def run(self) -> GAResults:
+    def save_checkpoint(self, checkpoint_dir: str, generation: int, current_run_time: float = 0.0) -> None:
+        """
+        Save current GA state to checkpoint for resuming later.
+        
+        Args:
+            checkpoint_dir: Directory to save checkpoint
+            generation: Current generation number
+            current_run_time: Time elapsed in current run (for cumulative tracking)
+        """
+        import os
+        os.makedirs(checkpoint_dir, exist_ok=True)
+        
+        checkpoint_data = {
+            'generation': generation,
+            'population': [json.loads(chrom.to_json()) for chrom in self.population],
+            'fitness_scores': [
+                {
+                    'balance': f.balance,
+                    'duration': f.duration,
+                    'strategy_diversity': f.strategy_diversity,
+                    'overall_fitness': f.overall_fitness
+                } for f in self.fitness_scores
+            ],
+            'best_individual': json.loads(self.best_individual.to_json()) if self.best_individual else None,
+            'best_fitness': {
+                'balance': self.best_fitness.balance,
+                'duration': self.best_fitness.duration,
+                'strategy_diversity': self.best_fitness.strategy_diversity,
+                'overall_fitness': self.best_fitness.overall_fitness
+            } if self.best_fitness else None,
+            'generation_stats': [stats.to_dict() for stats in self.generation_stats],
+            'generations_without_improvement': self.generations_without_improvement,
+            'last_best_fitness': self.last_best_fitness,
+            'previous_total_time': self.previous_total_time + current_run_time,
+            'config': {
+                'population_size': self.config.population_size,
+                'generations': self.config.generations,
+                'crossover_rate': self.config.crossover_rate,
+                'mutation_rate': self.config.mutation_rate,
+                'mutation_strength': self.config.mutation_strength,
+                'tournament_size': self.config.tournament_size,
+                'elite_size': self.config.elite_size,
+                'fitness_alpha': self.config.fitness_alpha,
+                'fitness_beta': self.config.fitness_beta,
+                'fitness_gamma': self.config.fitness_gamma,
+            }
+        }
+        
+        checkpoint_file = os.path.join(checkpoint_dir, f"checkpoint_gen_{generation}.json")
+        with open(checkpoint_file, 'w') as f:
+            json.dump(checkpoint_data, f, indent=2)
+        
+        # Also save latest checkpoint
+        latest_checkpoint = os.path.join(checkpoint_dir, "checkpoint_latest.json")
+        with open(latest_checkpoint, 'w') as f:
+            json.dump(checkpoint_data, f, indent=2)
+        
+        if self.config.verbose:
+            print(f"Checkpoint saved: {checkpoint_file}")
+    
+    @classmethod
+    def load_checkpoint(cls, checkpoint_file: str) -> 'MicroRTSGeneticAlgorithm':
+        """
+        Load GA state from checkpoint.
+        
+        Args:
+            checkpoint_file: Path to checkpoint JSON file
+            
+        Returns:
+            MicroRTSGeneticAlgorithm instance restored from checkpoint
+        """
+        with open(checkpoint_file, 'r') as f:
+            checkpoint_data = json.load(f)
+        
+        # Recreate config
+        config_dict = checkpoint_data['config']
+        config = GAConfig(**config_dict)
+        
+        # Create GA instance
+        ga = cls(config)
+        
+        # Restore population
+        from .ga_chromosome import MicroRTSChromosome
+        ga.population = [
+            MicroRTSChromosome.from_json(json.dumps(chrom_data))
+            for chrom_data in checkpoint_data['population']
+        ]
+        
+        # Restore fitness scores
+        from .ga_fitness_evaluator import FitnessComponents
+        ga.fitness_scores = [
+            FitnessComponents(**f_data)
+            for f_data in checkpoint_data['fitness_scores']
+        ]
+        
+        # Restore best individual
+        if checkpoint_data['best_individual']:
+            ga.best_individual = MicroRTSChromosome.from_json(
+                json.dumps(checkpoint_data['best_individual'])
+            )
+        
+        # Restore best fitness
+        if checkpoint_data['best_fitness']:
+            ga.best_fitness = FitnessComponents(**checkpoint_data['best_fitness'])
+        
+        # Restore generation stats
+        ga.generation_stats = [
+            GenerationStats(**stats_data)
+            for stats_data in checkpoint_data['generation_stats']
+        ]
+        
+        # Restore convergence tracking
+        ga.generations_without_improvement = checkpoint_data['generations_without_improvement']
+        ga.last_best_fitness = checkpoint_data['last_best_fitness']
+        ga.current_generation = checkpoint_data['generation']
+        
+        # Restore previous total time if available
+        if 'previous_total_time' in checkpoint_data:
+            ga.previous_total_time = checkpoint_data['previous_total_time']
+        elif ga.generation_stats:
+            # Estimate from generation stats
+            ga.previous_total_time = sum(stats.time_elapsed for stats in ga.generation_stats)
+        
+        return ga
+    
+    def run(self, checkpoint_dir: str = None, resume_from: str = None) -> GAResults:
         """
         Run the complete genetic algorithm.
+        
+        Args:
+            checkpoint_dir: Directory to save checkpoints (optional)
+            resume_from: Path to checkpoint file to resume from (optional)
         
         Returns:
             GAResults containing the best individual and evolution statistics
         """
-        if self.config.verbose:
-            print("=" * 60)
-            print("MICRO RTS GENETIC ALGORITHM")
-            print("=" * 60)
-            print(f"Population size: {self.config.population_size}")
-            print(f"Generations: {self.config.generations}")
-            print(f"Crossover rate: {self.config.crossover_rate}")
-            print(f"Mutation rate: {self.config.mutation_rate}")
-            print(f"Fitness weights: α={self.config.fitness_alpha}, β={self.config.fitness_beta}, γ={self.config.fitness_gamma}")
-            print("=" * 60)
-        
         start_time = time.time()
         
-        # Initialize population
-        self.initialize_population()
+        # Resume from checkpoint if provided
+        if resume_from:
+            if self.config.verbose:
+                print("=" * 60)
+                print("RESUMING FROM CHECKPOINT")
+                print("=" * 60)
+                print(f"Loading checkpoint: {resume_from}")
+            
+            # Load checkpoint
+            resumed_ga = self.load_checkpoint(resume_from)
+            # Copy state to self
+            self.population = resumed_ga.population
+            self.fitness_scores = resumed_ga.fitness_scores
+            self.best_individual = resumed_ga.best_individual
+            self.best_fitness = resumed_ga.best_fitness
+            self.generation_stats = resumed_ga.generation_stats
+            self.generations_without_improvement = resumed_ga.generations_without_improvement
+            self.last_best_fitness = resumed_ga.last_best_fitness
+            self.previous_total_time = resumed_ga.previous_total_time
+            generation = resumed_ga.current_generation + 1  # Start from next generation
+            
+            if self.config.verbose:
+                print(f"Resuming from generation {generation}")
+                print(f"Best fitness so far: {self.best_fitness.overall_fitness:.4f}")
+                print("=" * 60)
+        else:
+            if self.config.verbose:
+                print("=" * 60)
+                print("MICRO RTS GENETIC ALGORITHM")
+                print("=" * 60)
+                print(f"Population size: {self.config.population_size}")
+                print(f"Generations: {self.config.generations}")
+                print(f"Crossover rate: {self.config.crossover_rate}")
+                print(f"Mutation rate: {self.config.mutation_rate}")
+                print(f"Fitness weights: α={self.config.fitness_alpha}, β={self.config.fitness_beta}, γ={self.config.fitness_gamma}")
+                print("=" * 60)
+            
+            # Initialize population
+            self.initialize_population()
+            generation = 0
         
-        # Run evolution
-        generation = 0
+        # Set checkpoint directory
+        if checkpoint_dir:
+            self.checkpoint_dir = checkpoint_dir
+            import os
+            os.makedirs(checkpoint_dir, exist_ok=True)
+        
         convergence_generation = None
         
         while not self.should_terminate(generation):
+            gen_start_time = time.time()
             self.evolve_generation(generation)
+            gen_elapsed = time.time() - gen_start_time
+            
+            # Save checkpoint after each generation
+            if self.checkpoint_dir:
+                self.save_checkpoint(self.checkpoint_dir, generation, current_run_time=time.time() - start_time)
             
             # Check for convergence
             if convergence_generation is None and self.generations_without_improvement >= 3:
@@ -402,7 +573,7 @@ class MicroRTSGeneticAlgorithm:
             
             generation += 1
         
-        total_time = time.time() - start_time
+        total_time = self.previous_total_time + (time.time() - start_time)
         
         if self.config.verbose:
             print("\n" + "=" * 60)

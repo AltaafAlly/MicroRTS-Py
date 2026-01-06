@@ -10,6 +10,7 @@ This folder contains scripts for running the Genetic Algorithm (GA) on a compute
 ### Manual Test Scripts
 - **`run_ga_manual.sh`** - Shell script to run the GA manually (for testing or local execution)
 - **`sync_to_cluster.sh`** - Script to sync code to the cluster using rsync
+- **`auto_resubmit_ga.sh`** - (Optional) Auto-resubmit wrapper for automatic resubmission (requires screen/tmux)
 
 ## Usage
 
@@ -56,9 +57,21 @@ export GA_EXPERIMENT_NAME="my_test"
 
 #### Basic Submission
 ```bash
-# Submit with default parameters (30 generations, 30 population)
+# Submit with default parameters (20 generations, 25 population)
 sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
 ```
+
+#### Resuming After Time Limit
+When the job hits the 3-day time limit, simply resubmit with the same command:
+```bash
+# Job finished at generation 12? Just resubmit:
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
+
+# The script automatically detects and resumes from the latest checkpoint
+# No need to find or specify the checkpoint file - it's automatic!
+```
+
+**Note**: The checkpoint detection and resume happens automatically - you just need to resubmit the job manually when it finishes.
 
 #### Custom Parameters via Environment Variables
 ```bash
@@ -83,23 +96,23 @@ GA_GENERATIONS=50 GA_POPULATION=40 GA_EXPERIMENT_NAME="custom_run" \
 ## Configuration
 
 ### Default Parameters
-- **Generations**: 30
-- **Population**: 30
-- **Games per evaluation**: 3 (per AI pair, so 18 total games per chromosome)
-- **Max steps per game**: 1000
+- **Generations**: 20
+- **Population**: 25
+- **Games per evaluation**: 5 (per AI pair, so 75 total games per chromosome with 15 pairs)
+- **Max steps per game**: 5000
 - **Experiment name**: "cluster_long_run"
-- **Time limit**: 24 hours
+- **Time limit**: 3 days (with automatic checkpoint/resume)
 - **Partition**: bigbatch
 
 ### Customizing Parameters
 
 You can customize the GA run by setting environment variables:
 
-- `GA_GENERATIONS` - Number of generations to evolve (default: 30)
-- `GA_POPULATION` - Population size (default: 30)
+- `GA_GENERATIONS` - Number of generations to evolve (default: 20)
+- `GA_POPULATION` - Population size (default: 25)
 - `GA_EXPERIMENT_NAME` - Name for the experiment (default: "cluster_long_run")
-- `GA_GAMES_PER_EVAL` - Games per AI pair (default: 3, total = 3 × 6 pairs = 18 games per chromosome)
-- `GA_MAX_STEPS` - Maximum steps per game (default: 1000)
+- `GA_GAMES_PER_EVAL` - Games per AI pair (default: 5, total = 5 × 15 pairs = 75 games per chromosome)
+- `GA_MAX_STEPS` - Maximum steps per game (default: 5000)
 
 ### Example: Long Evolution Run
 ```bash
@@ -121,10 +134,79 @@ Results are saved to:
 │   └── ${EXPERIMENT_NAME}_${TIMESTAMP}/
 │       ├── ga_config.json
 │       ├── ga_results.json
-│       └── best_microrts_config.json
+│       ├── best_microrts_config.json
+│       └── checkpoints/
+│           ├── checkpoint_gen_0.json
+│           ├── checkpoint_gen_1.json
+│           ├── ...
+│           └── checkpoint_latest.json  # Always points to most recent
 ├── ga_stdout.log
 └── microrts.jar (rebuilt for cluster)
 ```
+
+## Checkpointing and Resuming
+
+The GA automatically saves checkpoints after each generation, allowing you to resume long-running jobs that hit time limits.
+
+### How It Works
+
+1. **Automatic Checkpointing**: After each generation, the GA saves:
+   - Current population
+   - Fitness scores
+   - Best individual found so far
+   - Generation statistics
+   - Convergence tracking state
+
+2. **Semi-Automatic Resume**: 
+   - **You need to**: Manually resubmit the job after it hits the time limit
+   - **The script automatically**: 
+     - Searches for the latest checkpoint (`checkpoint_latest.json`)
+     - Resumes from that checkpoint if found
+     - Continues evolution from the next generation
+   - **No manual work needed**: You don't need to find or specify the checkpoint file
+
+3. **Manual Resume** (if you want more control): You can also resume manually:
+   ```bash
+   python run_ga.py --resume-from /path/to/checkpoint_latest.json [other args...]
+   ```
+
+### Benefits
+
+- **No Lost Progress**: If a job hits the 3-day time limit, simply resubmit and it continues
+- **Incremental Evolution**: Run for 3 days, analyze results, then continue if needed
+- **Fault Tolerance**: If the job crashes, you can resume from the last checkpoint
+
+### Example: Resuming After Time Limit
+
+**Simple workflow - just resubmit when the job finishes:**
+
+```bash
+# Step 1: Submit initial job
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
+# Job ID: 12345
+
+# Step 2: Wait for job to finish (check status)
+squeue -u $USER
+# or check the output log: tail -f /home-mscluster/${USER}/job_logs/ga_evolution_*.out
+
+# Step 3: When job finishes (hits time limit), simply resubmit:
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
+# Job ID: 12346
+# The script automatically:
+# 1. Detects checkpoint_latest.json from the previous run
+# 2. Loads the population and state
+# 3. Continues from the next generation
+# 4. No manual work needed - checkpoint detection is automatic!
+
+# Step 4: If it hits time limit again, repeat step 3
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
+# Continues seamlessly...
+```
+
+**What happens:**
+- ✅ **Automatic**: Checkpoint detection and resume (you don't need to find the checkpoint file)
+- ⚠️ **Manual**: You need to resubmit the job using `sbatch` after it stops (simple one-line command)
+- ✅ **Automatic**: The script finds the latest checkpoint and resumes seamlessly
 
 ## Monitoring
 
@@ -186,14 +268,33 @@ The scripts are configured for the mscluster environment with:
 - Reduce max_steps
 
 ### Time Limit Exceeded
-- Reduce generations or population
-- Reduce games_per_eval
-- Increase time limit in sbatch script: `#SBATCH --time=48:00:00`
+- **Automatic Resume**: The batch script automatically detects and resumes from checkpoints. Simply resubmit the same job:
+  ```bash
+  sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
+  ```
+  The script will automatically find the latest checkpoint and resume from where it left off.
+- **Manual Resume**: If you need to resume manually:
+  ```bash
+  # Find the latest checkpoint
+  LATEST_CHECKPOINT=$(find ~/Research/MicroRTS-Py-Research/experiments -name "checkpoint_latest.json" | sort -r | head -1)
+  
+  # Resume from checkpoint
+  cd ~/Research/MicroRTS-Py-Research/scripts/GA\ and\ MAP-Elites
+  python run_ga.py \
+      --resume-from "$LATEST_CHECKPOINT" \
+      --generations 20 \
+      --population 25 \
+      --experiment-name "cluster_long_run" \
+      --use-working-evaluator \
+      --verbose
+  ```
+- **Alternative**: Reduce generations or population, reduce games_per_eval, or increase time limit in sbatch script: `#SBATCH --time=3-00:00:00` (3 days)
 
 ## Performance Tips
 
-1. **For faster runs**: Reduce `GA_GAMES_PER_EVAL` to 2 (12 total games per chromosome)
-2. **For better results**: Increase `GA_GAMES_PER_EVAL` to 5 (30 total games per chromosome)
-3. **For exploration**: Increase `GA_POPULATION` to 50+
-4. **For convergence**: Increase `GA_GENERATIONS` to 50+
+1. **For faster runs**: Reduce `GA_GAMES_PER_EVAL` to 3 (45 total games per chromosome)
+2. **For better results**: Increase `GA_GAMES_PER_EVAL` to 7-10 (105-150 total games per chromosome)
+3. **For exploration**: Increase `GA_POPULATION` to 40+
+4. **For convergence**: Increase `GA_GENERATIONS` to 30+
+5. **With checkpointing**: You can now afford higher `GA_GAMES_PER_EVAL` values (5-10) since jobs can resume after time limits
 
