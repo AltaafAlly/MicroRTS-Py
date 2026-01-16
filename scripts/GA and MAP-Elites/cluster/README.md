@@ -95,10 +95,51 @@ GA_GENERATIONS=50 GA_POPULATION=40 GA_EXPERIMENT_NAME="custom_run" \
 
 ## Configuration
 
+### Balance Improvements (v2)
+
+**New in this version**: Improved balance calculation with stricter penalties for imbalanced matchups.
+
+#### Key Improvements:
+1. **Increased Balance Weight**: Default `alpha` (balance weight) increased from 0.4 to 0.5
+   - Balance now has 50% weight (up from 40%)
+   - Duration and diversity weights reduced to 25% each (from 30%)
+
+2. **Strict Balance Penalties**: Exponential penalties for very imbalanced matchups
+   - Matchups with >70-30 split get exponential penalty: `(imbalance/0.5)^2`
+   - Matchups with 60-40 to 70-30 split get quadratic penalty: `(imbalance/0.5)^1.5`
+   - This means a single 5-0-0 matchup will significantly hurt the overall balance score
+
+3. **Geometric Mean Aggregation**: Balance scores now use geometric mean instead of arithmetic mean
+   - Geometric mean is more sensitive to very low scores
+   - One very imbalanced matchup (e.g., 5-0-0) will significantly lower the overall score
+   - This encourages the GA to find configurations where ALL matchups are reasonably balanced
+
+4. **Minimum Balance Threshold**: Configurable threshold (default 0.2)
+   - If any matchup is below the threshold, an additional penalty is applied
+   - This prevents configurations with extremely imbalanced matchups from surviving
+
+#### Example Impact:
+**Before** (arithmetic mean, linear penalty):
+- Matchups: [0.0, 0.0, 0.3, 0.5, 0.7, ...] (some very imbalanced)
+- Average balance: ~0.28 (low but not terrible)
+
+**After** (geometric mean, exponential penalty):
+- Same matchups: [0.0, 0.0, 0.15, 0.3, 0.5, ...] (penalized more)
+- Geometric mean balance: ~0.15 (much lower, encourages improvement)
+- GA will evolve away from configurations with any very imbalanced matchups
+
+#### Expected Results:
+- **Higher balance scores**: Target 0.4-0.5+ (up from 0.28)
+- **Fewer one-sided matchups**: Expect fewer 5-0-0 or 0-5-0 results
+- **More balanced overall**: Even if some matchups favor one side, they should be closer to 60-40 or better
+- **Slower convergence**: May take more generations to find good solutions, but solutions will be more balanced
+
 ### Default Parameters
 - **Generations**: 20
 - **Population**: 25
-- **Games per evaluation**: 5 (per AI pair, so 75 total games per chromosome with 15 pairs)
+- **AI agents**: 8 AIs (workerRushAI, lightRushAI, coacAI, naiveMCTSAI, droplet, mixedBot, passiveAI, randomBiasedAI)
+- **Games per evaluation**: 5 (per AI pair, so 140 total games per chromosome with 28 pairs)
+- **Note**: Expanded from 6 to 8 AIs (87% more matchups) for better balance evaluation
 - **Max steps per game**: 5000
 - **Experiment name**: "cluster_long_run"
 - **Time limit**: 3 days (with automatic checkpoint/resume)
@@ -111,7 +152,7 @@ You can customize the GA run by setting environment variables:
 - `GA_GENERATIONS` - Number of generations to evolve (default: 20)
 - `GA_POPULATION` - Population size (default: 25)
 - `GA_EXPERIMENT_NAME` - Name for the experiment (default: "cluster_long_run")
-- `GA_GAMES_PER_EVAL` - Games per AI pair (default: 5, total = 5 × 15 pairs = 75 games per chromosome)
+- `GA_GAMES_PER_EVAL` - Games per AI pair (default: 5, total = 5 × 28 pairs = 140 games per chromosome with 8 AIs)
 - `GA_MAX_STEPS` - Maximum steps per game (default: 5000)
 
 ### Example: Long Evolution Run
@@ -292,8 +333,8 @@ The scripts are configured for the mscluster environment with:
 
 ## Performance Tips
 
-1. **For faster runs**: Reduce `GA_GAMES_PER_EVAL` to 3 (45 total games per chromosome)
-2. **For better results**: Increase `GA_GAMES_PER_EVAL` to 7-10 (105-150 total games per chromosome)
+1. **For faster runs**: Reduce `GA_GAMES_PER_EVAL` to 3 (84 total games per chromosome with 8 AIs, 28 pairs)
+2. **For better results**: Increase `GA_GAMES_PER_EVAL` to 7-10 (196-280 total games per chromosome with 8 AIs)
 3. **For exploration**: Increase `GA_POPULATION` to 40+
 4. **For convergence**: Increase `GA_GENERATIONS` to 30+
 5. **With checkpointing**: You can now afford higher `GA_GAMES_PER_EVAL` values (5-10) since jobs can resume after time limits

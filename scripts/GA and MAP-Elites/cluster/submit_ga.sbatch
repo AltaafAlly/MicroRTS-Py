@@ -125,9 +125,12 @@ echo "Population: ${POPULATION}"
 echo "Experiment Name: ${EXPERIMENT_NAME}"
 echo "Games per evaluation: ${GAMES_PER_EVAL}"
 echo "Max steps per game: ${MAX_STEPS}"
-echo "Round-robin pairs: 15 (all AIs vs each other)"
-echo "Total games per chromosome: $((15 * ${GAMES_PER_EVAL}))"
-echo "Total games per generation: $((15 * ${GAMES_PER_EVAL} * ${POPULATION}))"
+# Calculate number of pairs dynamically (8 AIs = 28 pairs, n choose 2)
+NUM_AIS=8
+NUM_PAIRS=$((NUM_AIS * (NUM_AIS - 1) / 2))
+echo "Round-robin pairs: ${NUM_PAIRS} (all AIs vs each other)"
+echo "Total games per chromosome: $((NUM_PAIRS * ${GAMES_PER_EVAL}))"
+echo "Total games per generation: $((NUM_PAIRS * ${GAMES_PER_EVAL} * ${POPULATION}))"
 echo ""
 
 # Create experiment output directory in the run directory
@@ -135,9 +138,22 @@ EXPERIMENT_OUTPUT_DIR="${RUN_DIR}/experiments"
 mkdir -p "${EXPERIMENT_OUTPUT_DIR}"
 
 # Checkpoint directory for resuming
-# Look for latest checkpoint in any experiment directory
+# Look for latest checkpoint in ALL previous run directories (not just current one)
 # This allows automatic resume when you resubmit the job after a time limit
-LATEST_CHECKPOINT=$(find ${EXPERIMENT_OUTPUT_DIR} -name "checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
+# Search in the parent ga_runs directory to find checkpoints from previous jobs
+GA_RUNS_BASE="/home-mscluster/${USER}/ga_runs"
+echo "Searching for checkpoints in: ${GA_RUNS_BASE}"
+
+# Find all checkpoints, prefer those matching the experiment name
+# First try to find checkpoint from same experiment name
+EXPERIMENT_CHECKPOINT=$(find ${GA_RUNS_BASE} -path "*/experiments/${EXPERIMENT_NAME}_*/checkpoints/checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
+
+# If not found, use any latest checkpoint
+if [ -z "${EXPERIMENT_CHECKPOINT}" ]; then
+    LATEST_CHECKPOINT=$(find ${GA_RUNS_BASE} -name "checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
+else
+    LATEST_CHECKPOINT="${EXPERIMENT_CHECKPOINT}"
+fi
 
 # Check if we should resume from checkpoint
 RESUME_FLAG=""
@@ -146,11 +162,15 @@ if [ -n "${LATEST_CHECKPOINT}" ] && [ -f "${LATEST_CHECKPOINT}" ]; then
     echo "AUTOMATIC RESUME DETECTED"
     echo "=========================================="
     echo "Found checkpoint: ${LATEST_CHECKPOINT}"
+    echo "Checkpoint modified: $(stat -c %y "${LATEST_CHECKPOINT}" 2>/dev/null || echo 'unknown')"
     echo "Resuming from checkpoint automatically..."
     echo "=========================================="
     RESUME_FLAG="--resume-from ${LATEST_CHECKPOINT}"
 else
     echo "No checkpoint found. Starting new run."
+    if [ -n "${EXPERIMENT_CHECKPOINT}" ]; then
+        echo "Note: Found checkpoint but it may be from a different experiment."
+    fi
 fi
 
 # Run GA

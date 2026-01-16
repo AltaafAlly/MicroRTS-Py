@@ -27,40 +27,60 @@ class WorkingGAEvaluator(FitnessEvaluator):
     """
     
     def __init__(self, 
-                 alpha: float = 0.4,
-                 beta: float = 0.3,
-                 gamma: float = 0.3,
+                 alpha: float = 0.5,  # Increased from 0.4 to prioritize balance
+                 beta: float = 0.25,  # Reduced from 0.3
+                 gamma: float = 0.25,  # Reduced from 0.3
                  max_steps: int = 1000,
                  map_path: str = "maps/8x8/basesWorkers8x8A.xml",
                  games_per_eval: int = 3,
-                 ai_agents: List[str] = None):
+                 ai_agents: List[str] = None,
+                 min_balance_threshold: float = 0.2,  # Minimum acceptable balance per matchup
+                 use_strict_balance: bool = True):  # Use stricter balance penalties
         """
         Initialize the working GA evaluator.
         
         Args:
-            alpha: Balance weight
+            alpha: Balance weight (increased default to prioritize balance)
             beta: Duration weight
             gamma: Strategy diversity weight
             max_steps: Maximum steps per game
             map_path: Path to map file
             games_per_eval: Number of games per evaluation
             ai_agents: List of AI agents to use for testing
+            min_balance_threshold: Minimum acceptable balance score per matchup (0.0-1.0)
+            use_strict_balance: If True, apply exponential penalty for very imbalanced matchups
         """
         super().__init__(alpha, beta, gamma)
         
         self.max_steps = max_steps
         self.map_path = map_path
         self.games_per_eval = games_per_eval
+        self.min_balance_threshold = min_balance_threshold
+        self.use_strict_balance = use_strict_balance
         
         # Baseline AI agents for comprehensive evaluation
-        # Covers diverse strategies: rush, balanced, defensive
+        # Covers diverse strategies: rush, balanced, defensive, competition AIs
+        # Expanded to 8 AIs for better balance evaluation (28 pairs vs. 15 pairs = 87% more matchups)
+        # This provides better balance assessment while keeping evaluation time reasonable
         self.baseline_ais = [
+            # Rush strategies (early aggression)
             "workerRushAI",      # Classic worker rush - early aggression
             "lightRushAI",       # Light unit rush - fast military units
+            
+            # Balanced/Strategic AIs
             "coacAI",            # Strong balanced AI - good overall strategy
             "naiveMCTSAI",       # Monte Carlo Tree Search - planning-based
+            "droplet",           # Strong competition AI - strategic gameplay (added for diversity)
+            "mixedBot",          # Mixed strategy bot - adaptive gameplay (added for diversity)
+            
+            # Defensive/Economic
             "passiveAI",         # Defensive baseline - economic focus
+            
+            # Baseline/Random
             "randomBiasedAI",    # Biased random - slightly strategic randomness
+            # Note: Excluded "randomAI" to keep at 8 AIs (28 pairs = 140 games/chromosome with 5 games/pair)
+            # Note: Excluded "guidedRojoA3N" (causes issues), "rojo", "izanagi", "tiamat", "mayari" 
+            #       to keep evaluation time manageable. Can be added if needed via ai_agents parameter.
         ]
         
         # Use provided AI agents or default to baseline
@@ -68,7 +88,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
         
         # Round-robin: All AI agents play against each other
         # This gives maximum variety and comprehensive balance assessment
-        # With 6 AIs, this creates 6 choose 2 = 15 unique pairs
+        # With 8 AIs, this creates 8 choose 2 = 28 unique pairs (vs. 15 with 6 AIs)
         self.comprehensive_test_pairs = self._generate_round_robin_pairs(self.baseline_ais)
         
         # Create temporary directory for UTT files
@@ -154,10 +174,11 @@ class WorkingGAEvaluator(FitnessEvaluator):
         Test a UTT file using round-robin tournament approach.
         
         All baseline AI agents play against each other in a round-robin format.
-        With 6 AIs, this creates 15 unique matchups, providing:
+        With 8 AIs, this creates 28 unique matchups (vs. 15 with 6 AIs), providing:
         - Maximum variety in strategy matchups
         - Comprehensive balance assessment across all AI types
         - Better diversity measurement
+        - More statistical coverage for balance evaluation
         """
         
         match_results = []
@@ -193,6 +214,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         print(f"        Result: {result.get('left_wins', 0)}-{result.get('right_wins', 0)}-{result.get('draws', 0)} (L-W-D)")
                 else:
                     print(f"        Warning: No result returned for {ai1} vs {ai2}")
+                    # Continue - don't fail entire evaluation if one matchup fails
                 
                 # Clean up
                 if microrts_utt_path.exists():
@@ -200,8 +222,10 @@ class WorkingGAEvaluator(FitnessEvaluator):
                     
             except Exception as e:
                 print(f"        Error testing {ai1} vs {ai2}: {e}")
+                print(f"        Skipping this matchup and continuing evaluation...")
                 import traceback
                 traceback.print_exc()
+                # Continue evaluation even if one AI pair fails (some AIs may not be available)
                 continue
         
         print(f"    Completed {len(match_results)}/{len(test_pairs)} match pairs successfully")
@@ -300,7 +324,31 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         win_ratio = result.get('left_wins', 0) / total_games
                         # Perfect balance is 0.5 (50-50 win rate)
                         # Score: 1.0 for perfect balance, 0.0 for completely one-sided
-                        balance = 1.0 - abs(win_ratio - 0.5) * 2
+                        imbalance = abs(win_ratio - 0.5)  # 0.0 = perfect, 0.5 = completely one-sided
+                        base_balance = 1.0 - imbalance * 2
+                        
+                        # Apply stricter penalty for very imbalanced matchups
+                        if self.use_strict_balance:
+                            # Exponential penalty: very imbalanced matchups get penalized more
+                            # This encourages the GA to avoid configurations with any highly imbalanced matchups
+                            if imbalance > 0.35:  # More than 70-30 split
+                                # Apply exponential penalty: (imbalance/0.5)^2
+                                # Example: 0.4 imbalance (80-20) -> penalty factor of 0.64
+                                penalty_factor = (imbalance / 0.5) ** 2
+                                balance = base_balance * penalty_factor
+                            elif imbalance > 0.25:  # Between 50-30 and 70-30
+                                # Apply quadratic penalty: (imbalance/0.5)^1.5
+                                penalty_factor = (imbalance / 0.5) ** 1.5
+                                balance = base_balance * penalty_factor
+                            else:
+                                # Relatively balanced (within 60-40), use base score
+                                balance = base_balance
+                        else:
+                            # Original linear penalty
+                            balance = base_balance
+                        
+                        # Ensure balance is non-negative
+                        balance = max(0.0, balance)
                     balance_scores.append(balance)
                     
                     # Duration: Since we don't have step count in results, we estimate based on outcomes
@@ -327,8 +375,32 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         # No games completed - very poor duration
                         duration_scores.append(0.2)
         
-        # Calculate average balance across all matchups
-        balance = sum(balance_scores) / len(balance_scores) if balance_scores else 0.5
+        # Calculate balance using geometric mean to penalize very imbalanced matchups more
+        # Geometric mean gives lower weight to outliers, so a single very imbalanced matchup
+        # will significantly lower the overall balance score
+        if balance_scores:
+            if self.use_strict_balance:
+                # Use geometric mean: more sensitive to very low scores
+                # This means one very imbalanced matchup (e.g., 5-0-0) will significantly hurt the score
+                import math
+                # Avoid zero values (add small epsilon) and use geometric mean
+                balanced_scores = [max(0.001, score) for score in balance_scores]  # Avoid log(0)
+                log_sum = sum(math.log(score) for score in balanced_scores)
+                geometric_mean = math.exp(log_sum / len(balanced_scores))
+                
+                # Also check minimum threshold: penalize if any matchup is below threshold
+                min_balance = min(balance_scores)
+                if min_balance < self.min_balance_threshold:
+                    # Apply penalty: reduce overall balance if any matchup is very imbalanced
+                    penalty = (min_balance / self.min_balance_threshold) ** 0.5  # Square root penalty
+                    balance = geometric_mean * penalty
+                else:
+                    balance = geometric_mean
+            else:
+                # Simple arithmetic mean (original approach)
+                balance = sum(balance_scores) / len(balance_scores)
+        else:
+            balance = 0.5
         
         # Calculate average duration score
         duration = sum(duration_scores) / len(duration_scores) if duration_scores else 0.5

@@ -37,9 +37,9 @@ class GAConfig:
     elite_size: int = 2
     
     # Fitness evaluation settings
-    fitness_alpha: float = 0.4  # Balance weight
-    fitness_beta: float = 0.3   # Duration weight
-    fitness_gamma: float = 0.3  # Strategy diversity weight
+    fitness_alpha: float = 0.5  # Balance weight (increased to prioritize balance)
+    fitness_beta: float = 0.25  # Duration weight (reduced from 0.3)
+    fitness_gamma: float = 0.25  # Strategy diversity weight (reduced from 0.3)
     target_duration: int = 200
     duration_tolerance: int = 50
     
