@@ -188,7 +188,8 @@ public class FEStatePane extends JPanel {
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_ALTERNATING),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),
-                                      loadCustomUTT("utts/CustomDemoUTT.json")   
+                                      loadCustomUTT("utts/CustomDemoUTT.json"),
+                                      loadCustomUTT("utts/test_utt_1771357799112631595.json")
     };
     public static String unitTypeTableNames[] = {"Original-Both",
                                    "Original-Alternating",
@@ -199,7 +200,8 @@ public class FEStatePane extends JPanel {
                                    "Nondeterministic-Both",
                                    "Nondeterministic-Alternating",
                                    "Nondeterministic-Random",
-                                   "Custom Demo UTT"};
+                                   "Custom Demo UTT",
+                                   "GA Test UTT"};
 
     JFormattedTextField mapWidthField;
     JFormattedTextField mapHeightField;

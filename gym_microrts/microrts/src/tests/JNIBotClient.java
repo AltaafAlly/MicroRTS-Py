@@ -36,6 +36,8 @@ public class JNIBotClient {
     public AI ai2;
     PhysicalGameState pgs;
     GameState gs;
+    /** Saved terminal game state before last reset(); used for end-of-game unit composition. */
+    GameState lastTerminalGs;
     UnitTypeTable utt;
     UnitTypeTable uttP0;
     UnitTypeTable uttP1;
@@ -215,6 +217,14 @@ public class JNIBotClient {
     }
 
     /**
+     * Game state at the end of the last completed game (before reset).
+     * Use this when capturing unit composition after a game ends.
+     */
+    public GameState getLastTerminalGameState() {
+        return lastTerminalGs;
+    }
+
+    /**
      * Change UTT configuration at runtime during a game.
      * This method allows changing the Unit Type Table for one or both players
      * without restarting the game or modifying the Java environment.
@@ -287,6 +297,7 @@ public class JNIBotClient {
      * @throws Exception
      */
     public Response reset(int player) throws Exception {
+        lastTerminalGs = gs;
         ai1 = ai1.clone();
         ai1.reset();
         ai2 = ai2.clone();

@@ -44,6 +44,9 @@ Examples:
   # Comprehensive run with results saving
   python run_ga.py --config comprehensive --save-results --experiment-name "balance_test"
   
+  # Single matchup (RangedRush vs WorkerRush) to see fitness change over generations
+  python run_ga.py --single-matchup --use-working-evaluator --generations 5
+  
   # List previous experiments
   python run_ga.py --list-experiments
   
@@ -86,6 +89,8 @@ Examples:
     microrts_group.add_argument('--max-steps', type=int, help='Maximum steps per game')
     microrts_group.add_argument('--map-path', type=str, help='Path to map file')
     microrts_group.add_argument('--games-per-eval', type=int, help='Games per chromosome evaluation')
+    microrts_group.add_argument('--single-matchup', action='store_true',
+                                help='Use only RangedRush vs WorkerRush (1 pair), deterministic rush that plays')
     
     # Termination criteria
     termination_group = parser.add_argument_group('Termination Criteria')
@@ -183,6 +188,8 @@ def create_ga_config(args) -> GAConfig:
         config.use_real_microrts = False
     if args.use_working_evaluator:
         config.use_working_evaluator = True
+    if getattr(args, 'single_matchup', False):
+        config.ai_agents = ["rangedRushAI", "workerRushAI"]  # RangedRush plays actively, often weaker than Light
     if args.max_steps is not None:
         config.max_steps = args.max_steps
     if args.map_path is not None:
@@ -373,6 +380,8 @@ def main():
     # Run genetic algorithm
     try:
         print("Starting MicroRTS Genetic Algorithm...")
+        if config.ai_agents and len(config.ai_agents) == 2:
+            print(f"  Single matchup mode: {config.ai_agents[0]} vs {config.ai_agents[1]}")
         results, experiment_dir = run_genetic_algorithm(
             config, experiment_manager, args.experiment_name,
             checkpoint_dir=args.checkpoint_dir,

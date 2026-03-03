@@ -482,10 +482,41 @@ class MicroRTSChromosome:
         config = json.loads(json_str)
         
         unit_params = {}
-        for unit_type, params_dict in config['unitTypes'].items():
-            unit_params[unit_type] = UnitParameters.from_dict(params_dict)
+        # Handle both list and dict formats for unitTypes
+        # to_microrts_config() produces a list, but we need a dict for internal use
+        if isinstance(config['unitTypes'], list):
+            # Convert list format to dict format
+            for unit_config in config['unitTypes']:
+                unit_type = unit_config['name']
+                # Extract only the parameter fields (exclude ID, name, and capability flags)
+                param_dict = {
+                    'cost': unit_config.get('cost', 1),
+                    'produceTime': unit_config.get('produceTime', 1),
+                    'hp': unit_config.get('hp', 1),
+                    'minDamage': unit_config.get('minDamage', 1),
+                    'maxDamage': unit_config.get('maxDamage', 1),
+                    'attackRange': unit_config.get('attackRange', 1),
+                    'attackTime': unit_config.get('attackTime', 1),
+                    'moveTime': unit_config.get('moveTime', 1),
+                    'sightRadius': unit_config.get('sightRadius', 1),
+                    'harvestTime': unit_config.get('harvestTime', 1),
+                    'returnTime': unit_config.get('returnTime', 1),
+                    'harvestAmount': unit_config.get('harvestAmount', 1)
+                }
+                unit_params[unit_type] = UnitParameters.from_dict(param_dict)
+        else:
+            # Dict format (legacy or direct format)
+            for unit_type, params_dict in config['unitTypes'].items():
+                unit_params[unit_type] = UnitParameters.from_dict(params_dict)
         
-        global_params = GlobalParameters.from_dict(config['globalParameters'])
+        # Handle globalParameters - to_microrts_config() stores it at top level
+        if 'globalParameters' in config and isinstance(config['globalParameters'], dict):
+            global_params = GlobalParameters.from_dict(config['globalParameters'])
+        else:
+            # to_microrts_config() stores moveConflictResolutionStrategy at top level
+            global_params = GlobalParameters(
+                moveConflictResolutionStrategy=config.get('moveConflictResolutionStrategy', 1)
+            )
         
         return cls(unit_params, global_params)
     

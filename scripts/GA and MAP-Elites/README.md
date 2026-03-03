@@ -1,6 +1,8 @@
-# MicroRTS Genetic Algorithm - Complete Rewrite
+# MicroRTS Genetic Algorithm
 
-This project implements a **completely redesigned genetic algorithm** for evolving balanced MicroRTS game configurations. The new system focuses on evolving **unit parameters and global game settings** to achieve fair, engaging, and strategically diverse gameplay through AI vs AI evaluation.
+Evolves **unit parameters and global game settings** for balanced MicroRTS via AI vs AI evaluation. Run locally with `run_ga.py` or `run_ga_local_test.py`; cluster submission is in **cluster/**.
+
+**Where things live:** scripts → **run_ga.py** / **run_ga_local_test.py** · code → **core/** · docs → **docs/** · local logs → **ga_run_logs/** · cluster outputs → **cluster_outputs/**
 
 ## 🆕 What's New
 
@@ -30,29 +32,49 @@ python run_ga.py --generations 15 --population 30 --mutation-rate 0.15
 python run_ga.py --config comprehensive --save-results --experiment-name "balance_test"
 ```
 
-### Example Usage
+### Local test (short run, logs + CSVs)
 ```bash
-python example_usage.py
+python run_ga_local_test.py
 ```
 
-## 📁 Project Structure
+## 📁 Project structure
 
 ```
 GA and MAP-Elites/
-├── core/                           # New GA framework
-│   ├── ga_chromosome.py           # Chromosome representation and encoding
-│   ├── ga_fitness_evaluator.py    # Three-component fitness evaluation
-│   ├── ga_genetic_operators.py    # Selection, crossover, mutation operators
-│   ├── ga_algorithm.py            # Main GA implementation
-│   ├── ga_config_manager.py       # Configuration management and conversion
-│   └── __init__.py
-├── run_ga.py                      # Main runner script
-├── example_usage.py               # Example usage and demonstrations
-├── experiments/                   # Experiment results storage
-└── README.md                      # This file
+├── README.md                 # This file — start here
+├── run_ga.py                 # Main CLI: run GA (local or configs)
+├── run_ga_local_test.py      # Local test: short run, logs to ga_run_logs/
+├── test_utt.py               # Test a single UTT file with AI vs AI
+├── hybrid_ga.py              # Hybrid GA utilities
+├── utt_manager.py            # UTT file helpers
+│
+├── core/                     # GA framework (chromosomes, fitness, evolution)
+│   ├── ga_chromosome.py      # Chromosome & unit parameter encoding
+│   ├── ga_fitness_evaluator.py
+│   ├── ga_working_evaluator.py   # Real MicroRTS evaluation (UTT runs)
+│   ├── ga_genetic_operators.py
+│   ├── ga_algorithm.py      # Main GA loop
+│   ├── ga_config_manager.py
+│   └── ga_utt_validator.py
+│
+├── docs/                     # Extra documentation (design, balance, UTT)
+│   └── README.md             # Index of docs
+│
+├── ga_run_logs/              # Local test outputs (run_ga_local_test.py)
+│   ├── run_history.csv       # One row per run
+│   ├── runs/<run_id>/        # One folder per run (CSVs, plot, match_outputs/)
+│   └── archive/              # Old flat logs moved here
+│
+├── cluster/                  # Submit GA jobs to cluster (SLURM)
+│   ├── submit_ga.sbatch
+│   └── README.md
+│
+├── cluster_outputs/          # Outputs from cluster jobs (ga_runs/, Raw outputs/)
+├── experiments/              # Experiment results (saved configs, checkpoints)
+└── .gitignore
 ```
 
-**Note**: This is a clean implementation with all legacy files removed. The new system is completely self-contained and ready to use.
+**Entry points:** `run_ga.py` (full runs), `run_ga_local_test.py` (quick local test with logs).
 
 ## 🧬 Core Components (New Implementation)
 

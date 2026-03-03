@@ -5,6 +5,7 @@ import ai.core.AI;
 import ai.jni.Response;
 import ai.jni.Responses;
 import ai.reward.RewardFunctionInterface;
+import rts.GameState;
 import rts.units.UnitTypeTable;
 
 /**
@@ -407,6 +408,19 @@ public class JNIGridnetVecClient {
                 botClients[i].close();
             }
         }
+    }
+
+    /**
+     * Return the game state at the end of the last completed game for bot client i
+     * (before reset). Use for end-of-game unit composition when capture_composition is true.
+     * @param i bot client index (usually 0 for single-env runs)
+     * @return terminal GameState or null
+     */
+    public GameState getLastTerminalGameState(int i) {
+        if (botClients != null && i >= 0 && i < botClients.length) {
+            return botClients[i].getLastTerminalGameState();
+        }
+        return null;
     }
 
     /**

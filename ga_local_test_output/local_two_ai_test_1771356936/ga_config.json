@@ -1,0 +1,42 @@
+{
+  "population_size": 6,
+  "generations": 20,
+  "crossover_rate": 0.7,
+  "mutation_rate": 0.15,
+  "mutation_strength": 0.1,
+  "tournament_size": 3,
+  "elite_size": 2,
+  "fitness_alpha": 0.7,
+  "fitness_beta": 0.15,
+  "fitness_gamma": 0.15,
+  "target_duration": 200,
+  "duration_tolerance": 50,
+  "use_real_microrts": true,
+  "use_working_evaluator": true,
+  "max_steps": 20000,
+  "map_path": "maps/8x8/basesWorkers8x8A.xml",
+  "map_paths": [
+    "maps/8x8/basesWorkers8x8A.xml",
+    "maps/8x8/basesWorkers8x8B.xml",
+    "maps/8x8/basesWorkers8x8C.xml",
+    "maps/8x8/basesWorkers8x8D.xml",
+    "maps/8x8/basesWorkers8x8E.xml",
+    "maps/8x8/basesWorkers8x8F.xml",
+    "maps/8x8/basesWorkers8x8G.xml",
+    "maps/8x8/basesWorkers8x8H.xml",
+    "maps/8x8/basesWorkers8x8I.xml",
+    "maps/8x8/basesWorkers8x8J.xml",
+    "maps/8x8/basesWorkers8x8K.xml",
+    "maps/8x8/basesWorkers8x8L.xml"
+  ],
+  "games_per_evaluation": 1,
+  "ai_agents": [
+    "rangedRushAI",
+    "workerRushAI"
+  ],
+  "max_generations_without_improvement": 20,
+  "target_fitness": 0.9,
+  "verbose": true,
+  "save_best_individuals": true,
+  "save_generation_stats": true
+}

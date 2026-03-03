@@ -106,14 +106,13 @@ echo "JAR size: $(du -h gym_microrts/microrts/microrts.jar 2>/dev/null || echo '
 echo "Lib directory: $(ls -la gym_microrts/microrts/lib/ 2>/dev/null | wc -l) files"
 
 # GA Configuration
-# Optimized for 3-day time limit with checkpointing/resume capability
-# With checkpointing, we can afford more games per evaluation for better fitness estimates
+# Optimized for single-matchup debugging (LightRush vs WorkerRush) with checkpointing/resume capability
 # You can customize these parameters or pass them via environment variables
 GENERATIONS=${GA_GENERATIONS:-20}
 POPULATION=${GA_POPULATION:-25}
 EXPERIMENT_NAME=${GA_EXPERIMENT_NAME:-"cluster_long_run"}
-GAMES_PER_EVAL=${GA_GAMES_PER_EVAL:-5}  # Increased from 3 to 5 for better fitness accuracy
-MAX_STEPS=${GA_MAX_STEPS:-5000}
+GAMES_PER_EVAL=${GA_GAMES_PER_EVAL:-5}  # 5 games/pair for decent statistics
+MAX_STEPS=${GA_MAX_STEPS:-10000}
 MUTATION_RATE=${GA_MUTATION_RATE:-0.15}
 MAX_GENERATIONS_WITHOUT_IMPROVEMENT=${GA_MAX_GEN_NO_IMPROVE:-8}
 
@@ -125,10 +124,10 @@ echo "Population: ${POPULATION}"
 echo "Experiment Name: ${EXPERIMENT_NAME}"
 echo "Games per evaluation: ${GAMES_PER_EVAL}"
 echo "Max steps per game: ${MAX_STEPS}"
-# Calculate number of pairs dynamically (8 AIs = 28 pairs, n choose 2)
-NUM_AIS=8
+# Calculate number of pairs dynamically (2 AIs = 1 pair, n choose 2)
+NUM_AIS=2
 NUM_PAIRS=$((NUM_AIS * (NUM_AIS - 1) / 2))
-echo "Round-robin pairs: ${NUM_PAIRS} (all AIs vs each other)"
+echo "Round-robin pairs: ${NUM_PAIRS} (LightRush vs WorkerRush only)"
 echo "Total games per chromosome: $((NUM_PAIRS * ${GAMES_PER_EVAL}))"
 echo "Total games per generation: $((NUM_PAIRS * ${GAMES_PER_EVAL} * ${POPULATION}))"
 echo ""
@@ -138,40 +137,10 @@ EXPERIMENT_OUTPUT_DIR="${RUN_DIR}/experiments"
 mkdir -p "${EXPERIMENT_OUTPUT_DIR}"
 
 # Checkpoint directory for resuming
-# Look for latest checkpoint in ALL previous run directories (not just current one)
-# This allows automatic resume when you resubmit the job after a time limit
-# Search in the parent ga_runs directory to find checkpoints from previous jobs
-GA_RUNS_BASE="/home-mscluster/${USER}/ga_runs"
-echo "Searching for checkpoints in: ${GA_RUNS_BASE}"
-
-# Find all checkpoints, prefer those matching the experiment name
-# First try to find checkpoint from same experiment name
-EXPERIMENT_CHECKPOINT=$(find ${GA_RUNS_BASE} -path "*/experiments/${EXPERIMENT_NAME}_*/checkpoints/checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
-
-# If not found, use any latest checkpoint
-if [ -z "${EXPERIMENT_CHECKPOINT}" ]; then
-    LATEST_CHECKPOINT=$(find ${GA_RUNS_BASE} -name "checkpoint_latest.json" -type f 2>/dev/null | sort -r | head -1)
-else
-    LATEST_CHECKPOINT="${EXPERIMENT_CHECKPOINT}"
-fi
-
-# Check if we should resume from checkpoint
+# For this single-matchup debugging run, we always want a **fresh run**,
+# even if old checkpoints exist elsewhere under ga_runs.
+echo "Checkpoint resume is DISABLED for this job (starting fresh run)."
 RESUME_FLAG=""
-if [ -n "${LATEST_CHECKPOINT}" ] && [ -f "${LATEST_CHECKPOINT}" ]; then
-    echo "=========================================="
-    echo "AUTOMATIC RESUME DETECTED"
-    echo "=========================================="
-    echo "Found checkpoint: ${LATEST_CHECKPOINT}"
-    echo "Checkpoint modified: $(stat -c %y "${LATEST_CHECKPOINT}" 2>/dev/null || echo 'unknown')"
-    echo "Resuming from checkpoint automatically..."
-    echo "=========================================="
-    RESUME_FLAG="--resume-from ${LATEST_CHECKPOINT}"
-else
-    echo "No checkpoint found. Starting new run."
-    if [ -n "${EXPERIMENT_CHECKPOINT}" ]; then
-        echo "Note: Found checkpoint but it may be from a different experiment."
-    fi
-fi
 
 # Run GA
 echo "Starting Genetic Algorithm at $(date)"
@@ -196,6 +165,7 @@ python run_ga.py \
     --mutation-rate ${MUTATION_RATE} \
     --max-generations-without-improvement ${MAX_GENERATIONS_WITHOUT_IMPROVEMENT} \
     --checkpoint-dir "" \
+    --single-matchup \
     ${RESUME_FLAG} \
     --verbose \
     2>&1 | tee "${RUN_DIR}/ga_stdout.log"

@@ -1,4 +1,5 @@
 import os
+import sys
 import csv
 from pathlib import Path
 from typing import Dict, Tuple, List, Optional, Union
@@ -11,9 +12,99 @@ from gym_microrts import microrts_ai
 # Single-file launcher: set your match parameters here and run this file.
 
 
+def run_games_with_env(env: MicroRTSBotVecEnv, games: int) -> Dict[str, int]:
+    """
+    Run N games with an existing MicroRTSBotVecEnv (same format as run_pair result).
+    Does not create or close the env. Use this to reuse one env across many UTT evaluations.
+    """
+    h, w = env.height, env.width
+    L = 7 * h * w
+    dummy_actions = [[[0] * L, [0] * L]]
+    results = {"left_wins": 0, "right_wins": 0, "draws": 0}
+    total_steps_this_run = 0
+    _ = env.reset()
+    for _g in range(games):
+        steps = 0
+        while True:
+            obs, rewards, done, info = env.step(dummy_actions)
+            steps += 1
+            if isinstance(done, (list, tuple, np.ndarray)):
+                done_flag = bool(done[0]) if len(done) else False
+            else:
+                done_flag = bool(done)
+            if not done_flag:
+                continue
+            total_steps_this_run += steps
+            inf = info[0] if isinstance(info, list) and info else info
+            winner = "draw"
+            if isinstance(inf, dict) and "raw_rewards" in inf:
+                rr = inf["raw_rewards"]
+                rr = rr.tolist() if hasattr(rr, "tolist") else rr
+                if rr and rr[0] > 0:
+                    winner = "left"
+                elif rr and rr[0] < 0:
+                    winner = "right"
+            if winner == "left":
+                results["left_wins"] += 1
+            elif winner == "right":
+                results["right_wins"] += 1
+            else:
+                results["draws"] += 1
+            _ = env.reset()
+            break
+    results["_total_steps"] = total_steps_this_run
+    return results
+
+
 def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: int,
              autobuild: bool, utt_json: Optional[str],
-             utt_json_p0: Optional[str] = None, utt_json_p1: Optional[str] = None) -> Dict[str, int]:
+             utt_json_p0: Optional[str] = None, utt_json_p1: Optional[str] = None,
+             capture_composition: bool = False,
+             capture_snapshots: bool = False,
+             snapshot_interval: int = 50) -> Dict:
+    """
+    Run games between ai_left (P0) and ai_right (P1).
+    If capture_composition is True, end-of-game unit composition is captured and returned.
+    If capture_snapshots is True, game-state snapshots (last game only) are captured every snapshot_interval steps.
+    """
+    # Optional: import game_state_utils for composition and/or snapshots
+    get_unit_composition_dict = None
+    composition_to_string = None
+    get_game_snapshot_text = None
+    if capture_composition or capture_snapshots:
+        _run_match_dir = os.path.dirname(os.path.abspath(__file__))
+        _scripts_dir = os.path.dirname(_run_match_dir)
+        _project_root = os.path.dirname(_scripts_dir) if _scripts_dir else os.getcwd()
+        _last_import_err = None
+        for _candidate in [
+            os.path.join(_run_match_dir, "runtime_utt_change"),
+            os.path.join(os.getcwd(), "scripts", "Running Simulations", "runtime_utt_change"),
+            os.path.join(_project_root, "scripts", "Running Simulations", "runtime_utt_change"),
+        ]:
+            if not os.path.isdir(_candidate):
+                continue
+            try:
+                if _candidate not in sys.path:
+                    sys.path.insert(0, _candidate)
+                from game_state_utils import get_unit_composition_dict as _guc, composition_to_string as _cts
+                get_unit_composition_dict = _guc
+                composition_to_string = _cts
+                try:
+                    from game_state_utils import get_game_snapshot_text as _gst
+                    get_game_snapshot_text = _gst
+                except ImportError:
+                    pass
+                break
+            except Exception as _e:
+                _last_import_err = _e
+                continue
+        if get_unit_composition_dict is None:
+            capture_composition = False
+        if get_game_snapshot_text is None:
+            capture_snapshots = False
+        if (capture_composition or capture_snapshots) and get_unit_composition_dict is None and get_game_snapshot_text is None:
+            print(f"  [run_pair] Could not import game_state_utils: {_last_import_err}", file=sys.stderr)
+
     a1 = getattr(microrts_ai, ai_left)
     a2 = getattr(microrts_ai, ai_right)
 
@@ -34,17 +125,38 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     dummy_actions = [[[0] * L, [0] * L]]
 
     results = {"left_wins": 0, "right_wins": 0, "draws": 0}
+    total_steps_this_run = 0
+    per_game_compositions = []
+    game_snapshots = []  # (step, text) for last game when capture_snapshots
     for _g in range(games):
         steps = 0
+        is_last_game = (_g == games - 1)
+        if is_last_game and capture_snapshots and get_game_snapshot_text:
+            try:
+                game_snapshots.append((0, get_game_snapshot_text(env, ai_left, ai_right)))
+            except Exception:
+                pass
         while True:
             obs, rewards, done, info = env.step(dummy_actions)
             steps += 1
+            if is_last_game and capture_snapshots and get_game_snapshot_text and steps <= max_steps:
+                if steps % snapshot_interval == 0 or steps == 1:
+                    try:
+                        game_snapshots.append((steps, get_game_snapshot_text(env, ai_left, ai_right)))
+                    except Exception:
+                        pass
             if isinstance(done, (list, tuple, np.ndarray)):
                 done_flag = bool(done[0]) if len(done) else False
             else:
                 done_flag = bool(done)
             if not done_flag:
                 continue
+            total_steps_this_run += steps
+            if is_last_game and capture_snapshots and get_game_snapshot_text and (not game_snapshots or game_snapshots[-1][0] != steps):
+                try:
+                    game_snapshots.append((steps, get_game_snapshot_text(env, ai_left, ai_right)))
+                except Exception:
+                    pass
             inf = info[0] if isinstance(info, list) and info else info
             winner = "draw"
             if isinstance(inf, dict) and "raw_rewards" in inf:
@@ -60,12 +172,34 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
                 results["right_wins"] += 1
             else:
                 results["draws"] += 1
+
+            # Capture end-of-game unit composition (before reset) when requested
+            if capture_composition and get_unit_composition_dict and composition_to_string:
+                comp = get_unit_composition_dict(env)
+                if comp:
+                    comp["winner"] = winner
+                    comp["game_index"] = _g
+                    per_game_compositions.append(comp)
+
             _ = env.reset()
             break
+    results["_game_snapshots"] = game_snapshots
 
-    # Important: do NOT call env.close() here because it shuts down the JVM,
-    # and JPype cannot restart it in the same Python process. Instead, close
-    # the underlying client only and keep the JVM alive for subsequent pairs.
+    # Sanity check: if total_steps is 0, games did not run (possible reuse/cache bug)
+    if total_steps_this_run == 0:
+        print("        WARNING: total steps this run = 0 (games may not have run)", file=sys.stderr)
+    results["_total_steps"] = total_steps_this_run
+    if capture_composition:
+        if per_game_compositions and composition_to_string:
+            results["_per_game_compositions"] = per_game_compositions
+            last = per_game_compositions[-1]
+            results["_left_unit_composition"] = composition_to_string(last.get("left", {}))
+            results["_right_unit_composition"] = composition_to_string(last.get("right", {}))
+        else:
+            results["_left_unit_composition"] = "N/A"
+            results["_right_unit_composition"] = "N/A"
+            print("  (Unit composition N/A: rebuild gym_microrts/microrts JAR for end-of-game capture)", file=sys.stderr)
+
     try:
         env.vec_client.close()
     except Exception:

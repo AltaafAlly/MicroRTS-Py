@@ -8,8 +8,8 @@ game configurations to achieve balanced, engaging, and strategically diverse gam
 import random
 import time
 import json
-from typing import List, Dict, Any, Optional, Tuple
-from dataclasses import dataclass, field
+from typing import List, Dict, Any, Optional, Tuple, Sequence
+from dataclasses import dataclass, field, fields
 import numpy as np
 
 from .ga_chromosome import MicroRTSChromosome, create_population
@@ -37,9 +37,10 @@ class GAConfig:
     elite_size: int = 2
     
     # Fitness evaluation settings
-    fitness_alpha: float = 0.5  # Balance weight (increased to prioritize balance)
-    fitness_beta: float = 0.25  # Duration weight (reduced from 0.3)
-    fitness_gamma: float = 0.25  # Strategy diversity weight (reduced from 0.3)
+    # Slightly prioritize balance, but still leave room for duration/diversity
+    fitness_alpha: float = 0.4  # Balance weight
+    fitness_beta: float = 0.3   # Duration weight
+    fitness_gamma: float = 0.3  # Strategy diversity weight
     target_duration: int = 200
     duration_tolerance: int = 50
     
@@ -47,12 +48,21 @@ class GAConfig:
     use_real_microrts: bool = True  # Use real MicroRTS instead of simulation
     use_working_evaluator: bool = False  # Use working UTT evaluator
     max_steps: int = 300  # Max steps per game
-    map_path: str = "maps/8x8/basesWorkers8x8L.xml"  # Map to use
+    map_path: str = "maps/8x8/basesWorkers8x8A.xml"  # Map to use
+    map_paths: Optional[Sequence[str]] = None  # If set, eval on each map and aggregate for balance signal (e.g. 8-7)
     games_per_evaluation: int = 3  # Games per chromosome evaluation
+    # Optional: restrict to specific AIs (e.g. ["lightRushAI", "workerRushAI"] for single-matchup debugging)
+    ai_agents: Optional[Sequence[str]] = None
+    # If True, evaluator forces nondeterministic UTT (random move conflicts + damage ranges) so 1 map gives balance signal
+    use_nondeterministic: bool = False
+    # If True, run (ai1,ai2) and (ai2,ai1) and aggregate; balanced UTT gives ~60-60 so balance > 0
+    use_both_orderings: bool = False
     
     # Termination criteria
     max_generations_without_improvement: int = 5
     target_fitness: float = 0.9
+    # Diversity: every N generations replace one non-elite individual with a random chromosome (0 = off)
+    random_immigrant_interval: int = 0
     
     # Output settings
     verbose: bool = True
@@ -101,6 +111,9 @@ class GAResults:
     total_generations: int
     total_time: float
     convergence_generation: Optional[int] = None
+    # Optional: per-generation best UTT for diffing and match log for CSV export
+    best_individual_per_generation: Optional[List[Tuple[int, MicroRTSChromosome]]] = None
+    run_match_log: Optional[List[Dict[str, Any]]] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -142,6 +155,9 @@ class MicroRTSGeneticAlgorithm:
         self.config = config or GAConfig()
         
         # Initialize components
+        ai_list = list(self.config.ai_agents) if self.config.ai_agents else None
+        use_nondet = getattr(self.config, "use_nondeterministic", False)
+        use_both = getattr(self.config, "use_both_orderings", False)
         if self.config.use_working_evaluator:
             # Use the working UTT evaluator that bypasses the UTT loading bug
             self.fitness_evaluator = WorkingGAEvaluator(
@@ -150,7 +166,13 @@ class MicroRTSGeneticAlgorithm:
                 gamma=self.config.fitness_gamma,
                 max_steps=self.config.max_steps,
                 map_path=self.config.map_path,
-                games_per_eval=self.config.games_per_evaluation
+                map_paths=getattr(self.config, "map_paths", None),
+                games_per_eval=self.config.games_per_evaluation,
+                ai_agents=ai_list,
+                use_nondeterministic=use_nondet,
+                use_both_orderings=use_both,
+                target_duration=getattr(self.config, "target_duration", 500),
+                duration_tolerance=getattr(self.config, "duration_tolerance", 400),
             )
         elif self.config.use_real_microrts:
             # Real MicroRTS evaluator removed due to UTT loading bug
@@ -162,7 +184,13 @@ class MicroRTSGeneticAlgorithm:
                 gamma=self.config.fitness_gamma,
                 max_steps=self.config.max_steps,
                 map_path=self.config.map_path,
-                games_per_eval=self.config.games_per_evaluation
+                map_paths=getattr(self.config, "map_paths", None),
+                games_per_eval=self.config.games_per_evaluation,
+                ai_agents=ai_list,
+                use_nondeterministic=use_nondet,
+                use_both_orderings=use_both,
+                target_duration=getattr(self.config, "target_duration", 500),
+                duration_tolerance=getattr(self.config, "duration_tolerance", 400),
             )
         else:
             self.fitness_evaluator = FitnessEvaluator(
@@ -195,6 +223,10 @@ class MicroRTSGeneticAlgorithm:
         self.checkpoint_dir = None
         self.current_generation = 0
         self.previous_total_time = 0.0  # Track time from previous runs when resuming
+        
+        # Optional: for run_ga_local_test CSV/plot (best UTT per gen, match log)
+        self.best_individual_history: List[Tuple[int, MicroRTSChromosome]] = []
+        self.run_match_log: List[Dict[str, Any]] = []
     
     def initialize_population(self) -> None:
         """Initialize the population with random chromosomes."""
@@ -335,11 +367,20 @@ class MicroRTSGeneticAlgorithm:
         
         start_time = time.time()
         
+        # Optional: let evaluator log each match (generation, individual_index, ai1, ai2, wins, unit composition, etc.)
+        # Set on evaluator every time (evaluator doesn't define these by default, so hasattr would be False)
+        setattr(self.fitness_evaluator, "run_match_log", self.run_match_log)
+        setattr(self.fitness_evaluator, "run_match_log_generation", generation)
+        setattr(self.fitness_evaluator, "run_match_capture_composition", True)
+        setattr(self.fitness_evaluator, "run_match_capture_snapshots", True)
         # Evaluate current population
         self.evaluate_population()
         
         # Update best individual
         self.update_best_individual()
+        # Record best UTT this generation for later UTT-diff and CSV
+        if self.best_individual is not None:
+            self.best_individual_history.append((generation, self.best_individual.copy()))
         
         # Calculate generation statistics
         stats = self.calculate_generation_stats(generation, start_time)
@@ -347,11 +388,21 @@ class MicroRTSGeneticAlgorithm:
         
         # Print generation summary
         if self.config.verbose:
+            # Count how many individuals are balanced (60-60) so evolution over time is visible
+            n_balanced = sum(1 for s in self.fitness_scores if s.balance >= 0.99)
+            pop_size = len(self.fitness_scores)
+            # One-line progress so evolution over time is visible when scanning the log
+            print(f"  Gen {generation}: best={stats.best_fitness:.3f} avg={stats.avg_fitness:.3f} balanced={n_balanced}/{pop_size}")
             print(f"Best fitness: {stats.best_fitness:.4f}")
             print(f"Average fitness: {stats.avg_fitness:.4f}")
+            print(f"Balanced (60-60): {n_balanced}/{pop_size}  ← population evolving toward balance")
             print(f"Population diversity: {stats.population_diversity:.4f}")
             print(f"Convergence rate: {stats.convergence_rate:.4f}")
             print(f"Time elapsed: {stats.time_elapsed:.2f}s")
+            # Single-matchup mode: show fitness for the one pair so we can see if it changes over generations
+            if self.config.ai_agents and len(self.config.ai_agents) == 2 and self.best_fitness:
+                a1, a2 = self.config.ai_agents[0], self.config.ai_agents[1]
+                print(f"  Single matchup ({a1} vs {a2}): balance={self.best_fitness.balance:.4f}, duration={self.best_fitness.duration:.4f}, diversity={self.best_fitness.strategy_diversity:.4f}, overall={self.best_fitness.overall_fitness:.4f}")
         
         # Evolve population (except for last generation)
         if not self.should_terminate(generation + 1):
@@ -365,6 +416,14 @@ class MicroRTSGeneticAlgorithm:
                     self.config.crossover_rate,
                     self.config.mutation_rate
                 )
+                # Optional: inject a random immigrant every N generations to escape plateaus
+                interval = getattr(self.config, 'random_immigrant_interval', 0)
+                if interval > 0 and (generation + 1) % interval == 0 and len(self.population) > getattr(self.config, 'elite_size', 2):
+                    elite_sz = self.config.elite_size
+                    idx = random.randint(elite_sz, len(self.population) - 1)
+                    self.population[idx] = create_population(1)[0]
+                    if self.config.verbose:
+                        print(f"  Injected random immigrant at index {idx}")
             except Exception as e:
                 print(f"❌ Error during evolution: {e}")
                 import traceback
@@ -416,6 +475,16 @@ class MicroRTSGeneticAlgorithm:
                 'fitness_alpha': self.config.fitness_alpha,
                 'fitness_beta': self.config.fitness_beta,
                 'fitness_gamma': self.config.fitness_gamma,
+                # Persist evaluator / environment settings so resume behaves identically
+                'use_real_microrts': self.config.use_real_microrts,
+                'use_working_evaluator': getattr(self.config, 'use_working_evaluator', False),
+                'max_steps': self.config.max_steps,
+                'map_path': self.config.map_path,
+                'map_paths': list(self.config.map_paths) if getattr(self.config, 'map_paths', None) else None,
+                'games_per_evaluation': self.config.games_per_evaluation,
+                'ai_agents': list(self.config.ai_agents) if self.config.ai_agents else None,
+                'max_generations_without_improvement': self.config.max_generations_without_improvement,
+                'random_immigrant_interval': getattr(self.config, 'random_immigrant_interval', 0),
             }
         }
         
@@ -445,8 +514,10 @@ class MicroRTSGeneticAlgorithm:
         with open(checkpoint_file, 'r') as f:
             checkpoint_data = json.load(f)
         
-        # Recreate config
+        # Recreate config (only pass known GAConfig fields for backward compatibility)
         config_dict = checkpoint_data['config']
+        valid_keys = {f.name for f in fields(GAConfig)}
+        config_dict = {k: v for k, v in config_dict.items() if k in valid_keys}
         config = GAConfig(**config_dict)
         
         # Create GA instance
@@ -549,6 +620,9 @@ class MicroRTSGeneticAlgorithm:
             # Initialize population
             self.initialize_population()
             generation = 0
+            # Clear optional logs for this run (UTT history + match log for CSV/plot)
+            self.run_match_log = []
+            self.best_individual_history = []
         
         # Set checkpoint directory
         if checkpoint_dir:
@@ -588,6 +662,10 @@ class MicroRTSGeneticAlgorithm:
                 print(f"Best diversity: {self.best_fitness.strategy_diversity:.4f}")
             print("=" * 60)
         
+        # Release cached env in working evaluator so JVM/client can be closed
+        if hasattr(self.fitness_evaluator, "close_cached_env"):
+            self.fitness_evaluator.close_cached_env()
+        
         # Create results
         results = GAResults(
             best_individual=self.best_individual or self.population[0],
@@ -595,7 +673,9 @@ class MicroRTSGeneticAlgorithm:
             generation_stats=self.generation_stats,
             total_generations=generation,
             total_time=total_time,
-            convergence_generation=convergence_generation
+            convergence_generation=convergence_generation,
+            best_individual_per_generation=self.best_individual_history if self.best_individual_history else None,
+            run_match_log=self.run_match_log if self.run_match_log else None,
         )
         
         return results

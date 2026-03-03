@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Optional: uncomment to ignore large output folders
+ga_run_logs/archive/
+# cluster_outputs/

@@ -109,6 +109,8 @@ class MicroRTSGridModeVecEnv:
             registerDomain("ai")
             jars = [
                 "microrts.jar",
+                "lib/jdom.jar",
+                "lib/minimal-json-0.9.4.jar",
                 "lib/bots/Coac.jar",
                 "lib/bots/Droplet.jar",
                 "lib/bots/GRojoA3N.jar",
@@ -138,7 +140,8 @@ class MicroRTSGridModeVecEnv:
             with open(utt_path_p1, "r") as f:
                 self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
         else:
-            self.real_utt_p1 = self.real_utt_p0  # Use P0's UTT if P1 not specified
+            # Asymmetric: P1 uses default UTT when only P0 has custom UTT (e.g. GA evolved vs baseline)
+            self.real_utt_p1 = UnitTypeTable()
             
         # For backward compatibility, use P0's UTT as the main one
         self.real_utt = self.real_utt_p0
@@ -439,6 +442,8 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
             registerDomain("rts")
             jars = [
                 "microrts.jar",
+                "lib/jdom.jar",
+                "lib/minimal-json-0.9.4.jar",
                 "lib/bots/Coac.jar",
                 "lib/bots/Droplet.jar",
                 "lib/bots/GRojoA3N.jar",
@@ -468,7 +473,8 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
             with open(utt_path_p1, "r") as f:
                 self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
         else:
-            self.real_utt_p1 = self.real_utt_p0  # Use P0's UTT if P1 not specified
+            # Asymmetric: P1 uses default UTT when only P0 has custom UTT (e.g. GA evolved vs baseline)
+            self.real_utt_p1 = UnitTypeTable()
             
         # For backward compatibility, use P0's UTT as the main one
         self.real_utt = self.real_utt_p0

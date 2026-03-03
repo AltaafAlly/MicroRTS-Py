@@ -471,6 +471,7 @@ if step < max_steps - 50:  # Leave buffer before game end
 
 ## Files in This Directory
 
+- **`game_state_utils.py`** - Shared helpers to read **unit composition** from the current game state (`get_unit_composition_dict`, `get_game_snapshot_text`). Used by `test_single_matchup.py`-style outputs and by the GA match runner to capture end-of-game unit counts (why a side won or lost). The GA writes these into `ga_run_logs/runs/<run_id>/match_outputs/`.
 - **`test_single_matchup_quiet.py`** - Minimal test script with quiet output
 - **`test_single_matchup.py`** - Detailed test script with game snapshots and verification
 - **`runtime_utt_change_example.py`** - Comprehensive example with UTT verification and comparison
