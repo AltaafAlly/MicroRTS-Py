@@ -1,0 +1,73 @@
+Job started on mscluster75.ms.wits.ac.za at Fri Jan 16 11:52:49 AM SAST 2026
+SLURM_JOBID=173706
+Initializing conda...
+Conda initialized
+Available conda environments:
+
+# conda environments:
+#
+base                   /home-mscluster/aally/miniconda3
+microrts               /home-mscluster/aally/miniconda3/envs/microrts
+microrts39             /home-mscluster/aally/miniconda3/envs/microrts39
+
+Activating microrts39 environment...
+Activated conda environment: microrts39
+Conda prefix: /home-mscluster/aally/miniconda3/envs/microrts39
+Python path: /home-mscluster/aally/miniconda3/envs/microrts39/bin/python
+Python version: Python 3.9.23
+Java home: /home-mscluster/aally/miniconda3/envs/microrts39/lib/jvm
+Java path: /home-mscluster/aally/miniconda3/envs/microrts39/lib/jvm/bin/java
+Java version: openjdk version "17.0.15-internal" 2025-04-15
+Java classpath: /home-mscluster/aally/Research/MicroRTS-Py-Research/gym_microrts/microrts/microrts.jar:/home-mscluster/aally/Research/MicroRTS-Py-Research/gym_microrts/microrts/lib/*
+Working directory: /home-mscluster/aally/ga_runs/ga_experiment_20260116_115435_job173706
+Repository: /home-mscluster/aally/Research/MicroRTS-Py-Research
+Rebuilding microrts.jar for cluster Java version...
+Compiling Java sources with cluster Java version...
+Creating fat JAR with all dependencies...
+Extracting existing microrts.jar...
+Extracting library dependencies...
+  Extracting hamcrest-all-1.3.jar...
+  Extracting jdom.jar...
+  Extracting junit-4.12.jar...
+  Extracting minimal-json-0.9.4.jar...
+  Extracting weka.jar...
+Creating new microrts.jar...
+Built microrts.jar successfully for cluster Java version
+JAR size: 940K
+Verifying MicroRTS setup...
+JAR file exists: -rw-r--r-- 1 aally Gaally 960661 Jan 16 11:56 gym_microrts/microrts/microrts.jar
+JAR size: 940K	gym_microrts/microrts/microrts.jar
+Lib directory: 9 files
+
+GA Configuration:
+==================
+Generations: 20
+Population: 25
+Experiment Name: cluster_long_run
+Games per evaluation: 5
+Max steps per game: 5000
+Round-robin pairs: 28 (all AIs vs each other)
+Total games per chromosome: 140
+Total games per generation: 3500
+
+Searching for checkpoints in: /home-mscluster/aally/ga_runs
+==========================================
+AUTOMATIC RESUME DETECTED
+==========================================
+Found checkpoint: /home-mscluster/aally/ga_runs/ga_experiment_20260114_135210_job173459/experiments/cluster_long_run_1768391702/checkpoints/checkpoint_latest.json
+Checkpoint modified: 2026-01-16 06:15:24.125006392 +0200
+Resuming from checkpoint automatically...
+==========================================
+Starting Genetic Algorithm at Fri Jan 16 11:57:08 AM SAST 2026
+Working directory: /home-mscluster/aally/Research/MicroRTS-Py-Research
+Python version: Python 3.9.23
+Java version: openjdk version "17.0.15-internal" 2025-04-15
+Starting MicroRTS Genetic Algorithm...
+Created temporary UTT directory: /tmp/ga_utts_8hkr_0ky
+============================================================
+RESUMING FROM CHECKPOINT
+============================================================
+Loading checkpoint: /home-mscluster/aally/ga_runs/ga_experiment_20260114_135210_job173459/experiments/cluster_long_run_1768391702/checkpoints/checkpoint_latest.json
+⚠️  Real MicroRTS evaluator has UTT loading bug. Using working evaluator instead.
+Created temporary UTT directory: /tmp/ga_utts_dp4asfq3
+❌ Error during evolution: 'list' object has no attribute 'items'

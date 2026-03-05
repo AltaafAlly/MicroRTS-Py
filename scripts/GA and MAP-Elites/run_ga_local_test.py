@@ -18,7 +18,6 @@ Or from this directory (scripts/GA and MAP-Elites):
 
 import csv
 import os
-import shutil
 import sys
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
@@ -71,9 +70,9 @@ class Tee:
         self.file.close()
 
 # Local test config: reduced for faster debug runs (increase for real tuning)
-GENERATIONS = 10
-POPULATION = 5
-GAMES_PER_EVAL = 10    # games per map (per ordering); higher for more stable balance/duration estimates
+GENERATIONS = int(os.getenv("GA_GENERATIONS", "10"))
+POPULATION = int(os.getenv("GA_POPULATION", "5"))
+GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "10"))  # games per map (per ordering); higher for more stable balance/duration estimates
 MAX_STEPS = 20000    # Cap per game; decisive games end in hundreds, draws stop here
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ga_local_test_output")
 EXPERIMENT_NAME = "local_two_ai_test"
@@ -355,21 +354,16 @@ def _write_local_run_logs(
     print(f"    This run (all in one folder): {run_dir}")
     print(f"      generations.csv, utt_changes.csv, best_utt_summary.txt, best_utt_config.json,")
     print(f"      matches.csv, fitness_plot.png, match_outputs/, utt_log/ (every gen/ind UTT)")
-    # Copy the main .log file for this run into the run folder for easy inspection
-    log_src = os.path.join(GA_RUN_LOGS_DIR, f"{experiment_name}_{ts}.log")
-    if os.path.exists(log_src):
-        log_dest = os.path.join(run_dir, f"{experiment_name}_{ts}.log")
-        try:
-            shutil.copy2(log_src, log_dest)
-        except Exception as e:
-            print(f"  (Could not copy run log into run folder: {e})")
     return run_dir
 
 
 def main():
     os.makedirs(GA_RUN_LOGS_DIR, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_path = os.path.join(GA_RUN_LOGS_DIR, f"{EXPERIMENT_NAME}_{ts}.log")
+    run_id = f"{EXPERIMENT_NAME}_{ts}"
+    run_dir = os.path.join(GA_RUN_LOGS_DIR, "runs", run_id)
+    os.makedirs(run_dir, exist_ok=True)
+    log_path = os.path.join(run_dir, f"{EXPERIMENT_NAME}_{ts}.log")
     tee = Tee(sys.stdout, log_path)
     old_stdout = sys.stdout
     sys.stdout = tee
@@ -415,7 +409,19 @@ def _main(ts: str, log_path: str):
         map_path=MAP_PATHS[0],
         map_paths=MAP_PATHS,
         games_per_evaluation=GAMES_PER_EVAL,
-        ai_agents=["lightRushAI", "workerRushAI"],  # Light vs Worker rush
+        ai_agents=[
+            # Fully observable rush/baselines
+            "lightRushAI",
+            "workerRushAI",
+            "heavyRushAI",
+            "rangedRushAI",
+            "randomBiasedAI",
+            # Partially observable rush variants
+            "POHeavyRush",
+            "POLightRush",
+            "PORangedRush",
+            "POWorkerRush",
+        ],
         # Weights: slightly less dominance for balance so duration can break ties between 5-5-0 UTTs
         fitness_alpha=0.5,   # balance weight
         fitness_beta=0.3,    # duration weight

@@ -1,0 +1,269 @@
+{
+  "best_individual": {
+    "moveConflictResolutionStrategy": 1,
+    "unitTypes": [
+      {
+        "ID": 0,
+        "name": "Resource",
+        "cost": 1,
+        "produceTime": 10,
+        "hp": 1,
+        "minDamage": 1,
+        "maxDamage": 1,
+        "attackRange": 1,
+        "attackTime": 10,
+        "moveTime": 10,
+        "sightRadius": 0,
+        "harvestTime": 10,
+        "returnTime": 10,
+        "harvestAmount": 1,
+        "isResource": true,
+        "isStockpile": false,
+        "canHarvest": false,
+        "canMove": false,
+        "canAttack": false,
+        "produces": [],
+        "producedBy": []
+      },
+      {
+        "ID": 3,
+        "name": "Worker",
+        "cost": 4,
+        "produceTime": 2,
+        "hp": 11,
+        "minDamage": 4,
+        "maxDamage": 4,
+        "attackRange": 1,
+        "attackTime": 2,
+        "moveTime": 1,
+        "sightRadius": 3,
+        "harvestTime": 4,
+        "returnTime": 2,
+        "harvestAmount": 5,
+        "isResource": false,
+        "isStockpile": false,
+        "canHarvest": true,
+        "canMove": true,
+        "canAttack": true,
+        "produces": [],
+        "producedBy": [
+          "Base"
+        ]
+      },
+      {
+        "ID": 4,
+        "name": "Light",
+        "cost": 12,
+        "produceTime": 3,
+        "hp": 23,
+        "minDamage": 12,
+        "maxDamage": 12,
+        "attackRange": 3,
+        "attackTime": 5,
+        "moveTime": 1,
+        "sightRadius": 4,
+        "harvestTime": 1,
+        "returnTime": 1,
+        "harvestAmount": 1,
+        "isResource": false,
+        "isStockpile": false,
+        "canHarvest": false,
+        "canMove": true,
+        "canAttack": true,
+        "produces": [],
+        "producedBy": [
+          "Barracks"
+        ]
+      },
+      {
+        "ID": 5,
+        "name": "Heavy",
+        "cost": 33,
+        "produceTime": 5,
+        "hp": 39,
+        "minDamage": 18,
+        "maxDamage": 27,
+        "attackRange": 3,
+        "attackTime": 3,
+        "moveTime": 6,
+        "sightRadius": 3,
+        "harvestTime": 1,
+        "returnTime": 1,
+        "harvestAmount": 1,
+        "isResource": false,
+        "isStockpile": false,
+        "canHarvest": false,
+        "canMove": true,
+        "canAttack": true,
+        "produces": [],
+        "producedBy": [
+          "Barracks"
+        ]
+      },
+      {
+        "ID": 6,
+        "name": "Ranged",
+        "cost": 12,
+        "produceTime": 10,
+        "hp": 36,
+        "minDamage": 8,
+        "maxDamage": 15,
+        "attackRange": 3,
+        "attackTime": 2,
+        "moveTime": 3,
+        "sightRadius": 8,
+        "harvestTime": 1,
+        "returnTime": 1,
+        "harvestAmount": 1,
+        "isResource": false,
+        "isStockpile": false,
+        "canHarvest": false,
+        "canMove": true,
+        "canAttack": true,
+        "produces": [],
+        "producedBy": [
+          "Barracks"
+        ]
+      },
+      {
+        "ID": 1,
+        "name": "Base",
+        "cost": 61,
+        "produceTime": 11,
+        "hp": 200,
+        "minDamage": 1,
+        "maxDamage": 1,
+        "attackRange": 1,
+        "attackTime": 1,
+        "moveTime": 1,
+        "sightRadius": 4,
+        "harvestTime": 1,
+        "returnTime": 1,
+        "harvestAmount": 1,
+        "isResource": false,
+        "isStockpile": true,
+        "canHarvest": false,
+        "canMove": false,
+        "canAttack": false,
+        "produces": [
+          "Worker"
+        ],
+        "producedBy": [
+          "Worker"
+        ]
+      },
+      {
+        "ID": 2,
+        "name": "Barracks",
+        "cost": 23,
+        "produceTime": 9,
+        "hp": 102,
+        "minDamage": 1,
+        "maxDamage": 1,
+        "attackRange": 1,
+        "attackTime": 1,
+        "moveTime": 1,
+        "sightRadius": 3,
+        "harvestTime": 1,
+        "returnTime": 1,
+        "harvestAmount": 1,
+        "isResource": false,
+        "isStockpile": false,
+        "canHarvest": false,
+        "canMove": false,
+        "canAttack": false,
+        "produces": [
+          "Light",
+          "Heavy",
+          "Ranged"
+        ],
+        "producedBy": [
+          "Worker"
+        ]
+      }
+    ]
+  },
+  "best_fitness": {
+    "balance": 0.5,
+    "duration": 0.5,
+    "strategy_diversity": 0.0,
+    "overall_fitness": 0.3
+  },
+  "generation_stats": [
+    {
+      "generation": 0,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.3714568534400905,
+      "convergence_rate": 0.0,
+      "time_elapsed": 15.81309723854065
+    },
+    {
+      "generation": 1,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.3647797588568796,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.6101231575012207
+    },
+    {
+      "generation": 2,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.358027876518368,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.5404994487762451
+    },
+    {
+      "generation": 3,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.3457520457994737,
+      "convergence_rate": 0.0,
+      "time_elapsed": 0.4919562339782715
+    },
+    {
+      "generation": 4,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.33719862488071084,
+      "convergence_rate": 0.0,
+      "time_elapsed": 5.026676416397095
+    },
+    {
+      "generation": 5,
+      "best_fitness": 0.3,
+      "avg_fitness": 0.30000000000000004,
+      "worst_fitness": 0.3,
+      "best_balance": 0.5,
+      "best_duration": 0.5,
+      "best_diversity": 0.0,
+      "population_diversity": 0.31817381731541566,
+      "convergence_rate": 0.0,
+      "time_elapsed": 4.032648324966431
+    }
+  ],
+  "total_generations": 6,
+  "total_time": 26.566749095916748,
+  "convergence_generation": 3
+}

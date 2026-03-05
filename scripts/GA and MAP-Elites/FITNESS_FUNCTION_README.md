@@ -211,3 +211,22 @@ So symmetric UTT + balance (by AI) + duration + diversity together implement “
   - `_calculate_fitness()` — balance, duration, diversity and overall formula.  
   - Both-orderings aggregation and `ai1_wins` / `ai2_wins` — in `_test_utt_file()` (round-robin / match loop).
 - **Weights and options:** Set in `GAConfig` (e.g. in `run_ga_local_test.py`) and passed into `WorkingGAEvaluator` (e.g. `fitness_alpha`, `fitness_beta`, `fitness_gamma`, `use_both_orderings`, `target_duration`, `duration_tolerance`, `use_strict_balance`, `min_balance_threshold`).
+
+---
+
+## 9. Viewing GA UTTs in the Java GUI
+
+To inspect an evolved UTT (e.g. `utt_log/gen0_ind0.json`) in the Java frontend:
+
+- **Copy the JSON into the Java UTT folder**  
+  Example:  
+  `scripts/GA and MAP-Elites/ga_run_logs/runs/<run_id>/utt_log/gen0_ind0.json` →  
+  `gym_microrts/microrts/utts/GA_local_two_ai_gen0_ind0.json`
+
+- **Register it in the GUI UTT list**  
+  Edit `gym_microrts/microrts/src/gui/frontend/FEStatePane.java`:
+  - Add a loader entry to `unitTypeTables`:
+    `loadCustomUTT("utts/GA_local_two_ai_gen0_ind0.json")`
+  - Add a matching name to `unitTypeTableNames`, e.g. `"GA local_two_ai gen0_ind0"`.
+
+After rebuilding `microrts.jar` and launching the GUI (`gui.frontend.FrontEnd`), the new UTT will appear in the UTT dropdown, so you can watch games played under that evolved configuration.
