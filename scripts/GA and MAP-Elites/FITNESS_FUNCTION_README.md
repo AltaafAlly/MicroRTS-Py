@@ -119,20 +119,32 @@ When total steps are not available (e.g. older logs or a different evaluation pa
 
 If we only optimized balance and duration for **one** AI pair, we could get a UTT that is balanced only for that pair and breaks others. Diversity encourages the GA to consider **multiple** matchups and **different** outcome types (some 5–5, some 6–4, etc.), so the evolved UTT is more robust and not overfitted to a single matchup.
 
-### 4.2 How diversity is computed
+### 4.2 How diversity is computed (short version)
 
-We combine three sub-metrics (all in [0, 1]):
+- **If there are ≥ 2 matchups**  
+  `strategy_diversity = 0.4·ai_diversity + 0.3·variance_score + 0.3·pattern_diversity`
+
+- **If there is only 1 matchup**  
+  `strategy_diversity = 0.3·ai_diversity`
+
+Where (all in [0, 1]):
+
+We combine three sub-metrics:
 
 1. **AI diversity**  
-   Fraction of the configured AI set that actually appeared in the evaluated matchups (capped at 1.0).  
+   Formula: `ai_diversity = min(1.0, #unique AIs seen / #AIs configured)`  
    **Why:** More distinct AIs tested ⇒ more evidence that the UTT is reasonable across strategies.
 
 2. **Variance in balance scores**  
-   Variance of per-matchup balance scores across matchups, scaled to [0, 1].  
+   - Let `balance_scores` be the per‑matchup balance values and `μ` their mean.  
+   - `balance_variance = average( (score − μ)² )`  
+   - `variance_score = min(1.0, balance_variance × 2)`  
    **Why:** We want **some** spread: not every matchup should be identical (e.g. all 5–5), but we also don’t want one matchup 10–0 and another 0–10. Variance captures “varied but not chaotic” outcomes.
 
 3. **Outcome-pattern diversity**  
-   Number of **distinct** (left_wins, right_wins, draws) patterns (e.g. (5,5,0), (6,4,0), (4,4,2)) divided by number of matchups, capped at 1.0.  
+   - For each matchup, form a triple `(left_wins, right_wins, draws)`.  
+   - Let `P = #distinct triples` and `M = #matchups`.  
+   - `pattern_diversity = min(1.0, P / M)`  
    **Why:** Different patterns (e.g. 5–5 vs 6–4) indicate that the UTT produces different kinds of games across matchups, which we treat as more interesting and robust.
 
 When there is **more than one** matchup:

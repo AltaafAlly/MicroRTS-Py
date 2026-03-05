@@ -68,6 +68,8 @@ class GAConfig:
     verbose: bool = True
     save_best_individuals: bool = True
     save_generation_stats: bool = True
+    # Optional: directory to save every evaluated UTT (gen{N}_ind{M}.json) for comparison
+    utt_log_dir: Optional[str] = None
 
 
 @dataclass
@@ -174,7 +176,8 @@ class MicroRTSGeneticAlgorithm:
                 target_duration=getattr(self.config, "target_duration", 500),
                 duration_tolerance=getattr(self.config, "duration_tolerance", 400),
             )
-        elif self.config.use_real_microrts:
+        setattr(self.fitness_evaluator, "utt_log_dir", getattr(self.config, "utt_log_dir", None))
+        if self.config.use_real_microrts:
             # Real MicroRTS evaluator removed due to UTT loading bug
             # Use working evaluator instead
             print("⚠️  Real MicroRTS evaluator has UTT loading bug. Using working evaluator instead.")
@@ -192,6 +195,7 @@ class MicroRTSGeneticAlgorithm:
                 target_duration=getattr(self.config, "target_duration", 500),
                 duration_tolerance=getattr(self.config, "duration_tolerance", 400),
             )
+            setattr(self.fitness_evaluator, "utt_log_dir", getattr(self.config, "utt_log_dir", None))
         else:
             self.fitness_evaluator = FitnessEvaluator(
                 alpha=self.config.fitness_alpha,

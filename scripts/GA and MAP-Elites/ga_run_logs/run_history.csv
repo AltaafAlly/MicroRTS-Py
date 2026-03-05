@@ -46,3 +46,9 @@ timestamp,experiment_name,generations,population_size,games_per_eval,max_steps,a
 20260301_133342,local_two_ai_test,5,4,5,20000,"lightRushAI,workerRushAI",0.195,0.0,1.0,0.3,1.65,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772364822
 20260301_134710,local_two_ai_test,5,4,5,20000,"lightRushAI,workerRushAI",0.745,1.0,0.0,0.3,1.94,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772365630
 20260301_135351,local_two_ai_test,5,4,5,20000,"lightRushAI,workerRushAI",0.745,1.0,0.0,0.3,2.06,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772366031
+20260304_131359,local_two_ai_test,30,20,10,20000,"lightRushAI,workerRushAI",0.745,1.0,0.0,0.3,22.74,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772622839
+20260304_133101,local_multi_ai_test,30,20,6,20000,"workerRushAI,lightRushAI,heavyRushAI,rangedRushAI",0.7675,1.0,0.0,0.45,254.05,/home/altaaf/projects/MicroRTS-Py-Research/ga_multi_matchup_output/local_multi_ai_test_1772623861
+20260304_172719,local_two_ai_test,10,5,5,20000,"lightRushAI,workerRushAI",0.745,1.0,0.0,0.3,3.11,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772638039
+20260305_123338,local_two_ai_test,10,5,5,20000,"lightRushAI,workerRushAI",0.745,1.0,0.0,0.3,3.16,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772706818
+20260305_123544,local_two_ai_test,10,5,5,20000,"lightRushAI,workerRushAI",0.8856,1.0,0.9375,0.3,2.94,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772706944
+20260305_124205,local_two_ai_test,10,5,10,20000,"lightRushAI,workerRushAI",0.8596,1.0,0.9988,0.3,3.79,/home/altaaf/projects/MicroRTS-Py-Research/ga_local_test_output/local_two_ai_test_1772707325

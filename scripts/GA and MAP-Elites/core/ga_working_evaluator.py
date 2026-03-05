@@ -6,6 +6,7 @@ This bypasses the UTT loading bug by using the working test_utt.py approach.
 
 import hashlib
 import os
+import shutil
 import sys
 import json
 import time
@@ -145,7 +146,14 @@ class WorkingGAEvaluator(FitnessEvaluator):
         try:
             # Create UTT file from chromosome
             utt_path = self._create_utt_file(chromosome)
-            
+            # Optional: log every UTT to a folder (gen{N}_ind{M}.json) for later comparison
+            utt_log_dir = getattr(self, "utt_log_dir", None)
+            if utt_log_dir:
+                gen = getattr(self, "run_match_log_generation", 0)
+                ind = getattr(self, "run_match_log_individual_index", 0)
+                os.makedirs(utt_log_dir, exist_ok=True)
+                dest = os.path.join(utt_log_dir, f"gen{gen}_ind{ind}.json")
+                shutil.copy2(utt_path, dest)
             # Test the UTT using the working approach
             match_results = self._test_utt_file(utt_path)
             

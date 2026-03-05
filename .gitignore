@@ -14,6 +14,10 @@ videos
 dataset.pickle
 runs
 
+# GA local outputs (root-level)
+ga_local_test_output/
+ga_multi_matchup_output/
+scripts/GA and MAP-Elites/ga_run_logs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

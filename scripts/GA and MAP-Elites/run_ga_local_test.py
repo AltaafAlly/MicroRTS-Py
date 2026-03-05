@@ -18,6 +18,7 @@ Or from this directory (scripts/GA and MAP-Elites):
 
 import csv
 import os
+import shutil
 import sys
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
@@ -70,9 +71,9 @@ class Tee:
         self.file.close()
 
 # Local test config: reduced for faster debug runs (increase for real tuning)
-GENERATIONS = 5
-POPULATION = 4
-GAMES_PER_EVAL = 5    # games per map; increase (e.g. 20) for stable balance estimates
+GENERATIONS = 10
+POPULATION = 5
+GAMES_PER_EVAL = 10    # games per map (per ordering); higher for more stable balance/duration estimates
 MAX_STEPS = 20000    # Cap per game; decisive games end in hundreds, draws stop here
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ga_local_test_output")
 EXPERIMENT_NAME = "local_two_ai_test"
@@ -353,7 +354,15 @@ def _write_local_run_logs(
     print(f"    History: {RUN_HISTORY_CSV}")
     print(f"    This run (all in one folder): {run_dir}")
     print(f"      generations.csv, utt_changes.csv, best_utt_summary.txt, best_utt_config.json,")
-    print(f"      matches.csv, fitness_plot.png, match_outputs/")
+    print(f"      matches.csv, fitness_plot.png, match_outputs/, utt_log/ (every gen/ind UTT)")
+    # Copy the main .log file for this run into the run folder for easy inspection
+    log_src = os.path.join(GA_RUN_LOGS_DIR, f"{experiment_name}_{ts}.log")
+    if os.path.exists(log_src):
+        log_dest = os.path.join(run_dir, f"{experiment_name}_{ts}.log")
+        try:
+            shutil.copy2(log_src, log_dest)
+        except Exception as e:
+            print(f"  (Could not copy run log into run folder: {e})")
     return run_dir
 
 
@@ -376,10 +385,18 @@ def _main(ts: str, log_path: str):
     MAP_PATHS = [
         "maps/8x8/basesWorkers8x8A.xml",
     ]
+    # Run folder and UTT log: create at start so we can save every evaluated UTT for comparison
+    run_id = f"{EXPERIMENT_NAME}_{ts}"
+    run_dir = os.path.join(GA_RUN_LOGS_DIR, "runs", run_id)
+    os.makedirs(run_dir, exist_ok=True)
+    utt_log_dir = os.path.join(run_dir, "utt_log")
+    os.makedirs(utt_log_dir, exist_ok=True)
+
     print("=" * 60)
     print("GA local test: LightRush vs WorkerRush")
     print("=" * 60)
     print(f"  Log file:       {log_path}")
+    print(f"  UTT log:        {utt_log_dir} (every gen/ind saved)")
     print(f"  Generations:    {GENERATIONS}")
     print(f"  Population:     {POPULATION}")
     print(f"  Games per eval: {GAMES_PER_EVAL} × {len(MAP_PATHS)} map(s)")
@@ -399,15 +416,19 @@ def _main(ts: str, log_path: str):
         map_paths=MAP_PATHS,
         games_per_evaluation=GAMES_PER_EVAL,
         ai_agents=["lightRushAI", "workerRushAI"],  # Light vs Worker rush
-        # Prioritize balance so UTTs with mixed outcomes (e.g. 2-0-10) beat 12-0-0
-        fitness_alpha=0.7,   # balance weight (default 0.4)
-        fitness_beta=0.15,  # duration weight
-        fitness_gamma=0.15, # diversity weight
+        # Weights: slightly less dominance for balance so duration can break ties between 5-5-0 UTTs
+        fitness_alpha=0.5,   # balance weight
+        fitness_beta=0.3,    # duration weight
+        fitness_gamma=0.2,   # diversity weight
+        # Duration target: typical avg steps/game ~50 with wide tolerance band [10, 90]
+        target_duration=50,
+        duration_tolerance=40,
         max_generations_without_improvement=GENERATIONS,  # run full 20 gens, don't early-stop at 5
         random_immigrant_interval=5,  # inject random UTT every 5 gens to escape 2-0-10 plateau
         use_nondeterministic=True,  # random move conflicts + wider damage ranges
         use_both_orderings=True,    # run (ai1,ai2) and (ai2,ai1); symmetric UTT → 50-50 gives balance signal
         verbose=True,
+        utt_log_dir=utt_log_dir,    # save every evaluated UTT (gen{N}_ind{M}.json) for comparison
     )
 
     experiment_manager = ExperimentManager(OUTPUT_DIR)
