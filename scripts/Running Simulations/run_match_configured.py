@@ -72,32 +72,47 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     composition_to_string = None
     get_game_snapshot_text = None
     if capture_composition or capture_snapshots:
-        _run_match_dir = os.path.dirname(os.path.abspath(__file__))
-        _scripts_dir = os.path.dirname(_run_match_dir)
-        _project_root = os.path.dirname(_scripts_dir) if _scripts_dir else os.getcwd()
         _last_import_err = None
-        for _candidate in [
-            os.path.join(_run_match_dir, "runtime_utt_change"),
-            os.path.join(os.getcwd(), "scripts", "Running Simulations", "runtime_utt_change"),
-            os.path.join(_project_root, "scripts", "Running Simulations", "runtime_utt_change"),
-        ]:
-            if not os.path.isdir(_candidate):
-                continue
+        # 1) Try using existing sys.path first (GA evaluator inserts runtime_utt_change)
+        try:
+            from game_state_utils import get_unit_composition_dict as _guc, composition_to_string as _cts
+            get_unit_composition_dict = _guc
+            composition_to_string = _cts
             try:
-                if _candidate not in sys.path:
-                    sys.path.insert(0, _candidate)
-                from game_state_utils import get_unit_composition_dict as _guc, composition_to_string as _cts
-                get_unit_composition_dict = _guc
-                composition_to_string = _cts
+                from game_state_utils import get_game_snapshot_text as _gst
+                get_game_snapshot_text = _gst
+            except ImportError:
+                pass
+        except Exception as _e:
+            _last_import_err = _e
+        # 2) If that failed, try path candidates (run from any cwd)
+        if get_unit_composition_dict is None:
+            _run_match_dir = os.path.dirname(os.path.abspath(__file__))
+            _scripts_dir = os.path.dirname(_run_match_dir)
+            _project_root = os.path.dirname(_scripts_dir) if _scripts_dir else os.getcwd()
+            for _candidate in [
+                os.path.join(_run_match_dir, "runtime_utt_change"),
+                os.path.join(_project_root, "scripts", "Running Simulations", "runtime_utt_change"),
+                os.path.join(os.getcwd(), "scripts", "Running Simulations", "runtime_utt_change"),
+                os.path.join(os.getcwd(), "runtime_utt_change"),
+            ]:
+                if not os.path.isdir(_candidate):
+                    continue
                 try:
-                    from game_state_utils import get_game_snapshot_text as _gst
-                    get_game_snapshot_text = _gst
-                except ImportError:
-                    pass
-                break
-            except Exception as _e:
-                _last_import_err = _e
-                continue
+                    if _candidate not in sys.path:
+                        sys.path.insert(0, _candidate)
+                    from game_state_utils import get_unit_composition_dict as _guc, composition_to_string as _cts
+                    get_unit_composition_dict = _guc
+                    composition_to_string = _cts
+                    try:
+                        from game_state_utils import get_game_snapshot_text as _gst
+                        get_game_snapshot_text = _gst
+                    except ImportError:
+                        pass
+                    break
+                except Exception as _e:
+                    _last_import_err = _e
+                    continue
         if get_unit_composition_dict is None:
             capture_composition = False
         if get_game_snapshot_text is None:
@@ -127,24 +142,31 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     results = {"left_wins": 0, "right_wins": 0, "draws": 0}
     total_steps_this_run = 0
     per_game_compositions = []
-    game_snapshots = []  # (step, text) for last game when capture_snapshots
+    game_snapshots = []  # list of per-game [(step, text), ...] when capture_snapshots (every game)
     for _g in range(games):
         steps = 0
-        is_last_game = (_g == games - 1)
-        if is_last_game and capture_snapshots and get_game_snapshot_text:
+        this_game_snapshots = []  # (step, text) for this game only
+
+        def _snapshot(step_num: int, at_end: bool = False) -> None:
+            if not capture_snapshots:
+                return
             try:
-                game_snapshots.append((0, get_game_snapshot_text(env, ai_left, ai_right)))
-            except Exception:
-                pass
+                if get_game_snapshot_text:
+                    text = get_game_snapshot_text(env, ai_left, ai_right)
+                    this_game_snapshots.append((step_num, text))
+                else:
+                    this_game_snapshots.append((step_num, "(game_state_utils not loaded)"))
+            except Exception as e:
+                this_game_snapshots.append((step_num, f"[Snapshot unavailable: {e}]"))
+
+        if capture_snapshots:
+            _snapshot(0)
         while True:
             obs, rewards, done, info = env.step(dummy_actions)
             steps += 1
-            if is_last_game and capture_snapshots and get_game_snapshot_text and steps <= max_steps:
+            if capture_snapshots and steps <= max_steps:
                 if steps % snapshot_interval == 0 or steps == 1:
-                    try:
-                        game_snapshots.append((steps, get_game_snapshot_text(env, ai_left, ai_right)))
-                    except Exception:
-                        pass
+                    _snapshot(steps)
             if isinstance(done, (list, tuple, np.ndarray)):
                 done_flag = bool(done[0]) if len(done) else False
             else:
@@ -152,11 +174,10 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
             if not done_flag:
                 continue
             total_steps_this_run += steps
-            if is_last_game and capture_snapshots and get_game_snapshot_text and (not game_snapshots or game_snapshots[-1][0] != steps):
-                try:
-                    game_snapshots.append((steps, get_game_snapshot_text(env, ai_left, ai_right)))
-                except Exception:
-                    pass
+            if capture_snapshots and (not this_game_snapshots or this_game_snapshots[-1][0] != steps):
+                _snapshot(steps, at_end=True)
+            if capture_snapshots:
+                game_snapshots.append(this_game_snapshots)
             inf = info[0] if isinstance(info, list) and info else info
             winner = "draw"
             if isinstance(inf, dict) and "raw_rewards" in inf:

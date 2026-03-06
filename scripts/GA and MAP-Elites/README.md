@@ -36,6 +36,7 @@ python run_ga.py --config comprehensive --save-results --experiment-name "balanc
 ```bash
 python run_ga_local_test.py
 ```
+Optional: **turn off** per-game snapshots and `match_outputs/*.txt` by setting `SAVE_GAME_DETAILS = False` at the top of `run_ga_local_test.py`, or set env `GA_SAVE_GAME_DETAILS=0` (faster runs, less disk). When on (default), each matchup gets detailed game state and winner/reason per game.
 
 ## 📁 Project structure
 
@@ -128,6 +129,18 @@ GA and MAP-Elites/
 - Boolean capability flags (canAttack, canMove, etc.)
 - Production relationships (Base→Worker, Barracks→Combat units)
 - Resource unit stats
+
+### Worker harvest bounds (avoid instant-drain economy)
+
+Worker harvest parameters are **bounded** so evolved UTTs stay playable in the GUI and don’t produce “instant drain” economies:
+
+| Parameter        | Bounds (chromosome) | Purpose |
+|-----------------|----------------------|--------|
+| **harvestTime** | 6–20                 | Harvest takes at least 6 cycles (no near-instant harvest). |
+| **returnTime**  | 4–12                 | Return to base takes at least 4 cycles (no 1-cycle return). |
+| **harvestAmount** | 1–4                | At most 4 per trip so map resources don’t empty in a few steps. |
+
+Without these bounds, workers can drain the map almost instantly, then idle with no harvest targets and no resources left for the Barracks to train units. Bounds are defined in `core/ga_chromosome.py` (`DEFAULT_PARAMETER_BOUNDS['Worker']`) and enforced in `core/ga_utt_validator.py` (`SAFE_BOUNDS['Worker']`).
 
 ## 🤖 AI Agents for Evaluation
 

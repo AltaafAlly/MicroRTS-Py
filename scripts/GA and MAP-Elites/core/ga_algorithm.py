@@ -70,6 +70,8 @@ class GAConfig:
     save_generation_stats: bool = True
     # Optional: directory to save every evaluated UTT (gen{N}_ind{M}.json) for comparison
     utt_log_dir: Optional[str] = None
+    # If True, capture per-game snapshots and unit composition and write match_outputs/*.txt (slower, more disk)
+    save_game_details: bool = True
 
 
 @dataclass
@@ -375,8 +377,10 @@ class MicroRTSGeneticAlgorithm:
         # Set on evaluator every time (evaluator doesn't define these by default, so hasattr would be False)
         setattr(self.fitness_evaluator, "run_match_log", self.run_match_log)
         setattr(self.fitness_evaluator, "run_match_log_generation", generation)
-        setattr(self.fitness_evaluator, "run_match_capture_composition", True)
-        setattr(self.fitness_evaluator, "run_match_capture_snapshots", True)
+        save_details = getattr(self.config, "save_game_details", True)
+        setattr(self.fitness_evaluator, "run_match_capture_composition", save_details)
+        setattr(self.fitness_evaluator, "run_match_capture_snapshots", save_details)
+        setattr(self.fitness_evaluator, "run_match_snapshot_interval", 15)  # snapshot every 15 steps when save_game_details is on
         # Evaluate current population
         self.evaluate_population()
         

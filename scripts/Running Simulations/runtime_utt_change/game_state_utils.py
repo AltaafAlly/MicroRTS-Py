@@ -111,7 +111,13 @@ def get_game_snapshot_text(
     Uses the same structure as test_single_matchup.get_game_snapshot for consistency.
     """
     try:
-        bot_client = env.vec_client.botClients[0]
+        vec_client = getattr(env, "vec_client", None)
+        if not vec_client:
+            return "Unable to access vec_client"
+        bot_clients = getattr(vec_client, "botClients", None)
+        if not bot_clients or len(bot_clients) == 0:
+            return "Unable to access botClients"
+        bot_client = bot_clients[0]
         gs = bot_client.getGameState()
         if not gs:
             return "Unable to access game state"
@@ -119,16 +125,18 @@ def get_game_snapshot_text(
         if not pgs:
             return "Unable to access physical game state"
         units = pgs.getUnits()
+        n_units = int(units.size()) if hasattr(units, "size") else len(units)
 
         player0_units = []
         player1_units = []
-        for i in range(units.size()):
+        for i in range(n_units):
             unit = units.get(i)
             player_id = unit.getPlayer()
             unit_type = unit.getType()
-            unit_name = unit_type.name
-            if player_id < 0 or unit_type.isResource:
+            unit_name = str(unit_type.name) if hasattr(unit_type, "name") else "?"
+            if player_id is None or int(player_id) < 0 or getattr(unit_type, "isResource", False):
                 continue
+            player_id = int(player_id)
             unit_info = {
                 "name": unit_name,
                 "hp": unit.getHitPoints(),
@@ -167,7 +175,7 @@ def get_game_snapshot_text(
                     lines.append(f"    ... and {len(ulist) - 5} more")
             return lines
 
-        out = [f"Total units on field: {units.size()}"]
+        out = [f"Total units on field: {n_units}"]
         out.extend(format_side(player0_units, f"Player 0 ({ai_left_name})", resources_p0))
         out.extend(format_side(player1_units, f"Player 1 ({ai_right_name})", resources_p1))
         return "\n".join(out)

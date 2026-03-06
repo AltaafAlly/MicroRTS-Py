@@ -4,7 +4,6 @@ Working GA Evaluator that uses the successful UTT testing approach.
 This bypasses the UTT loading bug by using the working test_utt.py approach.
 """
 
-import hashlib
 import os
 import shutil
 import sys
@@ -24,6 +23,7 @@ if _runtime_utt_dir.is_dir() and str(_runtime_utt_dir) not in sys.path:
 
 from core.ga_chromosome import MicroRTSChromosome
 from core.ga_fitness_evaluator import FitnessEvaluator, FitnessComponents, MatchResult
+from core.ga_utt_validator import UTTValidator
 
 class WorkingGAEvaluator(FitnessEvaluator):
     """
@@ -177,6 +177,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         "right_unit_composition": r.get("_right_unit_composition", "N/A"),
                         "_per_game_compositions": r.get("_per_game_compositions"),  # for match_outputs/*.txt
                         "_game_snapshots": r.get("_game_snapshots", []),  # (step, text) for match_outputs full map
+                        "_games_per_ordering": r.get("_games_per_ordering"),  # when both orderings: 5 so we can label Games 1-5 vs 6-10
                     })
             
             # Calculate fitness from match results
@@ -203,8 +204,8 @@ class WorkingGAEvaluator(FitnessEvaluator):
     def _create_utt_file(self, chromosome: MicroRTSChromosome) -> Path:
         """Create a UTT file from a chromosome."""
         
-        # Generate UTT config
-        utt_config = chromosome.to_microrts_config()
+        # Generate UTT config and clamp to safe bounds (e.g. Worker cost <= 5 so Base can produce with 5 starting resources)
+        utt_config = UTTValidator.validate_and_fix_utt(chromosome.to_microrts_config())
         
         # Nondeterministic mode: random move conflicts + wider damage ranges so outcomes can flip (balance signal)
         if self.use_nondeterministic:
@@ -266,10 +267,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 # Copy UTT to a unique filename so the Java client cannot return cached results
                 unique_id = str(time.time_ns())
                 microrts_utt_path = self._copy_utt_to_microrts(utt_path, unique_suffix=unique_id)
-                with open(utt_path, "rb") as f:
-                    utt_hash = hashlib.md5(f.read()).hexdigest()[:8]
-                print(f"        UTT hash: {utt_hash}")
-                
+
                 def _run_one_ordering(left_ai: str, right_ai: str):
                     """Run left_ai vs right_ai on all maps; return aggregated {left_wins, right_wins, draws, _total_steps}."""
                     if len(self.map_paths) == 1:
@@ -302,6 +300,26 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         "left_wins": ai1_wins,
                         "right_wins": ai2_wins,
                     }
+                    # Pass through capture data for match_outputs: merge both orderings so all 10 games are shown
+                    s1 = R1.get("_game_snapshots") or []
+                    s2 = R2.get("_game_snapshots") or []
+                    combined["_game_snapshots"] = s1 + s2
+                    # Unit composition summary: use last game of R1 (or R2) for left/right in ai1/ai2 terms
+                    combined["_left_unit_composition"] = R1.get("_left_unit_composition", "N/A")
+                    combined["_right_unit_composition"] = R1.get("_right_unit_composition", "N/A")
+                    # Per-game compositions: R1 as-is; for R2 swap left/right and winner so Left=ai1, Right=ai2
+                    p1 = R1.get("_per_game_compositions") or []
+                    p2_raw = R2.get("_per_game_compositions") or []
+                    p2_swapped = []
+                    for pg in p2_raw:
+                        p2_swapped.append({
+                            "left": pg.get("right"),
+                            "right": pg.get("left"),
+                            "winner": "right" if pg.get("winner") == "left" else ("left" if pg.get("winner") == "right" else "draw"),
+                            "game_index": len(p1) + len(p2_swapped),
+                        })
+                    combined["_per_game_compositions"] = p1 + p2_swapped
+                    combined["_games_per_ordering"] = len(s1)  # so writer can label "Games 1-5" vs "Games 6-10"
                     total_steps = combined.get("_total_steps", 0)
                     if total_steps:
                         print(f"        (total steps this run: {total_steps})")
@@ -413,7 +431,12 @@ class WorkingGAEvaluator(FitnessEvaluator):
             games: Number of games to run (defaults to self.games_per_eval or 3)
             map_path_override: If set, use this map instead of self.map_path
         """
-        sys.path.insert(0, str(project_root / "scripts" / "Running Simulations"))
+        # Ensure runtime_utt_change is on path so run_pair can import game_state_utils (capture/snapshots)
+        _run_sim = project_root / "scripts" / "Running Simulations"
+        if str(_run_sim) not in sys.path:
+            sys.path.insert(0, str(_run_sim))
+        if _runtime_utt_dir.is_dir() and str(_runtime_utt_dir) not in sys.path:
+            sys.path.insert(0, str(_runtime_utt_dir))
         from run_match_configured import run_pair
 
         if games is None:
@@ -424,6 +447,8 @@ class WorkingGAEvaluator(FitnessEvaluator):
         utt_rel = "utts/" + utt_path.name
         capture_composition = getattr(self, "run_match_capture_composition", False)
         capture_snapshots = getattr(self, "run_match_capture_snapshots", False)
+        # Snapshot every N steps so short games (~40-80 steps) still show multiple states
+        snapshot_interval = getattr(self, "run_match_snapshot_interval", 15)
         try:
             return run_pair(
                 ai_left=ai1,
@@ -437,6 +462,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 utt_json_p1=utt_rel,
                 capture_composition=capture_composition,
                 capture_snapshots=capture_snapshots,
+                snapshot_interval=snapshot_interval,
             )
         except Exception as e:
             print(f"    Error running match: {e}")

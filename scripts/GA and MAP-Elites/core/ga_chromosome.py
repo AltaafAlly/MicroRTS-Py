@@ -106,7 +106,7 @@ class MicroRTSChromosome:
             'sightRadius': (0, 0)
         },
         'Worker': {
-            'cost': (2, 6),      # More reasonable cost range
+            'cost': (2, 5),      # Max 5 so Base can produce at least one Worker with 5 starting resources (8x8 maps)
             'produceTime': (2, 4), # Faster production
             'hp': (5, 15),       # More survivable
             'minDamage': (2, 4), # Effective damage
@@ -115,9 +115,10 @@ class MicroRTSChromosome:
             'attackTime': (2, 4), # Reasonable attack speed
             'moveTime': (1, 2),  # Fast movement
             'sightRadius': (2, 4), # Good vision
-            'harvestTime': (2, 4), # Efficient harvesting
-            'returnTime': (1, 2), # Quick return
-            'harvestAmount': (3, 8) # Good harvest amount
+            # Bounded to avoid "instant drain" economy (workers empty map, then idle; no resources for Barracks)
+            'harvestTime': (6, 20),   # Min 6 so harvest isn't near-instant
+            'returnTime': (4, 12),    # Min 4 so return to base isn't 1 cycle
+            'harvestAmount': (1, 4)   # Max 4 so map resources last; default-like economy possible
         },
         'Light': {
             'cost': (8, 15),     # More reasonable cost

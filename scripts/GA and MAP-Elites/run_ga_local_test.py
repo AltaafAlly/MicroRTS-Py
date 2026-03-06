@@ -69,13 +69,17 @@ class Tee:
     def close(self):
         self.file.close()
 
-# Local test config: reduced for faster debug runs (increase for real tuning)
-GENERATIONS = int(os.getenv("GA_GENERATIONS", "10"))
-POPULATION = int(os.getenv("GA_POPULATION", "5"))
-GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "10"))  # games per map (per ordering); higher for more stable balance/duration estimates
+# Local test config (override with GA_GENERATIONS, GA_POPULATION, GA_GAMES_PER_EVAL if needed)
+GENERATIONS = int(os.getenv("GA_GENERATIONS", "25"))
+POPULATION = int(os.getenv("GA_POPULATION", "10"))
+GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "8"))  # per map, per ordering
 MAX_STEPS = 20000    # Cap per game; decisive games end in hundreds, draws stop here
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ga_local_test_output")
 EXPERIMENT_NAME = "local_two_ai_test"
+# Save per-game snapshots and match_outputs/*.txt — change to False for faster runs, less disk
+SAVE_GAME_DETAILS = False
+if "GA_SAVE_GAME_DETAILS" in os.environ:
+    SAVE_GAME_DETAILS = os.environ["GA_SAVE_GAME_DETAILS"].strip().lower() in ("1", "true", "yes")
 
 
 # Param order for UTT export
@@ -225,8 +229,10 @@ def _write_local_run_logs(
     run_id = f"{experiment_name}_{ts}"
     run_dir = os.path.join(GA_RUN_LOGS_DIR, "runs", run_id)
     os.makedirs(run_dir, exist_ok=True)
+    save_game_details = getattr(config, "save_game_details", True)
     match_outputs_dir = os.path.join(run_dir, "match_outputs")
-    os.makedirs(match_outputs_dir, exist_ok=True)
+    if save_game_details:
+        os.makedirs(match_outputs_dir, exist_ok=True)
 
     # 1) Append one row to run_history.csv (top-level) for easy comparison across runs
     history_path = os.path.join(GA_RUN_LOGS_DIR, RUN_HISTORY_CSV)
@@ -302,28 +308,102 @@ def _write_local_run_logs(
                 m.get("left_unit_composition", "N/A"),
                 m.get("right_unit_composition", "N/A"),
             ])
-            # One .txt per matchup with actual unit composition (why this side won / lost)
-            gen = m.get("generation", 0)
-            ind = m.get("individual_index", 0)
-            ai_left = m.get("ai_left", "").replace(" ", "_")
-            ai_right = m.get("ai_right", "").replace(" ", "_")
-            safe_name = f"gen{gen}_ind{ind}_{ai_left}_vs_{ai_right}".replace("/", "_")
-            txt_path = os.path.join(match_outputs_dir, f"{safe_name}.txt")
-            with open(txt_path, "w", encoding="utf-8") as tf:
-                tf.write(f"Match: {m.get('ai_left', '')} (left) vs {m.get('ai_right', '')} (right)\n")
-                tf.write(f"Result: {m.get('left_wins', 0)}-{m.get('right_wins', 0)} (draws: {m.get('draws', 0)})\n")
-                tf.write(f"Winner: {m.get('winner', '')}\n")
-                tf.write(f"Left unit composition (end of last game): {m.get('left_unit_composition', 'N/A')}\n")
-                tf.write(f"Right unit composition (end of last game): {m.get('right_unit_composition', 'N/A')}\n")
-                tf.write("\n(Unit composition is captured from the last game of the matchup when capture_composition is enabled.)\n")
-                snapshots = m.get("_game_snapshots") or []
-                if snapshots:
-                    tf.write("\n--- Game state snapshots (last game) ---\n")
-                    for step, text in snapshots:
-                        tf.write(f"\n--- Step {step} ---\n")
-                        tf.write(text)
-                        if not text.endswith("\n"):
-                            tf.write("\n")
+            # One .txt per matchup (only when save_game_details is on)
+            if save_game_details:
+                gen = m.get("generation", 0)
+                ind = m.get("individual_index", 0)
+                ai_left = m.get("ai_left", "").replace(" ", "_")
+                ai_right = m.get("ai_right", "").replace(" ", "_")
+                subfolder = os.path.join(match_outputs_dir, f"gen{gen}_ind{ind}")
+                os.makedirs(subfolder, exist_ok=True)
+                matchup_name = f"{ai_left}_vs_{ai_right}".replace("/", "_")
+                txt_path = os.path.join(subfolder, f"{matchup_name}.txt")
+                with open(txt_path, "w", encoding="utf-8") as tf:
+                    left_comp = m.get("left_unit_composition", "N/A")
+                    right_comp = m.get("right_unit_composition", "N/A")
+                    winner = m.get("winner", "")
+                    tf.write(f"Match: {m.get('ai_left', '')} (left) vs {m.get('ai_right', '')} (right)\n")
+                    tf.write(f"Result: {m.get('left_wins', 0)}-{m.get('right_wins', 0)} (draws: {m.get('draws', 0)})\n")
+                    tf.write(f"Winner: {winner}\n")
+                    tf.write(f"Left unit composition (end of last game): {left_comp or '(none)'}\n")
+                    tf.write(f"Right unit composition (end of last game): {right_comp or '(none)'}\n")
+                    # Win condition: how MicroRTS decides a winner
+                    tf.write("\n--- Win condition (MicroRTS) ---\n")
+                    tf.write("A game ends when one player has no units left (elimination). That player loses; the other wins.\n")
+                    tf.write("Draw if both still have units when max steps is reached, or both have zero units.\n")
+                    # Why this side won: explicit reason from end state
+                    tf.write("\n--- Why this result ---\n")
+                    if left_comp not in ("N/A", "", None) or right_comp not in ("N/A", "", None):
+                        if winner == "left":
+                            tf.write(f"Left ({m.get('ai_left', '')}) won: Right had no units left (eliminated). ")
+                            tf.write(f"End state: Left had {left_comp or 'units'}; Right had {right_comp or 'none'}.\n")
+                        elif winner == "right":
+                            tf.write(f"Right ({m.get('ai_right', '')}) won: Left had no units left (eliminated). ")
+                            tf.write(f"End state: Left had {left_comp or 'none'}; Right had {right_comp or 'units'}.\n")
+                        elif winner == "draw":
+                            tf.write(f"Draw: both sides still had units (or tied at zero). ")
+                            tf.write(f"End state: Left had {left_comp or 'none'}; Right had {right_comp or 'none'}.\n")
+                    else:
+                        tf.write("(Unit composition not captured; see snapshots below for end state.)\n")
+                    tf.write("\n(Unit composition is captured from the last game of the matchup when capture_composition is enabled.)\n")
+                    all_game_snapshots = m.get("_game_snapshots") or []
+                    per_game_compositions = m.get("_per_game_compositions") or []  # list of {winner, left, right, game_index}
+                    games_per_ordering = m.get("_games_per_ordering")  # when both orderings: 5 so Games 1-5 = one ordering, 6-10 = other
+
+                    def _comp_str(comp_dict):
+                        if not comp_dict or not isinstance(comp_dict, dict):
+                            return "none"
+                        return ",".join(f"{k}:{v}" for k, v in sorted(comp_dict.items()))
+
+                    if all_game_snapshots:
+                        tf.write("\n" + "=" * 60 + "\n")
+                        tf.write("Game state snapshots – every game, step 0 then every N steps then final\n")
+                        tf.write("=" * 60 + "\n")
+                        # New format: list of per-game [(step, text), ...]; old format: flat [(step, text), ...] for one game
+                        if all_game_snapshots and isinstance(all_game_snapshots[0], list):
+                            for game_idx, snapshots in enumerate(all_game_snapshots, 1):
+                                if games_per_ordering and game_idx == 1:
+                                    tf.write(f"\n(Ordering 1: Left={m.get('ai_left', '')}, Right={m.get('ai_right', '')} — Games 1–{games_per_ordering})\n")
+                                elif games_per_ordering and game_idx == games_per_ordering + 1:
+                                    tf.write(f"\n(Ordering 2: Left={m.get('ai_right', '')}, Right={m.get('ai_left', '')} — Games {games_per_ordering + 1}–{len(all_game_snapshots)})\n")
+                                tf.write(f"\n--- Game {game_idx} ---\n")
+                                # Per-game winner and why (from _per_game_compositions when available)
+                                if game_idx <= len(per_game_compositions):
+                                    pg = per_game_compositions[game_idx - 1]
+                                    pg_winner = pg.get("winner", "")
+                                    left_c = _comp_str(pg.get("left"))
+                                    right_c = _comp_str(pg.get("right"))
+                                    if pg_winner == "left":
+                                        tf.write(f"Winner: Left ({m.get('ai_left', '')}) — Right had no units (elimination). Left: {left_c}; Right: {right_c}.\n")
+                                    elif pg_winner == "right":
+                                        tf.write(f"Winner: Right ({m.get('ai_right', '')}) — Left had no units (elimination). Left: {left_c}; Right: {right_c}.\n")
+                                    else:
+                                        tf.write(f"Winner: Draw — Both sides still had units. Left: {left_c}; Right: {right_c}.\n")
+                                for step, text in snapshots:
+                                    tf.write(f"\n  Step {step}\n")
+                                    tf.write(text)
+                                    if not text.endswith("\n"):
+                                        tf.write("\n")
+                        else:
+                            tf.write("\n--- Game 1 (legacy single-game capture) ---\n")
+                            if per_game_compositions:
+                                pg = per_game_compositions[0]
+                                pg_winner = pg.get("winner", "")
+                                left_c = _comp_str(pg.get("left"))
+                                right_c = _comp_str(pg.get("right"))
+                                if pg_winner == "left":
+                                    tf.write(f"Winner: Left — Right had no units (elimination). Left: {left_c}; Right: {right_c}.\n")
+                                elif pg_winner == "right":
+                                    tf.write(f"Winner: Right — Left had no units (elimination). Left: {left_c}; Right: {right_c}.\n")
+                                else:
+                                    tf.write(f"Winner: Draw — Both sides still had units. Left: {left_c}; Right: {right_c}.\n")
+                            for step, text in all_game_snapshots:
+                                tf.write(f"\n  Step {step}\n")
+                                tf.write(text)
+                                if not text.endswith("\n"):
+                                    tf.write("\n")
+                    else:
+                        tf.write("\n(No snapshots: enable capture_snapshots and ensure game_state_utils is available.)\n")
 
     # 5) Fitness over generations plot — inside run folder
     plot_path = os.path.join(run_dir, "fitness_plot.png")
@@ -353,7 +433,7 @@ def _write_local_run_logs(
     print(f"    History: {RUN_HISTORY_CSV}")
     print(f"    This run (all in one folder): {run_dir}")
     print(f"      generations.csv, utt_changes.csv, best_utt_summary.txt, best_utt_config.json,")
-    print(f"      matches.csv, fitness_plot.png, match_outputs/, utt_log/ (every gen/ind UTT)")
+    print(f"      matches.csv, fitness_plot.png," + (" match_outputs/<genN_indM>/*.txt," if save_game_details else " (match_outputs off),") + " utt_log/ (every gen/ind UTT)")
     return run_dir
 
 
@@ -395,6 +475,7 @@ def _main(ts: str, log_path: str):
     print(f"  Population:     {POPULATION}")
     print(f"  Games per eval: {GAMES_PER_EVAL} × {len(MAP_PATHS)} map(s)")
     print(f"  Max steps:      {MAX_STEPS}")
+    print(f"  Save game details: {SAVE_GAME_DETAILS} (edit SAVE_GAME_DETAILS in this script or set GA_SAVE_GAME_DETAILS=0)")
     print(f"  Output dir:     {OUTPUT_DIR}")
     print("=" * 60)
 
@@ -415,7 +496,7 @@ def _main(ts: str, log_path: str):
             "workerRushAI",
             "heavyRushAI",
             "rangedRushAI",
-            "randomBiasedAI",
+            #"randomBiasedAI",
             # Partially observable rush variants
             "POHeavyRush",
             "POLightRush",
@@ -435,6 +516,7 @@ def _main(ts: str, log_path: str):
         use_both_orderings=True,    # run (ai1,ai2) and (ai2,ai1); symmetric UTT → 50-50 gives balance signal
         verbose=True,
         utt_log_dir=utt_log_dir,    # save every evaluated UTT (gen{N}_ind{M}.json) for comparison
+        save_game_details=SAVE_GAME_DETAILS,  # per-game snapshots + match_outputs/*.txt (set GA_SAVE_GAME_DETAILS=0 to disable)
     )
 
     experiment_manager = ExperimentManager(OUTPUT_DIR)

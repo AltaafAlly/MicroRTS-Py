@@ -26,7 +26,7 @@ class UTTValidator:
             'harvestAmount': (1, 1)
         },
         'Worker': {
-            'cost': (1, 10),
+            'cost': (1, 5),   # Max 5 so Base can produce at least one Worker with 5 starting resources (8x8 maps)
             'produceTime': (1, 5),
             'hp': (1, 20),
             'minDamage': (1, 5),
@@ -35,9 +35,10 @@ class UTTValidator:
             'attackTime': (1, 5),
             'moveTime': (1, 3),
             'sightRadius': (1, 5),
-            'harvestTime': (1, 5),
-            'returnTime': (1, 3),
-            'harvestAmount': (1, 10)
+            # Align with chromosome: avoid instant-drain economy (harvest/return too fast, harvestAmount too high)
+            'harvestTime': (6, 25),
+            'returnTime': (4, 15),
+            'harvestAmount': (1, 5)
         },
         'Light': {
             'cost': (5, 20),
