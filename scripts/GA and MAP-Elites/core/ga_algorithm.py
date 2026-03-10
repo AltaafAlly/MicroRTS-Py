@@ -118,6 +118,8 @@ class GAResults:
     # Optional: per-generation best UTT for diffing and match log for CSV export
     best_individual_per_generation: Optional[List[Tuple[int, MicroRTSChromosome]]] = None
     run_match_log: Optional[List[Dict[str, Any]]] = None
+    # Optional: per-generation, per-individual overall fitness values (for plotting / analysis)
+    per_individual_fitness: Optional[List[List[float]]] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -230,9 +232,11 @@ class MicroRTSGeneticAlgorithm:
         self.current_generation = 0
         self.previous_total_time = 0.0  # Track time from previous runs when resuming
         
-        # Optional: for run_ga_local_test CSV/plot (best UTT per gen, match log)
+        # Optional: for run_ga_local_test CSV/plot (best UTT per gen, match log, per-individual curves)
         self.best_individual_history: List[Tuple[int, MicroRTSChromosome]] = []
         self.run_match_log: List[Dict[str, Any]] = []
+        # Per-generation per-individual fitness history: [[f0,f1,...], ...] indexed by generation then individual index
+        self.individual_fitness_history: List[List[float]] = []
     
     def initialize_population(self) -> None:
         """Initialize the population with random chromosomes."""
@@ -383,6 +387,11 @@ class MicroRTSGeneticAlgorithm:
         setattr(self.fitness_evaluator, "run_match_snapshot_interval", 15)  # snapshot every 15 steps when save_game_details is on
         # Evaluate current population
         self.evaluate_population()
+        # Record per-individual fitness for this generation (overall_fitness only; components can be recomputed if needed)
+        if self.fitness_scores:
+            self.individual_fitness_history.append(
+                [score.overall_fitness for score in self.fitness_scores]
+            )
         
         # Update best individual
         self.update_best_individual()
@@ -684,6 +693,7 @@ class MicroRTSGeneticAlgorithm:
             convergence_generation=convergence_generation,
             best_individual_per_generation=self.best_individual_history if self.best_individual_history else None,
             run_match_log=self.run_match_log if self.run_match_log else None,
+            per_individual_fitness=self.individual_fitness_history if self.individual_fitness_history else None,
         )
         
         return results

@@ -70,9 +70,10 @@ class Tee:
         self.file.close()
 
 # Local test config (override with GA_GENERATIONS, GA_POPULATION, GA_GAMES_PER_EVAL if needed)
-GENERATIONS = int(os.getenv("GA_GENERATIONS", "25"))
-POPULATION = int(os.getenv("GA_POPULATION", "10"))
-GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "8"))  # per map, per ordering
+# Tuned for a “medium” local run on a typical PC: ~30–60 minutes.
+GENERATIONS = int(os.getenv("GA_GENERATIONS", "10"))
+POPULATION = int(os.getenv("GA_POPULATION", "5"))
+GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "4"))  # per map, per ordering
 MAX_STEPS = 20000    # Cap per game; decisive games end in hundreds, draws stop here
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ga_local_test_output")
 EXPERIMENT_NAME = "local_two_ai_test"
@@ -265,6 +266,17 @@ def _write_local_run_logs(
                 round(s.time_elapsed, 2)
             ])
 
+    # 2b) Per-individual fitness CSV — fitness of every individual in every generation
+    ind_hist = getattr(results, "per_individual_fitness", None)
+    if ind_hist:
+        ind_path = os.path.join(run_dir, "individuals.csv")
+        with open(ind_path, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["generation", "individual_index", "fitness"])
+            for gen_idx, fitnesses in enumerate(ind_hist):
+                for ind_idx, f_val in enumerate(fitnesses):
+                    w.writerow([gen_idx, ind_idx, round(f_val, 4)])
+
     # 3) UTT changes — only real value changes: gen 0 vs default (midpoint), then gen-to-gen diffs
     utt_changes_path = os.path.join(run_dir, "utt_changes.csv")
     utt_changes_rows = []
@@ -407,11 +419,14 @@ def _write_local_run_logs(
 
     # 5) Fitness over generations plot — inside run folder
     plot_path = os.path.join(run_dir, "fitness_plot.png")
+    indiv_plot_path = os.path.join(run_dir, "individual_fitness.png")
     if results.generation_stats:
         try:
             import matplotlib
             matplotlib.use("Agg")
             import matplotlib.pyplot as plt
+
+            # Aggregate best/avg plot
             gens = [s.generation for s in results.generation_stats]
             best_f = [s.best_fitness for s in results.generation_stats]
             avg_f = [s.avg_fitness for s in results.generation_stats]
@@ -426,14 +441,32 @@ def _write_local_run_logs(
             plt.tight_layout()
             plt.savefig(plot_path, dpi=120)
             plt.close()
+
+            # Per-individual fitness plot: one line per individual across generations
+            ind_hist = getattr(results, "per_individual_fitness", None)
+            if ind_hist and len(ind_hist) > 0:
+                num_gens = len(ind_hist)
+                num_inds = len(ind_hist[0])
+                plt.figure(figsize=(10, 6))
+                x = list(range(num_gens))
+                for ind_idx in range(num_inds):
+                    y = [gen_fit[ind_idx] for gen_fit in ind_hist]
+                    plt.plot(x, y, label=f"ind {ind_idx}", alpha=0.6)
+                plt.xlabel("Generation")
+                plt.ylabel("Fitness")
+                plt.title("Per-individual fitness over generations")
+                plt.grid(True, alpha=0.3)
+                plt.tight_layout()
+                plt.savefig(indiv_plot_path, dpi=120)
+                plt.close()
         except Exception as e:
-            print(f"  (Could not save fitness plot: {e})")
+            print(f"  (Could not save fitness plot(s): {e})")
 
     print(f"  Run logs: {GA_RUN_LOGS_DIR}")
     print(f"    History: {RUN_HISTORY_CSV}")
     print(f"    This run (all in one folder): {run_dir}")
-    print(f"      generations.csv, utt_changes.csv, best_utt_summary.txt, best_utt_config.json,")
-    print(f"      matches.csv, fitness_plot.png," + (" match_outputs/<genN_indM>/*.txt," if save_game_details else " (match_outputs off),") + " utt_log/ (every gen/ind UTT)")
+    print(f"      generations.csv, individuals.csv, utt_changes.csv, best_utt_summary.txt, best_utt_config.json,")
+    print(f"      matches.csv, fitness_plot.png, individual_fitness.png," + (" match_outputs/<genN_indM>/*.txt," if save_game_details else " (match_outputs off),") + " utt_log/ (every gen/ind UTT)")
     return run_dir
 
 
@@ -491,17 +524,21 @@ def _main(ts: str, log_path: str):
         map_paths=MAP_PATHS,
         games_per_evaluation=GAMES_PER_EVAL,
         ai_agents=[
-            # Fully observable rush/baselines
+            # Fully observable
             "lightRushAI",
             "workerRushAI",
             "heavyRushAI",
             "rangedRushAI",
-            #"randomBiasedAI",
-            # Partially observable rush variants
-            "POHeavyRush",
-            "POLightRush",
-            "PORangedRush",
-            "POWorkerRush",
+            # Competition
+            #"coacAI",
+            #"naiveMCTSAI",
+            #"mixedBot",
+            #"rojo",
+            #"izanagi",
+            #"tiamat",
+            #"droplet",
+            #"mayari",
+            #"guidedRojoA3N", bot does not work 
         ],
         # Weights: slightly less dominance for balance so duration can break ties between 5-5-0 UTTs
         fitness_alpha=0.5,   # balance weight

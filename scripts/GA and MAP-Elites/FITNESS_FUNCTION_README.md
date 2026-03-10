@@ -67,6 +67,14 @@ If every game in a matchup is a draw (`decisible == 0`), we set **balance = 0** 
 
 **Why:** All-draw outcomes usually mean games timed out or got stuck (e.g. hitting max steps). We don’t want the GA to “solve” balance by making games never end; we want real wins/losses and a 50–50 split between the two AIs.
 
+### 2.5b Penalizing dead UTTs (any all-draw matchup + draw-rate multiplier)
+
+- **If any matchup is all-draws**, we set **overall balance = 0** (not just that matchup’s score). So a UTT with even one timeout matchup is treated as bad for balance.
+- After computing `overall_fitness`, we apply a **draw-rate penalty**:  
+  `overall *= max(0.01, 1.0 - draw_ratio × 1.2)`, where `draw_ratio = total_draws / total_games` across all matchups for that individual.
+
+**Why:** “Dead” UTTs (e.g. economy too slow, games hit max steps) were still surviving when only per-matchup balance and duration were used. Zeroing overall balance when any matchup is all-draws, plus a global draw-rate multiplier, strongly selects against these UTTs so the population converges to configurations that produce decisive games.
+
 ### 2.6 Aggregating balance across multiple matchups (geometric mean)
 
 When we have several matchups (e.g. multiple AI pairs or maps), we don’t use a simple average of per-matchup balance scores. We use the **geometric mean** of those scores (with a small epsilon to avoid log(0)).

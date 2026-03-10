@@ -188,7 +188,8 @@ public class FEStatePane extends JPanel {
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_ALTERNATING),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),
-                                      loadCustomUTT("/utts/gen15_ind2.json"),
+                                      loadCustomUTT("/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/utts/gen15_ind2.json"),
+                                      loadCustomUTT("/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/utts/gen0_ind0 copy.json"),
                                       
                                       
     };
@@ -201,7 +202,8 @@ public class FEStatePane extends JPanel {
                                    "Nondeterministic-Both",
                                    "Nondeterministic-Alternating",
                                    "Nondeterministic-Random",
-                                    "From GA"};
+                                    "From GA",
+                                    "Draw Games"};
 
     JFormattedTextField mapWidthField;
     JFormattedTextField mapHeightField;

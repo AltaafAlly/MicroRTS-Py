@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -597,6 +598,9 @@ public class GameState {
         for(UnitActionAssignment uaa:unitActions.values()) {
             if (uaa.action.ETA(uaa.unit)+uaa.time<=time) readyToExecute.add(uaa);
         }
+        // Shuffle so neither player has a consistent "first execution" advantage (player 0 was
+        // always first because issueSafe(pa1) is called before issueSafe(pa2) and unitActions is a LinkedHashMap).
+        Collections.shuffle(readyToExecute, r);
                 
         // execute the actions:
         for(UnitActionAssignment uaa:readyToExecute) {
@@ -616,6 +620,7 @@ public class GameState {
      */
     public void forceExecuteAllActions() {
         List<UnitActionAssignment> readyToExecute = new LinkedList<>(unitActions.values());
+        Collections.shuffle(readyToExecute, r);
                 
         // execute all the actions:
         for(UnitActionAssignment uaa:readyToExecute) {

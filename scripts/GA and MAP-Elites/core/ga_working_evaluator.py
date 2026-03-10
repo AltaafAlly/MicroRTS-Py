@@ -323,8 +323,13 @@ class WorkingGAEvaluator(FitnessEvaluator):
                     total_steps = combined.get("_total_steps", 0)
                     if total_steps:
                         print(f"        (total steps this run: {total_steps})")
+                    # Per-ordering breakdown so you can see neither AI always wins on one side
+                    r1_l, r1_r, r1_d = R1.get("left_wins", 0), R1.get("right_wins", 0), R1.get("draws", 0)
+                    r2_l, r2_r, r2_d = R2.get("left_wins", 0), R2.get("right_wins", 0), R2.get("draws", 0)
+                    print(f"        Ordering 1 ({ai1} left, {ai2} right): {ai1} {r1_l}, {ai2} {r1_r}, draws {r1_d}")
+                    print(f"        Ordering 2 ({ai2} left, {ai1} right): {ai1} {r2_r}, {ai2} {r2_l}, draws {r2_d}")
                     d = combined["draws"]
-                    print(f"        Result: {ai1_wins}-{ai2_wins}-{d} ({ai1} vs {ai2} wins) (both orderings)")
+                    print(f"        Result: {ai1_wins}-{ai2_wins}-{d} ({ai1} vs {ai2} wins) (combined by AI)")
                     match_results.append({"ai1": ai1, "ai2": ai2, "result": combined})
                 elif len(self.map_paths) == 1:
                     result = self._run_match_with_utt(ai1, ai2, microrts_utt_path, games_per_pair,
@@ -500,6 +505,8 @@ class WorkingGAEvaluator(FitnessEvaluator):
         balance_scores = []
         duration_scores = []
         all_ai_names = set()  # Track which AIs were tested for diversity
+        total_draws_global = 0
+        total_games_global = 0
         
         for match in match_results:
             result = match['result']
@@ -520,8 +527,10 @@ class WorkingGAEvaluator(FitnessEvaluator):
                     total_games = wins_ai1 + wins_ai2 + result.get("draws", 0)
                     decisive = wins_ai1 + wins_ai2
                 if total_games > 0:
+                    total_games_global += total_games
+                    total_draws_global += result.get("draws", 0)
                     if decisive == 0:
-                        # All draws = no competitive signal; treat as poor balance so GA doesn't optimize for timeouts
+                        # All draws = dead UTT (timeouts); treat as poor balance so GA strongly selects against these
                         balance = 0.0
                     else:
                         # Win ratio for the two AIs (of decisive games, is it 50-50?)
@@ -581,28 +590,24 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         duration_scores.append(duration_score)
         
         # Calculate balance using geometric mean to penalize very imbalanced matchups more
-        # Geometric mean gives lower weight to outliers, so a single very imbalanced matchup
-        # will significantly lower the overall balance score
+        # If ANY matchup is all-draws (dead UTT), set balance to 0 so GA strongly selects against these
         if balance_scores:
-            if self.use_strict_balance:
-                # Use geometric mean: more sensitive to very low scores
-                # This means one very imbalanced matchup (e.g., 5-0-0) will significantly hurt the score
+            min_balance = min(balance_scores)
+            if min_balance <= 0.0:
+                # At least one matchup had all draws (timeouts) => dead UTT
+                balance = 0.0
+            elif self.use_strict_balance:
                 import math
-                # Avoid zero values (add small epsilon) and use geometric mean
-                balanced_scores = [max(0.001, score) for score in balance_scores]  # Avoid log(0)
+                # Use geometric mean: more sensitive to very low scores
+                balanced_scores = [max(0.001, score) for score in balance_scores]
                 log_sum = sum(math.log(score) for score in balanced_scores)
-                geometric_mean = math.exp(log_sum / len(balanced_scores))
-                
-                # Also check minimum threshold: penalize if any matchup is below threshold
-                min_balance = min(balance_scores)
+                geometric_mean = math.exp(log_sum / len(balance_scores))
                 if min_balance < self.min_balance_threshold:
-                    # Apply penalty: reduce overall balance if any matchup is very imbalanced
-                    penalty = (min_balance / self.min_balance_threshold) ** 0.5  # Square root penalty
+                    penalty = (min_balance / self.min_balance_threshold) ** 0.5
                     balance = geometric_mean * penalty
                 else:
                     balance = geometric_mean
             else:
-                # Simple arithmetic mean (original approach)
                 balance = sum(balance_scores) / len(balance_scores)
         else:
             balance = 0.5
@@ -643,6 +648,13 @@ class WorkingGAEvaluator(FitnessEvaluator):
         overall = (self.alpha * balance + 
                   self.beta * duration + 
                   self.gamma * strategy_diversity)
+        
+        # Penalize high draw rate (dead UTTs that cause timeouts): multiply by (1 - draw_ratio * factor)
+        # so UTTs with many all-draw matchups get much lower fitness
+        if total_games_global > 0:
+            draw_ratio = total_draws_global / total_games_global
+            draw_penalty_factor = 1.2  # 50% draws => overall *= 0.4; 100% => overall *= 0.0 (capped to 0.01)
+            overall *= max(0.01, 1.0 - draw_ratio * draw_penalty_factor)
         
         return FitnessComponents(
             balance=balance,
