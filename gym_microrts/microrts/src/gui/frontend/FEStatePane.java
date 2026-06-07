@@ -188,11 +188,13 @@ public class FEStatePane extends JPanel {
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_ALTERNATING),
                                       new UnitTypeTable(UnitTypeTable.VERSION_NON_DETERMINISTIC, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_RANDOM),
-                                      loadCustomUTT("/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/utts/gen15_ind2.json"),
-                                      loadCustomUTT("/home/altaaf/projects/MicroRTS-Py-Research/gym_microrts/microrts/utts/gen0_ind0 copy.json"),
+                                      loadCustomUTT("utts/gen15_ind2.json"),
+                                      loadCustomUTT("utts/latest_gui.json"),
+                                      loadCustomUTT("utts/LightRushFavored_GUI.json"),
                                       
                                       
     };
+    //how to change the UTT in the GUI: change the path in the loadCustomUTT method to cp "gym_microrts/microrts/utts/test_utt_<whatever>.json" "gym_microrts/microrts/utts/latest_gui.json"
     public static String unitTypeTableNames[] = {"Original-Both",
                                    "Original-Alternating",
                                    "Original-Random",
@@ -202,8 +204,9 @@ public class FEStatePane extends JPanel {
                                    "Nondeterministic-Both",
                                    "Nondeterministic-Alternating",
                                    "Nondeterministic-Random",
-                                    "From GA",
-                                    "Draw Games"};
+                                    "From GA (gen15_ind2.json)",
+                                    "Latest (utts/latest_gui.json — overwrite to refresh)",
+                                    "LightRush favored (GUI)"};
 
     JFormattedTextField mapWidthField;
     JFormattedTextField mapHeightField;
@@ -1046,15 +1049,41 @@ public class FEStatePane extends JPanel {
     }
     
     /**
+     * Resolve a UTT path for the GUI: absolute paths as-is; relative paths against
+     * {@code user.dir} (IDE / shell cwd), then {@code gym_microrts/microrts/}, then {@code microrts/}.
+     */
+    private static java.io.File resolveUttFile(String filePath) {
+        java.io.File f = new java.io.File(filePath);
+        if (f.isAbsolute()) {
+            return f;
+        }
+        if (f.exists()) {
+            return f;
+        }
+        String ud = System.getProperty("user.dir");
+        java.io.File[] candidates = new java.io.File[] {
+            new java.io.File(ud, filePath),
+            new java.io.File(ud, "gym_microrts/microrts/" + filePath),
+            new java.io.File(ud, "microrts/" + filePath),
+        };
+        for (java.io.File c : candidates) {
+            if (c.exists()) {
+                return c;
+            }
+        }
+        return f;
+    }
+
+    /**
      * Helper method to load a custom UTT from JSON file
      * @param filePath path to the JSON UTT file
      * @return UnitTypeTable loaded from JSON, or default UTT if loading fails
      */
     private static UnitTypeTable loadCustomUTT(String filePath) {
         try {
-            java.io.File file = new java.io.File(filePath);
+            java.io.File file = resolveUttFile(filePath);
             if (!file.exists()) {
-                System.err.println("UTT file not found: " + filePath + ", using default UTT");
+                System.err.println("UTT file not found: " + filePath + " (resolved: " + file.getAbsolutePath() + "), using default UTT");
                 return new UnitTypeTable(UnitTypeTable.VERSION_ORIGINAL_FINETUNED, UnitTypeTable.MOVE_CONFLICT_RESOLUTION_CANCEL_BOTH);
             }
             

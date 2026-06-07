@@ -35,7 +35,7 @@ public class Train extends AbstractAction {
     {
         if (!(o instanceof Train)) return false;
         Train a = (Train)o;
-        return type == a.type;
+        return type != null && type.equals(a.type);
     }
     
     

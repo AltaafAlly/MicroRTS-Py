@@ -88,7 +88,7 @@ public class CRush_V2 extends AbstractionLayerAI {
 
         // behavior of bases:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == baseType
+            if (baseType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
 
@@ -102,7 +102,7 @@ public class CRush_V2 extends AbstractionLayerAI {
 
         // behavior of barracks:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == barracksType
+            if (barracksType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
                 barracksBehavior(u, p, pgs);
@@ -114,7 +114,7 @@ public class CRush_V2 extends AbstractionLayerAI {
             if (u.getType().canAttack && !u.getType().canHarvest
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
-                if (u.getType() == rangedType) {
+                if (rangedType.equals(u.getType())) {
                     rangedUnitBehavior(u, p, gs);
                 } else {
                     meleeUnitBehavior(u, p, gs);
@@ -134,19 +134,19 @@ public class CRush_V2 extends AbstractionLayerAI {
         int resources = p.getResources();
 
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == workerType
+            if (workerType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nworkers++;
             }
-            if (u2.getType() == barracksType
+            if (barracksType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbarracks++;
             }
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbases++;
             }
-            if (u2.getType() == rangedType
+            if (rangedType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nranged++;
             }
@@ -186,21 +186,21 @@ public class CRush_V2 extends AbstractionLayerAI {
                     closestDistance = d;
                 }
             }
-            if (u2.getType() == barracksType && u2.getPlayer() == p.getID()) {
+            if (barracksType.equals(u2.getType()) && u2.getPlayer() == p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestRacks == null || d < closestDistance) {
                     closestRacks = u2;
                     closestDistance = d;
                 }
             }
-            if (u2.getType() == baseType && u2.getPlayer() == p.getID()) {
+            if (baseType.equals(u2.getType()) && u2.getPlayer() == p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestBase == null || d < closestDistance) {
                     closestBase = u2;
                     closestDistance = d;
                 }
             }
-            if (u2.getType() == baseType && u2.getPlayer() != p.getID()) {
+            if (baseType.equals(u2.getType()) && u2.getPlayer() != p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestEnemyBase == null || d < closestDistance) {
                     closestEnemyBase = u2;
@@ -234,7 +234,7 @@ public class CRush_V2 extends AbstractionLayerAI {
                     closestDistance = d;
                 }
             }
-            if (u2.getType() == baseType && u2.getPlayer() == p.getID()) {
+            if (baseType.equals(u2.getType()) && u2.getPlayer() == p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestBase == null || d < closestDistance) {
                     closestBase = u2;
@@ -242,14 +242,14 @@ public class CRush_V2 extends AbstractionLayerAI {
                 }
             }
 
-            if (u2.getType() == barracksType && u2.getPlayer() == p.getID()) {
+            if (barracksType.equals(u2.getType()) && u2.getPlayer() == p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestRacks == null || d < closestDistance) {
                     closestRacks = u2;
                     closestDistance = d;
                 }
             }
-            if (u2.getType() == baseType && u2.getPlayer() != p.getID()) {
+            if (baseType.equals(u2.getType()) && u2.getPlayer() != p.getID()) {
                 int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                 if (closestEnemyBase == null || d < closestDistance) {
                     closestEnemyBase = u2;
@@ -273,15 +273,15 @@ public class CRush_V2 extends AbstractionLayerAI {
         List<Unit> battleWorkers = new LinkedList<>();
 
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbases++;
             }
-            if (u2.getType() == barracksType
+            if (barracksType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbarracks++;
             }
-            if (u2.getType() == workerType
+            if (workerType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nworkers++;
             }
@@ -316,9 +316,10 @@ public class CRush_V2 extends AbstractionLayerAI {
             //Not when it actually starts building the building.
             int resources = p.getResources();
             Unit u = freeWorkers.remove(0);
-            buildIfNotAlreadyBuilding(u, barracksType, u.getX(), u.getY(), reservedPositions, p, pgs);
-            resourcesUsed += barracksType.cost;
-            buildingRacks = true;
+            if (buildIfNotAlreadyBuilding(u, barracksType, u.getX(), u.getY(), reservedPositions, p, pgs)) {
+                resourcesUsed += barracksType.cost;
+                buildingRacks = true;
+            }
 
         } else {
             resourcesUsed = barracksType.cost * nbarracks;
@@ -346,7 +347,7 @@ public class CRush_V2 extends AbstractionLayerAI {
                         closestDistance = d;
                     }
                 }
-                if (u2.getType() == baseType && u2.getPlayer() != p.getID()) {
+                if (baseType.equals(u2.getType()) && u2.getPlayer() != p.getID()) {
                     int d = Math.abs(u2.getX() - u.getX()) + Math.abs(u2.getY() - u.getY());
                     if (closestEnemyBase == null || d < closestDistance) {
                         closestEnemyBase = u2;
@@ -398,11 +399,11 @@ public class CRush_V2 extends AbstractionLayerAI {
         List<Unit> battleWorkers = new LinkedList<>();
 
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbases++;
             }
-            if (u2.getType() == workerType
+            if (workerType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nworkers++;
             }

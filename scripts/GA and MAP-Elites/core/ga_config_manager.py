@@ -363,6 +363,9 @@ class ExperimentManager:
         config_file = os.path.join(experiment_dir, "ga_config.json")
         with open(config_file, 'r') as f:
             data = json.load(f)
+        fe = data.get("fe_utt_builtin")
+        if isinstance(fe, list) and len(fe) == 2:
+            data["fe_utt_builtin"] = (int(fe[0]), int(fe[1]))
         return GAConfig(**data)
     
     def load_experiment_results(self, experiment_dir: str) -> GAResults:

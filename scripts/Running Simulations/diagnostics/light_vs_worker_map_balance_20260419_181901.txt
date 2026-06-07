@@ -1,0 +1,20 @@
+Map set: single  (1 maps)  games/order=4  max_steps=10000  ai1=lightRushAI ai2=workerRushAI  verbose_per_game=True  DIAG_USE_FE_UTT=1  utt_builtin=(3, 1) (FE Nondeterministic-Both)
+
+
+[1/1] maps/BroodWar/(2)Benzene.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(2)Benzene.scxA.xml] game 1/4: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2724
+        [(2)Benzene.scxA.xml] game 2/4: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3032
+        [(2)Benzene.scxA.xml] game 3/4: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2837
+        [(2)Benzene.scxA.xml] game 4/4: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2923
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(2)Benzene.scxA.xml] game 1/4: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=4582
+        [(2)Benzene.scxA.xml] game 2/4: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3835
+        [(2)Benzene.scxA.xml] game 3/4: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3804
+        [(2)Benzene.scxA.xml] game 4/4: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3255
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+Wrote /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/light_vs_worker_map_balance.csv
+
+Best overall balance (low seat asym, near 50% aggregate): maps/BroodWar/(2)Benzene.scxA.xml
+  seat_asymmetry=0.0  aggregate_ai1_win_rate=1.0

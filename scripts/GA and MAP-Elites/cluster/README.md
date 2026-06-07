@@ -6,6 +6,7 @@ This folder contains scripts for running the Genetic Algorithm (GA) on a compute
 
 ### SLURM Batch Scripts
 - **`submit_ga.sbatch`** - SLURM batch script for running long GA evolution runs on the cluster
+- **`submit_single_gene_balance_decrease.sbatch`** - SLURM job for **`run_single_gene_balance_decrease.py`** (one-gene balance / dominance shaping). Map **`maps/16x16/basesWorkers16x16.xml`** by default. Wall time **3 days**, outputs under `/home-mscluster/${USER}/single_gene_runs/`, optional env overrides (see script header).
 
 ### Manual Test Scripts
 - **`run_ga_manual.sh`** - Shell script to run the GA manually (for testing or local execution)
@@ -23,6 +24,10 @@ Before running the GA on the cluster, sync your code:
 cd /path/to/MicroRTS-Py-Research
 ./scripts/GA\ and\ MAP-Elites/cluster/sync_to_cluster.sh
 
+# Defaults: aally@146.141.21.100 → ~/Research/MicroRTS-Py-Research/
+# Repo directly under ~/Research (no subfolder): third arg "."
+./scripts/GA\ and\ MAP-Elites/cluster/sync_to_cluster.sh aally 146.141.21.100 .
+
 # Or manually with rsync
 rsync -avz --progress \
     --exclude='.git/' \
@@ -30,13 +35,15 @@ rsync -avz --progress \
     --exclude='*.pyc' \
     --exclude='experiments/' \
     --exclude='results/' \
+    --exclude='runs/' \
     --exclude='gym_microrts/microrts/microrts.jar' \
-    ./ username@cluster:~/Research/MicroRTS-Py-Research/
+    ./ aally@146.141.21.100:~/Research/MicroRTS-Py-Research/
 ```
 
 The sync script automatically excludes:
 - Git files, Python cache, compiled files
 - Experiment results and logs
+- Any directory named **`runs/`** (e.g. `single_gene_experiment/runs`, root-level `runs`)
 - JAR files (will be rebuilt on cluster)
 - IDE files and temporary files
 
@@ -60,6 +67,32 @@ export GA_EXPERIMENT_NAME="my_test"
 # Submit with default parameters (20 generations, 25 population)
 sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_ga.sbatch
 ```
+
+#### Single-gene local default (validated 122522 profile)
+```bash
+cd /path/to/MicroRTS-Py-Research
+./scripts/GA\ and\ MAP-Elites/cluster/run_single_gene_local_default.sh
+```
+40 generations, population 16, 8 games per ordering, 50k max steps, **`SINGLE_GENE_DEC_JUMP_RATE=0.05`** (critical — 0.08 often reinjects huge Heavy.hp late in the run). Match logs on by default (`SINGLE_GENE_SAVE_GAME_DETAILS=1`); set to `0` for a faster run. Python defaults match this profile when you run `run_single_gene_balance_decrease.py` with no env vars (logs off unless you export `SINGLE_GENE_SAVE_GAME_DETAILS=1`).
+
+#### Single-gene local smoke test (fast)
+```bash
+cd /path/to/MicroRTS-Py-Research
+./scripts/GA\ and\ MAP-Elites/cluster/run_single_gene_local_smoke.sh
+```
+Uses `SINGLE_GENE_SMOKE=1`: 6 generations, population 8, 4 games per ordering, 20k max steps — same algorithm as cluster, much faster. Outputs go to `single_gene_experiment/runs/`.
+
+#### Single-gene balance-decrease (long run)
+```bash
+# Defaults: 16×16 basesWorkers map, 800 generations, pop 40, 24 games/ordering, 3-day limit,
+# outputs in ~/single_gene_runs on mscluster
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_single_gene_balance_decrease.sbatch
+
+# Heavier statistics (example)
+export SINGLE_GENE_DEC_GENS=1200 SINGLE_GENE_DEC_GAMES=32 SINGLE_GENE_DEC_POP=48
+sbatch scripts/GA\ and\ MAP-Elites/cluster/submit_single_gene_balance_decrease.sbatch
+```
+Set **`SINGLE_GENE_SAVE_GAME_DETAILS=1`** only if you need per-match `.txt` dumps (large). The batch file defaults it to **0** for disk safety.
 
 #### Resuming After Time Limit
 When the job hits the 3-day time limit, simply resubmit with the same command:

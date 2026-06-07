@@ -1,0 +1,10 @@
+Map set: broodwar  (45 maps)  games/order=24  max_steps=100000  ai1=lightRushAI ai2=workerRushAI  verbose_per_game=False
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[2/45] maps/BroodWar/(2)Destination.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[3/45] maps/BroodWar/(2)HeartbreakRidge.scxA.xml

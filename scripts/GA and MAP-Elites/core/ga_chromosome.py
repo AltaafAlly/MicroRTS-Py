@@ -124,8 +124,9 @@ class MicroRTSChromosome:
             'cost': (8, 15),     # More reasonable cost
             'produceTime': (3, 6), # Faster production
             'hp': (15, 30),     # More survivable
-            'minDamage': (6, 12), # Effective damage
-            'maxDamage': (6, 12), # Effective damage
+            # Slightly wider damage bounds to test if GA wants stronger lights
+            'minDamage': (6, 16), # Effective damage
+            'maxDamage': (6, 16), # Effective damage
             'attackRange': (1, 3), # Good range
             'attackTime': (3, 6), # Reasonable attack speed
             'moveTime': (1, 3),  # Fast movement
@@ -421,7 +422,9 @@ class MicroRTSChromosome:
             'Resource': {'ID': 0, 'isResource': True, 'isStockpile': False, 'canHarvest': False, 'canMove': False, 'canAttack': False, 'produces': [], 'producedBy': []},
             'Base': {'ID': 1, 'isResource': False, 'isStockpile': True, 'canHarvest': False, 'canMove': False, 'canAttack': False, 'produces': ['Worker'], 'producedBy': ['Worker']},
             'Barracks': {'ID': 2, 'isResource': False, 'isStockpile': False, 'canHarvest': False, 'canMove': False, 'canAttack': False, 'produces': ['Light', 'Heavy', 'Ranged'], 'producedBy': ['Worker']},
-            'Worker': {'ID': 3, 'isResource': False, 'isStockpile': False, 'canHarvest': True, 'canMove': True, 'canAttack': True, 'produces': [], 'producedBy': ['Base']},
+            # Workers must list Base + Barracks in produces or Java getUnitActions never adds build actions;
+            # GUI loads JSON-only UTT (no overlay) and HeavyRush would never get a Barracks → no Heavies.
+            'Worker': {'ID': 3, 'isResource': False, 'isStockpile': False, 'canHarvest': True, 'canMove': True, 'canAttack': True, 'produces': ['Base', 'Barracks'], 'producedBy': ['Base']},
             'Light': {'ID': 4, 'isResource': False, 'isStockpile': False, 'canHarvest': False, 'canMove': True, 'canAttack': True, 'produces': [], 'producedBy': ['Barracks']},
             'Heavy': {'ID': 5, 'isResource': False, 'isStockpile': False, 'canHarvest': False, 'canMove': True, 'canAttack': True, 'produces': [], 'producedBy': ['Barracks']},
             'Ranged': {'ID': 6, 'isResource': False, 'isStockpile': False, 'canHarvest': False, 'canMove': True, 'canAttack': True, 'produces': [], 'producedBy': ['Barracks']}

@@ -429,6 +429,26 @@ public class UnitTypeTable  {
 			JsonObject uto = v.asObject();
 			utt.getUnitType(uto.getString("name", null)).updateFromJSON(uto, utt);
 		}
+		// GA / hand-edited JSON often has Worker "produces": []. The GUI loads UTT via fromJSON only
+		// (no merge with a built-in table), so workers never get TYPE_PRODUCE for Base/Barracks and
+		// rush scripts only ever use workers in melee. Repair the standard build graph by name.
+		UnitType worker = utt.getUnitType("Worker");
+		if (worker != null && worker.produces.isEmpty()) {
+			UnitType base = utt.getUnitType("Base");
+			UnitType barracks = utt.getUnitType("Barracks");
+			if (base != null) {
+				worker.produces.add(base);
+				if (!base.producedBy.contains(worker)) {
+					base.producedBy.add(worker);
+				}
+			}
+			if (barracks != null) {
+				worker.produces.add(barracks);
+				if (!barracks.producedBy.contains(worker)) {
+					barracks.producedBy.add(worker);
+				}
+			}
+		}
 		return utt;
     }
     

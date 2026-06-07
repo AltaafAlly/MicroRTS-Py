@@ -131,7 +131,7 @@ public class WorkerRush extends AbstractionLayerAI {
         if (workers.isEmpty()) return;
         
         for(Unit u2:pgs.getUnits()) {
-            if (u2.getType() == baseType && 
+            if (baseType.equals(u2.getType()) && 
                 u2.getPlayer() == p.getID()) nbases++;
         }
         
@@ -140,8 +140,9 @@ public class WorkerRush extends AbstractionLayerAI {
             // build a base:
             if (p.getResources()>=baseType.cost + resourcesUsed) {
                 Unit u = freeWorkers.remove(0);
-                buildIfNotAlreadyBuilding(u,baseType,u.getX(),u.getY(),reservedPositions,p,pgs);
-                resourcesUsed+=baseType.cost;
+                if (buildIfNotAlreadyBuilding(u,baseType,u.getX(),u.getY(),reservedPositions,p,pgs)) {
+                    resourcesUsed+=baseType.cost;
+                }
             }
         }
         

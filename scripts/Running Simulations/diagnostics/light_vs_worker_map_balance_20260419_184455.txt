@@ -1,0 +1,322 @@
+Map set: broodwar  (45 maps)  games/order=1  max_steps=100000  ai1=lightRushAI ai2=workerRushAI  verbose_per_game=True  DIAG_USE_FE_UTT=1  utt_builtin=(3, 1) (FE Nondeterministic-Both)
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(2)Benzene.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2714
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(2)Benzene.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3530
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[2/45] maps/BroodWar/(2)Destination.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(2)Destination.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2822
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(2)Destination.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2898
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[3/45] maps/BroodWar/(2)HeartbreakRidge.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(2)HeartbreakRidge.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3054
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(2)HeartbreakRidge.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3079
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[4/45] maps/BroodWar/(3)Aztec.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)Aztec.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3164
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)Aztec.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2690
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[5/45] maps/BroodWar/(3)Aztec.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)Aztec.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3239
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)Aztec.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2990
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[6/45] maps/BroodWar/(3)Aztec.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)Aztec.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2985
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)Aztec.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3372
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[7/45] maps/BroodWar/(3)TauCross.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)TauCross.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3455
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)TauCross.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3034
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[8/45] maps/BroodWar/(3)TauCross.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)TauCross.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2978
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)TauCross.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3203
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[9/45] maps/BroodWar/(3)TauCross.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(3)TauCross.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2868
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(3)TauCross.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3195
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[10/45] maps/BroodWar/(4)Andromeda.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3355
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2961
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[11/45] maps/BroodWar/(4)Andromeda.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3843
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3269
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[12/45] maps/BroodWar/(4)Andromeda.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2575
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2975
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[13/45] maps/BroodWar/(4)Andromeda.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2419
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3250
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[14/45] maps/BroodWar/(4)Andromeda.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2998
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3805
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[15/45] maps/BroodWar/(4)Andromeda.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Andromeda.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2146
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Andromeda.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2609
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[16/45] maps/BroodWar/(4)BloodBath.scmA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=1795
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2359
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[17/45] maps/BroodWar/(4)BloodBath.scmB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2509
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=1936
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[18/45] maps/BroodWar/(4)BloodBath.scmC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmC.xml] game 1/1: winner=workerRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=915
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmC.xml] game 1/1: winner=workerRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=985
+  asym=0.000  agg_lightRushAI=0.00  o1_rate=0.00  o2_rate=0.00
+
+[19/45] maps/BroodWar/(4)BloodBath.scmD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2340
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2269
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[20/45] maps/BroodWar/(4)BloodBath.scmE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmE.xml] game 1/1: winner=workerRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=1300
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3265
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[21/45] maps/BroodWar/(4)BloodBath.scmF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)BloodBath.scmF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2337
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)BloodBath.scmF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2338
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[22/45] maps/BroodWar/(4)CircuitBreaker.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=1997
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2754
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[23/45] maps/BroodWar/(4)CircuitBreaker.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3020
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3216
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[24/45] maps/BroodWar/(4)CircuitBreaker.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2794
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2381
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[25/45] maps/BroodWar/(4)CircuitBreaker.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2810
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2842
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[26/45] maps/BroodWar/(4)CircuitBreaker.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3798
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2952
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[27/45] maps/BroodWar/(4)CircuitBreaker.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)CircuitBreaker.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3047
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)CircuitBreaker.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2637
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[28/45] maps/BroodWar/(4)EmpireoftheSun.scmA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3605
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2929
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[29/45] maps/BroodWar/(4)EmpireoftheSun.scmB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3246
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3449
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[30/45] maps/BroodWar/(4)EmpireoftheSun.scmC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2628
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3818
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[31/45] maps/BroodWar/(4)EmpireoftheSun.scmD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2369
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3099
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[32/45] maps/BroodWar/(4)EmpireoftheSun.scmE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmE.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3047
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=4303
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[33/45] maps/BroodWar/(4)EmpireoftheSun.scmF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)EmpireoftheSun.scmF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2648
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)EmpireoftheSun.scmF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3248
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[34/45] maps/BroodWar/(4)Fortress.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3377
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2320
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[35/45] maps/BroodWar/(4)Fortress.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3318
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2074
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[36/45] maps/BroodWar/(4)Fortress.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3738
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2386
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[37/45] maps/BroodWar/(4)Fortress.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3690
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2437
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[38/45] maps/BroodWar/(4)Fortress.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2802
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3156
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[39/45] maps/BroodWar/(4)Fortress.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Fortress.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2667
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Fortress.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2876
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[40/45] maps/BroodWar/(4)Python.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2475
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxA.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2863
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[41/45] maps/BroodWar/(4)Python.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2784
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxB.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3223
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[42/45] maps/BroodWar/(4)Python.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2638
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxC.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2670
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[43/45] maps/BroodWar/(4)Python.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2403
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxD.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3688
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[44/45] maps/BroodWar/(4)Python.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2626
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxE.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3042
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+[45/45] maps/BroodWar/(4)Python.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(4)Python.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3229
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(4)Python.scxF.xml] game 1/1: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=2424
+  asym=0.000  agg_lightRushAI=1.00  o1_rate=1.00  o2_rate=1.00
+
+Wrote /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/light_vs_worker_map_balance.csv
+
+Best overall balance (low seat asym, near 50% aggregate): maps/BroodWar/(2)Benzene.scxA.xml
+  seat_asymmetry=0.0  aggregate_ai1_win_rate=1.0

@@ -1,0 +1,15 @@
+
+=== Testing map: maps/10x10/basesWorkers10x10.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=23, right_wins=27, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=28, right_wins=22, draws=0
+
+CSV written to: /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/lightRush_vs_workerRush_side_bias.csv
+
+Aggregate over both orderings (50 games each) per map:
+- maps/10x10/basesWorkers10x10.xml:
+    Ordering 1 (light left):  left=23, right=27, draws=0
+    Ordering 2 (light left):  left=28, right=22, draws=0

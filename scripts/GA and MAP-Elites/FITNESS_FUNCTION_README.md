@@ -38,7 +38,7 @@ When we run **both orderings** — (ai1 vs ai2) and (ai2 vs ai1) — we aggregat
 
 ### 2.2 Win ratio and imbalance
 
-- **Decisive games** = games that ended in a win (not a draw): `decisible = ai1_wins + ai2_wins`.
+- **Decisive games** = games that ended in a win (not a draw): `decisive = ai1_wins + ai2_wins`.
 - **Win ratio** (for AI1) = `ai1_wins / decisive`.
 - **Imbalance** = `|win_ratio - 0.5|` (0 = perfect 50–50, 0.5 = one AI wins everything).
 
@@ -63,7 +63,7 @@ When `use_strict_balance` is True we apply **extra** penalty for highly imbalanc
 
 ### 2.5 All draws → balance = 0
 
-If every game in a matchup is a draw (`decisible == 0`), we set **balance = 0** for that matchup.
+If every game in a matchup is a draw (`decisive == 0`), we set **balance = 0** for that matchup.
 
 **Why:** All-draw outcomes usually mean games timed out or got stuck (e.g. hitting max steps). We don’t want the GA to “solve” balance by making games never end; we want real wins/losses and a 50–50 split between the two AIs.
 
@@ -75,11 +75,11 @@ If every game in a matchup is a draw (`decisible == 0`), we set **balance = 0** 
 
 **Why:** “Dead” UTTs (e.g. economy too slow, games hit max steps) were still surviving when only per-matchup balance and duration were used. Zeroing overall balance when any matchup is all-draws, plus a global draw-rate multiplier, strongly selects against these UTTs so the population converges to configurations that produce decisive games.
 
-### 2.6 Aggregating balance across multiple matchups (geometric mean)
+### 2.6 Aggregating balance across multiple matchups (geometric mean or average)
 
-When we have several matchups (e.g. multiple AI pairs or maps), we don’t use a simple average of per-matchup balance scores. We use the **geometric mean** of those scores (with a small epsilon to avoid log(0)).
+When any matchup is all-draws, overall balance is set to 0 (see §2.5b) and we do not aggregate. Otherwise: when **`use_strict_balance`** is True we use the **geometric mean** of per-matchup balance scores (epsilon 0.001 to avoid log(0)); when False we use the **arithmetic mean**.
 
-**Why:** The geometric mean is dominated by the **lowest** scores. So one very imbalanced matchup (e.g. 10–0) drags the overall balance down a lot. That matches the goal: we want UTTs that are balanced in **every** tested matchup, not UTTs that are balanced on average but terrible in one pairing.
+**Why geometric mean when strict:** The geometric mean is dominated by the **lowest** scores, so one very imbalanced matchup (e.g. 10–0) drags overall balance down; we want UTTs balanced in **every** tested matchup, not just on average.
 
 ### 2.7 Minimum balance threshold (`min_balance_threshold`)
 
@@ -98,7 +98,7 @@ We want games that are **neither too short (curb-stomp) nor too long (endless dr
 When we have **total steps** for the matchup (sum of steps over all games):
 
 - **Avg steps per game** = `total_steps / total_games`.
-- We define a **target duration** (e.g. 500 steps) and a **tolerance** (e.g. 400 steps).
+- We define a **target duration** (e.g. 500 steps; configurable — `run_ga_local_test.py` uses 50) and a **tolerance** (e.g. 400 steps; configurable — local test uses 40).
 - **Duration score**:
   - 1.0 when avg steps = target.
   - Linear decay to 0.0 when avg steps = target ± tolerance.
@@ -205,7 +205,9 @@ So symmetric UTT + balance (by AI) + duration + diversity together implement “
 | **Balance**     | 50–50 win rate between the two AIs       | Fair matchup; by AI (not side) so fairness is about strategies, not left/right.     |
 | **Strict balance** | Extra penalty for 80–20 or worse     | Discourage any highly imbalanced matchup, not just low average balance.              |
 | **All draws = 0** | Balance = 0 if no decisive games      | Avoid rewarding timeouts / endless games as “balanced.”                              |
-| **Geometric mean** | Over matchups for balance              | One bad matchup should strongly reduce overall balance.                               |
+| **Any all-draw → balance 0** | If any matchup is all-draws, overall balance = 0 | Treat dead/timeout UTTs as bad; no aggregation.                    |
+| **Draw-rate penalty** | `overall *= max(0.01, 1.0 - draw_ratio × 1.2)` after fitness | Further penalize high draw rates across all matchups.           |
+| **Geometric mean** | Over matchups when `use_strict_balance` | One bad matchup strongly reduces overall balance; else arithmetic mean.   |
 | **Duration**    | Avg steps per game in a target band      | Sweet-spot length; gives gradient under symmetric UTT; avoid stomps and timeouts.    |
 | **Diversity**   | AI coverage, balance variance, patterns  | Robustness across matchups; avoid overfitting to one pair or one outcome type.        |
 | **Both orderings** | (ai1 vs ai2) and (ai2 vs ai1)         | Balance by AI, remove side bias, more stable win-rate estimate.                      |

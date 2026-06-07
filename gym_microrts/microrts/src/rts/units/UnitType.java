@@ -224,8 +224,8 @@ public class UnitType {
         produceTime = o.getInt("produceTime", 10);
         moveTime = o.getInt("moveTime", 10);
         attackTime = o.getInt("attackTime", 10);
-        harvestTime = o.getInt("produceTime", 10);
-        produceTime = o.getInt("produceTime", 10);
+        harvestTime = o.getInt("harvestTime", 10);
+        returnTime = o.getInt("returnTime", 10);
 
         harvestAmount = o.getInt("harvestAmount", 10);
         sightRadius = o.getInt("sightRadius", 10);
@@ -235,7 +235,9 @@ public class UnitType {
         canHarvest = o.getBoolean("canHarvest", false);
         canMove = o.getBoolean("canMove", false);
         canAttack = o.getBoolean("canAttack", false);
-        
+
+        produces.clear();
+        producedBy.clear();
         JsonArray produces_a = o.get("produces").asArray();        
         for(JsonValue v:produces_a.values()) {
             produces.add(utt.getUnitType(v.asString()));

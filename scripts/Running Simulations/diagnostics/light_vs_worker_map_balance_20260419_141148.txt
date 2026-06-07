@@ -1,0 +1,142 @@
+Map set: broodwar  (45 maps)  games/order=24  max_steps=20000  ai1=lightRushAI ai2=workerRushAI
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[2/45] maps/BroodWar/(2)Destination.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[3/45] maps/BroodWar/(2)HeartbreakRidge.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[4/45] maps/BroodWar/(3)Aztec.scxA.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[5/45] maps/BroodWar/(3)Aztec.scxB.xml
+  asym=1.000  agg_lightRushAI=0.50  o1_rate=0.00  o2_rate=1.00
+
+[6/45] maps/BroodWar/(3)Aztec.scxC.xml
+  SKIP: Java Virtual Machine is not running
+
+[7/45] maps/BroodWar/(3)TauCross.scxA.xml
+  SKIP: JVM cannot be restarted
+
+[8/45] maps/BroodWar/(3)TauCross.scxB.xml
+  SKIP: JVM cannot be restarted
+
+[9/45] maps/BroodWar/(3)TauCross.scxC.xml
+  SKIP: JVM cannot be restarted
+
+[10/45] maps/BroodWar/(4)Andromeda.scxA.xml
+  SKIP: JVM cannot be restarted
+
+[11/45] maps/BroodWar/(4)Andromeda.scxB.xml
+  SKIP: JVM cannot be restarted
+
+[12/45] maps/BroodWar/(4)Andromeda.scxC.xml
+  SKIP: JVM cannot be restarted
+
+[13/45] maps/BroodWar/(4)Andromeda.scxD.xml
+  SKIP: JVM cannot be restarted
+
+[14/45] maps/BroodWar/(4)Andromeda.scxE.xml
+  SKIP: JVM cannot be restarted
+
+[15/45] maps/BroodWar/(4)Andromeda.scxF.xml
+  SKIP: JVM cannot be restarted
+
+[16/45] maps/BroodWar/(4)BloodBath.scmA.xml
+  SKIP: JVM cannot be restarted
+
+[17/45] maps/BroodWar/(4)BloodBath.scmB.xml
+  SKIP: JVM cannot be restarted
+
+[18/45] maps/BroodWar/(4)BloodBath.scmC.xml
+  SKIP: JVM cannot be restarted
+
+[19/45] maps/BroodWar/(4)BloodBath.scmD.xml
+  SKIP: JVM cannot be restarted
+
+[20/45] maps/BroodWar/(4)BloodBath.scmE.xml
+  SKIP: JVM cannot be restarted
+
+[21/45] maps/BroodWar/(4)BloodBath.scmF.xml
+  SKIP: JVM cannot be restarted
+
+[22/45] maps/BroodWar/(4)CircuitBreaker.scxA.xml
+  SKIP: JVM cannot be restarted
+
+[23/45] maps/BroodWar/(4)CircuitBreaker.scxB.xml
+  SKIP: JVM cannot be restarted
+
+[24/45] maps/BroodWar/(4)CircuitBreaker.scxC.xml
+  SKIP: JVM cannot be restarted
+
+[25/45] maps/BroodWar/(4)CircuitBreaker.scxD.xml
+  SKIP: JVM cannot be restarted
+
+[26/45] maps/BroodWar/(4)CircuitBreaker.scxE.xml
+  SKIP: JVM cannot be restarted
+
+[27/45] maps/BroodWar/(4)CircuitBreaker.scxF.xml
+  SKIP: JVM cannot be restarted
+
+[28/45] maps/BroodWar/(4)EmpireoftheSun.scmA.xml
+  SKIP: JVM cannot be restarted
+
+[29/45] maps/BroodWar/(4)EmpireoftheSun.scmB.xml
+  SKIP: JVM cannot be restarted
+
+[30/45] maps/BroodWar/(4)EmpireoftheSun.scmC.xml
+  SKIP: JVM cannot be restarted
+
+[31/45] maps/BroodWar/(4)EmpireoftheSun.scmD.xml
+  SKIP: JVM cannot be restarted
+
+[32/45] maps/BroodWar/(4)EmpireoftheSun.scmE.xml
+  SKIP: JVM cannot be restarted
+
+[33/45] maps/BroodWar/(4)EmpireoftheSun.scmF.xml
+  SKIP: JVM cannot be restarted
+
+[34/45] maps/BroodWar/(4)Fortress.scxA.xml
+  SKIP: JVM cannot be restarted
+
+[35/45] maps/BroodWar/(4)Fortress.scxB.xml
+  SKIP: JVM cannot be restarted
+
+[36/45] maps/BroodWar/(4)Fortress.scxC.xml
+  SKIP: JVM cannot be restarted
+
+[37/45] maps/BroodWar/(4)Fortress.scxD.xml
+  SKIP: JVM cannot be restarted
+
+[38/45] maps/BroodWar/(4)Fortress.scxE.xml
+  SKIP: JVM cannot be restarted
+
+[39/45] maps/BroodWar/(4)Fortress.scxF.xml
+  SKIP: JVM cannot be restarted
+
+[40/45] maps/BroodWar/(4)Python.scxA.xml
+  SKIP: JVM cannot be restarted
+
+[41/45] maps/BroodWar/(4)Python.scxB.xml
+  SKIP: JVM cannot be restarted
+
+[42/45] maps/BroodWar/(4)Python.scxC.xml
+  SKIP: JVM cannot be restarted
+
+[43/45] maps/BroodWar/(4)Python.scxD.xml
+  SKIP: JVM cannot be restarted
+
+[44/45] maps/BroodWar/(4)Python.scxE.xml
+  SKIP: JVM cannot be restarted
+
+[45/45] maps/BroodWar/(4)Python.scxF.xml
+  SKIP: JVM cannot be restarted
+
+Wrote /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/light_vs_worker_map_balance.csv
+
+Best overall balance (low seat asym, near 50% aggregate): maps/BroodWar/(2)Benzene.scxA.xml
+  seat_asymmetry=1.0  aggregate_ai1_win_rate=0.5

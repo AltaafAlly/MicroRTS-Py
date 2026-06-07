@@ -41,7 +41,7 @@ public class Build extends AbstractAction  {
     {
         if (!(o instanceof Build)) return false;
         Build a = (Build)o;
-        return type == a.type && x == a.x && y == a.y && pf.getClass() == a.pf.getClass();
+        return type != null && type.equals(a.type) && x == a.x && y == a.y && pf.getClass() == a.pf.getClass();
     }
     
 

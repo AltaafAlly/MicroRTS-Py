@@ -1,0 +1,215 @@
+Map set: broodwar  (45 maps)  games/order=24  max_steps=100000  ai1=lightRushAI ai2=workerRushAI  verbose_per_game=True  DIAG_USE_FE_UTT=1  utt_builtin=(3, 1) (FE Nondeterministic-Both)
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+        [(2)Benzene.scxA.xml] game 1/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2823
+        [(2)Benzene.scxA.xml] game 2/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2777
+        [(2)Benzene.scxA.xml] game 3/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2843
+        [(2)Benzene.scxA.xml] game 4/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2884
+        [(2)Benzene.scxA.xml] game 5/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2724
+        [(2)Benzene.scxA.xml] game 6/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2750
+        [(2)Benzene.scxA.xml] game 7/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2620
+        [(2)Benzene.scxA.xml] game 8/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2753
+        [(2)Benzene.scxA.xml] game 9/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2826
+        [(2)Benzene.scxA.xml] game 10/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3212
+        [(2)Benzene.scxA.xml] game 11/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2703
+        [(2)Benzene.scxA.xml] game 12/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3051
+        [(2)Benzene.scxA.xml] game 13/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2739
+        [(2)Benzene.scxA.xml] game 14/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2902
+        [(2)Benzene.scxA.xml] game 15/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2899
+        [(2)Benzene.scxA.xml] game 16/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2777
+        [(2)Benzene.scxA.xml] game 17/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=3325
+        [(2)Benzene.scxA.xml] game 18/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2594
+        [(2)Benzene.scxA.xml] game 19/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2634
+        [(2)Benzene.scxA.xml] game 20/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2877
+        [(2)Benzene.scxA.xml] game 21/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2714
+        [(2)Benzene.scxA.xml] game 22/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2829
+        [(2)Benzene.scxA.xml] game 23/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2701
+        [(2)Benzene.scxA.xml] game 24/24: winner=lightRushAI  (P0/left=lightRushAI, P1/right=workerRushAI)  steps=2754
+  Ordering 2 — P0/left=workerRushAI  vs  P1/right=lightRushAI  (swap)
+        [(2)Benzene.scxA.xml] game 1/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3323
+        [(2)Benzene.scxA.xml] game 2/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3406
+        [(2)Benzene.scxA.xml] game 3/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3321
+        [(2)Benzene.scxA.xml] game 4/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3540
+        [(2)Benzene.scxA.xml] game 5/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3304
+        [(2)Benzene.scxA.xml] game 6/24: winner=lightRushAI  (P0/left=workerRushAI, P1/right=lightRushAI)  steps=3516
+  SKIP: Java Virtual Machine is not running
+
+[2/45] maps/BroodWar/(2)Destination.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[3/45] maps/BroodWar/(2)HeartbreakRidge.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[4/45] maps/BroodWar/(3)Aztec.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[5/45] maps/BroodWar/(3)Aztec.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[6/45] maps/BroodWar/(3)Aztec.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[7/45] maps/BroodWar/(3)TauCross.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[8/45] maps/BroodWar/(3)TauCross.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[9/45] maps/BroodWar/(3)TauCross.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[10/45] maps/BroodWar/(4)Andromeda.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[11/45] maps/BroodWar/(4)Andromeda.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[12/45] maps/BroodWar/(4)Andromeda.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[13/45] maps/BroodWar/(4)Andromeda.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[14/45] maps/BroodWar/(4)Andromeda.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[15/45] maps/BroodWar/(4)Andromeda.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[16/45] maps/BroodWar/(4)BloodBath.scmA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[17/45] maps/BroodWar/(4)BloodBath.scmB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[18/45] maps/BroodWar/(4)BloodBath.scmC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[19/45] maps/BroodWar/(4)BloodBath.scmD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[20/45] maps/BroodWar/(4)BloodBath.scmE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[21/45] maps/BroodWar/(4)BloodBath.scmF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[22/45] maps/BroodWar/(4)CircuitBreaker.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[23/45] maps/BroodWar/(4)CircuitBreaker.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[24/45] maps/BroodWar/(4)CircuitBreaker.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[25/45] maps/BroodWar/(4)CircuitBreaker.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[26/45] maps/BroodWar/(4)CircuitBreaker.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[27/45] maps/BroodWar/(4)CircuitBreaker.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[28/45] maps/BroodWar/(4)EmpireoftheSun.scmA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[29/45] maps/BroodWar/(4)EmpireoftheSun.scmB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[30/45] maps/BroodWar/(4)EmpireoftheSun.scmC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[31/45] maps/BroodWar/(4)EmpireoftheSun.scmD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[32/45] maps/BroodWar/(4)EmpireoftheSun.scmE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[33/45] maps/BroodWar/(4)EmpireoftheSun.scmF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[34/45] maps/BroodWar/(4)Fortress.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[35/45] maps/BroodWar/(4)Fortress.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[36/45] maps/BroodWar/(4)Fortress.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[37/45] maps/BroodWar/(4)Fortress.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[38/45] maps/BroodWar/(4)Fortress.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[39/45] maps/BroodWar/(4)Fortress.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[40/45] maps/BroodWar/(4)Python.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[41/45] maps/BroodWar/(4)Python.scxB.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[42/45] maps/BroodWar/(4)Python.scxC.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[43/45] maps/BroodWar/(4)Python.scxD.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[44/45] maps/BroodWar/(4)Python.scxE.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+[45/45] maps/BroodWar/(4)Python.scxF.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI
+  SKIP: JVM cannot be restarted
+
+Wrote /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/light_vs_worker_map_balance.csv

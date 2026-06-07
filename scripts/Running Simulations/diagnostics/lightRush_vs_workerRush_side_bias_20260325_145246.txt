@@ -1,0 +1,598 @@
+
+=== Testing map: maps/4x4/basesWorkers4x4.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8A.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8B.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8C.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8D.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8E.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8F.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8G.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8H.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8I.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8J.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8K.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/8x8/basesWorkers8x8L.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/10x10/basesWorkers10x10.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=27, right_wins=23, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=24, right_wins=26, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12A.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12B.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12C.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=13, right_wins=36, draws=1
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12D.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=40, right_wins=0, draws=10
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=42, right_wins=0, draws=8
+
+=== Testing map: maps/12x12/basesWorkers12x12E.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12F.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=20, right_wins=30, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=30, right_wins=20, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12G.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=0, draws=50
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=0, draws=50
+
+=== Testing map: maps/12x12/basesWorkers12x12H.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=5, right_wins=45, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=10, right_wins=40, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12I.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=19, right_wins=30, draws=1
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=21, right_wins=28, draws=1
+
+=== Testing map: maps/12x12/basesWorkers12x12J.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=14, right_wins=36, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=9, right_wins=41, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12K.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=12, right_wins=38, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=11, right_wins=39, draws=0
+
+=== Testing map: maps/12x12/basesWorkers12x12L.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=30, right_wins=20, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=30, right_wins=20, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=9, right_wins=41, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=7, right_wins=43, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16A.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=8, right_wins=42, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16B.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16C.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16D.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16E.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=34, draws=16
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=35, draws=15
+
+=== Testing map: maps/16x16/basesWorkers16x16F.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=45, draws=5
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=42, draws=8
+
+=== Testing map: maps/16x16/basesWorkers16x16G.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=22, right_wins=28, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=21, right_wins=29, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16H.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16I.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16J.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16K.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/16x16/basesWorkers16x16L.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=7, right_wins=42, draws=1
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=5, right_wins=42, draws=3
+
+=== Testing map: maps/24x24/basesWorkers24x24A.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=6, right_wins=42, draws=2
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=10, right_wins=38, draws=2
+
+=== Testing map: maps/24x24/basesWorkers24x24B.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=0, draws=50
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=0, draws=50
+
+=== Testing map: maps/24x24/basesWorkers24x24C.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=3, right_wins=47, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=7, right_wins=42, draws=1
+
+=== Testing map: maps/24x24/basesWorkers24x24D.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=10, right_wins=40, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=13, right_wins=37, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24E.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=2, right_wins=48, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24F.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=7, right_wins=43, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24G.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=1, right_wins=49, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24H.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=0, right_wins=50, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=1, right_wins=49, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24I.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=2, right_wins=48, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24J.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=5, right_wins=45, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=5, right_wins=45, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24K.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=13, right_wins=37, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=6, right_wins=44, draws=0
+
+=== Testing map: maps/24x24/basesWorkers24x24L.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_1_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+=== ordering_2_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===
+ordering_2_light_left summary over 50 games: left_wins=50, right_wins=0, draws=0
+
+CSV written to: /home/altaaf/projects/MicroRTS-Py-Research/scripts/Running Simulations/diagnostics/lightRush_vs_workerRush_side_bias.csv
+
+Aggregate over both orderings (50 games each) per map:
+- maps/4x4/basesWorkers4x4.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8A.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8B.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8C.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8D.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/8x8/basesWorkers8x8E.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8F.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8G.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/8x8/basesWorkers8x8H.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/8x8/basesWorkers8x8I.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/8x8/basesWorkers8x8J.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8K.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/8x8/basesWorkers8x8L.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/10x10/basesWorkers10x10.xml:
+    Ordering 1 (light left):  left=27, right=23, draws=0
+    Ordering 2 (light left):  left=24, right=26, draws=0
+- maps/12x12/basesWorkers12x12.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/12x12/basesWorkers12x12A.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/12x12/basesWorkers12x12B.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/12x12/basesWorkers12x12C.xml:
+    Ordering 1 (light left):  left=13, right=36, draws=1
+    Ordering 2 (light left):  left=6, right=44, draws=0
+- maps/12x12/basesWorkers12x12D.xml:
+    Ordering 1 (light left):  left=40, right=0, draws=10
+    Ordering 2 (light left):  left=42, right=0, draws=8
+- maps/12x12/basesWorkers12x12E.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/12x12/basesWorkers12x12F.xml:
+    Ordering 1 (light left):  left=20, right=30, draws=0
+    Ordering 2 (light left):  left=30, right=20, draws=0
+- maps/12x12/basesWorkers12x12G.xml:
+    Ordering 1 (light left):  left=0, right=0, draws=50
+    Ordering 2 (light left):  left=0, right=0, draws=50
+- maps/12x12/basesWorkers12x12H.xml:
+    Ordering 1 (light left):  left=5, right=45, draws=0
+    Ordering 2 (light left):  left=10, right=40, draws=0
+- maps/12x12/basesWorkers12x12I.xml:
+    Ordering 1 (light left):  left=19, right=30, draws=1
+    Ordering 2 (light left):  left=21, right=28, draws=1
+- maps/12x12/basesWorkers12x12J.xml:
+    Ordering 1 (light left):  left=14, right=36, draws=0
+    Ordering 2 (light left):  left=9, right=41, draws=0
+- maps/12x12/basesWorkers12x12K.xml:
+    Ordering 1 (light left):  left=12, right=38, draws=0
+    Ordering 2 (light left):  left=11, right=39, draws=0
+- maps/12x12/basesWorkers12x12L.xml:
+    Ordering 1 (light left):  left=30, right=20, draws=0
+    Ordering 2 (light left):  left=30, right=20, draws=0
+- maps/16x16/basesWorkers16x16.xml:
+    Ordering 1 (light left):  left=9, right=41, draws=0
+    Ordering 2 (light left):  left=7, right=43, draws=0
+- maps/16x16/basesWorkers16x16A.xml:
+    Ordering 1 (light left):  left=8, right=42, draws=0
+    Ordering 2 (light left):  left=6, right=44, draws=0
+- maps/16x16/basesWorkers16x16B.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/16x16/basesWorkers16x16C.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/16x16/basesWorkers16x16D.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/16x16/basesWorkers16x16E.xml:
+    Ordering 1 (light left):  left=0, right=34, draws=16
+    Ordering 2 (light left):  left=0, right=35, draws=15
+- maps/16x16/basesWorkers16x16F.xml:
+    Ordering 1 (light left):  left=0, right=45, draws=5
+    Ordering 2 (light left):  left=0, right=42, draws=8
+- maps/16x16/basesWorkers16x16G.xml:
+    Ordering 1 (light left):  left=22, right=28, draws=0
+    Ordering 2 (light left):  left=21, right=29, draws=0
+- maps/16x16/basesWorkers16x16H.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0
+- maps/16x16/basesWorkers16x16I.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/16x16/basesWorkers16x16J.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/16x16/basesWorkers16x16K.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/16x16/basesWorkers16x16L.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/24x24/basesWorkers24x24.xml:
+    Ordering 1 (light left):  left=7, right=42, draws=1
+    Ordering 2 (light left):  left=5, right=42, draws=3
+- maps/24x24/basesWorkers24x24A.xml:
+    Ordering 1 (light left):  left=6, right=42, draws=2
+    Ordering 2 (light left):  left=10, right=38, draws=2
+- maps/24x24/basesWorkers24x24B.xml:
+    Ordering 1 (light left):  left=0, right=0, draws=50
+    Ordering 2 (light left):  left=0, right=0, draws=50
+- maps/24x24/basesWorkers24x24C.xml:
+    Ordering 1 (light left):  left=3, right=47, draws=0
+    Ordering 2 (light left):  left=7, right=42, draws=1
+- maps/24x24/basesWorkers24x24D.xml:
+    Ordering 1 (light left):  left=10, right=40, draws=0
+    Ordering 2 (light left):  left=13, right=37, draws=0
+- maps/24x24/basesWorkers24x24E.xml:
+    Ordering 1 (light left):  left=6, right=44, draws=0
+    Ordering 2 (light left):  left=2, right=48, draws=0
+- maps/24x24/basesWorkers24x24F.xml:
+    Ordering 1 (light left):  left=6, right=44, draws=0
+    Ordering 2 (light left):  left=7, right=43, draws=0
+- maps/24x24/basesWorkers24x24G.xml:
+    Ordering 1 (light left):  left=1, right=49, draws=0
+    Ordering 2 (light left):  left=0, right=50, draws=0
+- maps/24x24/basesWorkers24x24H.xml:
+    Ordering 1 (light left):  left=0, right=50, draws=0
+    Ordering 2 (light left):  left=1, right=49, draws=0
+- maps/24x24/basesWorkers24x24I.xml:
+    Ordering 1 (light left):  left=2, right=48, draws=0
+    Ordering 2 (light left):  left=6, right=44, draws=0
+- maps/24x24/basesWorkers24x24J.xml:
+    Ordering 1 (light left):  left=5, right=45, draws=0
+    Ordering 2 (light left):  left=5, right=45, draws=0
+- maps/24x24/basesWorkers24x24K.xml:
+    Ordering 1 (light left):  left=13, right=37, draws=0
+    Ordering 2 (light left):  left=6, right=44, draws=0
+- maps/24x24/basesWorkers24x24L.xml:
+    Ordering 1 (light left):  left=50, right=0, draws=0
+    Ordering 2 (light left):  left=50, right=0, draws=0

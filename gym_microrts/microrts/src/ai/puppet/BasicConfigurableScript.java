@@ -97,14 +97,14 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
         abandonedbases = 0;
         freeresources = 0;
         for (Unit u2 : pgs.getUnits()) {
-        	if (u2.getType() == workerType
+        	if (workerType.equals(u2.getType())
         			&& u2.getPlayer() == p.getID()) {
         		nworkers++;
         	}
         }
 
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbases++;
                 if(!pgs.getUnitsAround(u2.getX(), u2.getY(), BASE_RESOURCE_RADIUS).stream()
@@ -113,11 +113,11 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
                 	abandonedbases++;
                 }
             }
-            if (u2.getType() == barracksType
+            if (barracksType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbarracks++;
             }
-            if(u2.getType() == resourceType){
+            if(resourceType.equals(u2.getType())){
             	nresources++;
             	if(pgs.getUnitsAround(u2.getX(), u2.getY(), BASE_RESOURCE_RADIUS).stream()
 				.map((a)->a.getPlayer()==p.getID()&&a.getType()==baseType)
@@ -135,7 +135,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
 
         // behavior of bases:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == baseType
+            if (baseType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
                 baseBehavior(u, p, pgs);
@@ -164,7 +164,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
 
         // behavior of barracks:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == barracksType
+            if (barracksType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
                 barracksBehavior(u, p, pgs);
@@ -247,7 +247,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
         
         List<Unit> bases = new LinkedList<>();
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 bases.add(u2);
             }
@@ -259,8 +259,9 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
             // build a base:
             if (p.getResources() >= baseType.cost + resourcesUsed) {
                 Unit u = freeWorkers.remove(0);
-                buildIfNotAlreadyBuilding(u,baseType,u.getX(),u.getY(),reservedPositions,p,pgs);
-                resourcesUsed += baseType.cost;
+                if (buildIfNotAlreadyBuilding(u,baseType,u.getX(),u.getY(),reservedPositions,p,pgs)) {
+                    resourcesUsed += baseType.cost;
+                }
             }
         } 
      
@@ -270,8 +271,9 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
             if (p.getResources() >= barracksType.cost + resourcesUsed && !freeWorkers.isEmpty()) {
             	Unit u = freeWorkers.remove(0);
                 Unit b = bases.get(nbarracks);
-                buildIfNotAlreadyBuilding(u,barracksType,b.getX(),b.getY(),reservedPositions,p,pgs);
-               	resourcesUsed += barracksType.cost;
+                if (buildIfNotAlreadyBuilding(u,barracksType,b.getX(),b.getY(),reservedPositions,p,pgs)) {
+                    resourcesUsed += barracksType.cost;
+                }
             }
         }
 
@@ -290,16 +292,17 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
                 //get closest resource that hasn't got bases around, or enemy units
                 Unit closestFreeResource=findClosest(u, 
                 		(Unit unit) -> {
-                			return unit.getType() == resourceType && 
+                			return resourceType.equals(unit.getType()) && 
                 					pgs.getUnitsAround(unit.getX(), unit.getY(), 10).stream()
                 					.map((a)->a.getPlayer()!=(1-p.getID())&&a.getType()!=baseType)
                 					.reduce((a,b)->a&&b).get();
                 			}, 
                 		pgs);
                 if(closestFreeResource!=null){
-                	buildIfNotAlreadyBuilding(u,baseType,closestFreeResource.getX(),closestFreeResource.getY(),reservedPositions,p,pgs);
+                	if (buildIfNotAlreadyBuilding(u,baseType,closestFreeResource.getX(),closestFreeResource.getY(),reservedPositions,p,pgs)) {
+                	    resourcesUsed += baseType.cost;
+                	}
                 }
-                resourcesUsed += baseType.cost;
             }else{
             	//System.out.println("reserving");
             	resourcesUsed+=  baseType.cost;
@@ -358,7 +361,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
     	 Unit closestUnit = null;
          int closestDistance = 0;
          for (Unit u2 : pgs.getUnits()) {
-             if (u2.getType() == targetType) {
+             if (targetType.equals(u2.getType())) {
                  int d = Math.abs(u2.getX() - from.getX()) + Math.abs(u2.getY() - from.getY());
                  if (closestUnit == null || d < closestDistance) {
                 	 closestUnit = u2;
@@ -375,7 +378,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
    	 Unit closestUnit = null;
         int closestDistance = 0;
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == targetType && u2.getID()!=except.getID()) {
+            if (targetType.equals(u2.getType()) && u2.getID()!=except.getID()) {
                 int d = Math.abs(u2.getX() - from.getX()) + Math.abs(u2.getY() - from.getY());
                 if (closestUnit == null || d < closestDistance) {
                	 closestUnit = u2;
@@ -389,7 +392,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
    	 Unit closestUnit = null;
         int closestDistance = 0;
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == targetType && u2.getPlayer()==targetPlayer.getID()) {
+            if (targetType.equals(u2.getType()) && u2.getPlayer()==targetPlayer.getID()) {
                 int d = Math.abs(u2.getX() - from.getX()) + Math.abs(u2.getY() - from.getY());
                 if (closestUnit == null || d < closestDistance) {
                	 closestUnit = u2;
@@ -428,13 +431,13 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
         int freeresources = 0;
 		for (Unit u2 : gs.getPhysicalGameState().getUnits()) {
 			if(u2.getPlayer() == player){
-				if (u2.getType() == workerType){
+				if (workerType.equals(u2.getType())){
 					nworkers++;
 				}
-				if (u2.getType() == barracksType ) {
+				if (barracksType.equals(u2.getType()) ) {
 					nbarracks++;
 				}
-				if (u2.getType() == baseType) {
+				if (baseType.equals(u2.getType())) {
 	                nbases++;
 	                if(!gs.getPhysicalGameState().getUnitsAround(u2.getX(), u2.getY(), BASE_RESOURCE_RADIUS).stream()
 	                		.map((a)->a.getType()==resourceType)
@@ -443,7 +446,7 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
 	                }
 				}
 			}
-			if(u2.getType() == resourceType){
+			if(resourceType.equals(u2.getType())){
 				nresources++;
 				if(gs.getPhysicalGameState().getUnitsAround(u2.getX(), u2.getY(), BASE_RESOURCE_RADIUS).stream()
 						.map((a)->a.getPlayer()==player&&a.getType()==baseType)

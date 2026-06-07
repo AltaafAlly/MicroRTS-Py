@@ -231,11 +231,13 @@ public abstract class AbstractionLayerAI extends AIWithComputationBudget {
     public boolean buildIfNotAlreadyBuilding(Unit u, UnitType type, int desiredX, int desiredY, List<Integer> reservedPositions, Player p, PhysicalGameState pgs) {
         AbstractAction action = getAbstractAction(u);
 //        System.out.println("buildIfNotAlreadyBuilding: action = " + action);
-        if (!(action instanceof Build) || ((Build) action).type != type) {
+        if (!(action instanceof Build) || !type.equals(((Build) action).type)) {
             int pos = findBuildingPosition(reservedPositions, desiredX, desiredY, p, pgs);
-            
-//            System.out.println("pos = " + (pos % pgs.getWidth()) + "," + (pos / pgs.getWidth()));
-            
+            // No free tile (e.g. worker surrounded): do not issue Build at invalid coords — that never completes and
+            // rush AIs appear "stuck" at exactly the building cost in the bank (workers stop making progress).
+            if (pos < 0) {
+                return false;
+            }
             build(u, type, pos % pgs.getWidth(), pos / pgs.getWidth());
             reservedPositions.add(pos);
             return true;

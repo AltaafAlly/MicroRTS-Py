@@ -1,0 +1,5 @@
+Map set: broodwar  (45 maps)  games/order=1  max_steps=100000  ai1=lightRushAI ai2=workerRushAI  verbose_per_game=True  DIAG_USE_FE_UTT=1  utt_builtin=(3, 1) (FE Nondeterministic-Both)
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml
+  Ordering 1 — P0/left=lightRushAI  vs  P1/right=workerRushAI

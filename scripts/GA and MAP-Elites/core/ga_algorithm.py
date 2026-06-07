@@ -57,6 +57,11 @@ class GAConfig:
     use_nondeterministic: bool = False
     # If True, run (ai1,ai2) and (ai2,ai1) and aggregate; balanced UTT gives ~60-60 so balance > 0
     use_both_orderings: bool = False
+    # If set, e.g. (3, 1), matches use Java ``UnitTypeTable`` like FE **Nondeterministic-Both** and **ignore**
+    # chromosome JSON in ``run_pair`` (fitness no longer reflects evolved stats—use for pipeline / GUI parity checks).
+    fe_utt_builtin: Optional[Tuple[int, int]] = None
+    # When True (default), evolved JSON is loaded on ``UnitTypeTable(3,1)`` (see ``MicroRTSBotVecEnv``); set False for legacy fromJSON-only.
+    use_utt_json_fe_overlay: bool = True
     
     # Termination criteria
     max_generations_without_improvement: int = 5
@@ -179,6 +184,8 @@ class MicroRTSGeneticAlgorithm:
                 use_both_orderings=use_both,
                 target_duration=getattr(self.config, "target_duration", 500),
                 duration_tolerance=getattr(self.config, "duration_tolerance", 400),
+                fe_utt_builtin=getattr(self.config, "fe_utt_builtin", None),
+                use_utt_json_fe_overlay=getattr(self.config, "use_utt_json_fe_overlay", True),
             )
         setattr(self.fitness_evaluator, "utt_log_dir", getattr(self.config, "utt_log_dir", None))
         if self.config.use_real_microrts:
@@ -198,6 +205,8 @@ class MicroRTSGeneticAlgorithm:
                 use_both_orderings=use_both,
                 target_duration=getattr(self.config, "target_duration", 500),
                 duration_tolerance=getattr(self.config, "duration_tolerance", 400),
+                fe_utt_builtin=getattr(self.config, "fe_utt_builtin", None),
+                use_utt_json_fe_overlay=getattr(self.config, "use_utt_json_fe_overlay", True),
             )
             setattr(self.fitness_evaluator, "utt_log_dir", getattr(self.config, "utt_log_dir", None))
         else:

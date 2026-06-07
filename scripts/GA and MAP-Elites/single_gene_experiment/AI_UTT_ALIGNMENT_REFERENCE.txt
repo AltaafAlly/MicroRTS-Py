@@ -1,0 +1,162 @@
+MicroRTS Py – baseline AIs vs UTT (single-gene GA context)
+==========================================================
+Python entry points: gym_microrts/microrts_ai.py
+Java behavior (source of truth): gym_microrts/microrts/src/ai/abstraction/
+
+----------------------------------------------------------------------------
+lightRushAI  →  ai.abstraction.LightRush
+----------------------------------------------------------------------------
+Strategy (from LightRush.java comments and code):
+  • Base: train 1 Worker.
+  • Worker: harvest / expand (build extra Base, Barracks as in workersBehavior).
+  • Barracks: continuously train Light when resources allow.
+  • Non-harvest melee units (Lights): attack nearest enemy.
+UTT fields that matter most for this script:
+  • Light.*   — primary military unit (rush).
+  • Worker.*  — economy and building.
+  • Base, Barracks — production costs and build order viability.
+
+Yes: this AI explicitly uses the "Light" unit type from the table.
+
+----------------------------------------------------------------------------
+workerRushAI  →  ai.abstraction.WorkerRush
+----------------------------------------------------------------------------
+Strategy (from WorkerRush.java):
+  • Base: train Workers non-stop.
+  • Workers beyond the first also attack as melee.
+  • No Barracks / no Light production in the core loop shown.
+UTT fields that matter most:
+  • Worker.* — almost everything offensive and economic runs on Workers.
+  • Light.* — weaker indirect effect (enemy Lights still exist if other player
+    builds them; Workers fight melee).
+
+----------------------------------------------------------------------------
+Symmetric UTT (one table for both players)
+----------------------------------------------------------------------------
+Both players read the same Light.moveTime, Worker.hp, etc. Changing Light.moveTime
+speeds or slows Lights for BOTH sides. lightRushAI builds many Lights;
+workerRushAI mostly spams Workers. So a Light stat shifts the matchup unevenly even
+though the table is “fair” symmetrically.
+
+----------------------------------------------------------------------------
+Default single-gene script (run_single_gene_balance_decrease.py)
+----------------------------------------------------------------------------
+  • Default evolved gene: Light.maxDamage (higher = harder hits; easy to read).
+
+----------------------------------------------------------------------------
+Reading Light.moveTime experiment results (if you set SINGLE_GENE_PARAM=moveTime)
+----------------------------------------------------------------------------
+Chromosome stores genome in [0,1] with 0 → min raw value, 1 → max raw value.
+
+For moveTime, LOWER raw tick value = FASTER movement (stronger rush).
+So:
+  • “Start very strong”  →  genome near 0  →  denormalized moveTime near MIN.
+  • Balance run nerfs Lights  →  raw moveTime INCREASES (slower).
+Plots with denormalized moveTime on the Y axis will go UP when the GA is slowing
+Lights — that is “decrease power”, not “increase gene buff”.
+
+If you want the curve to go down when nerfing, plot “buff strength” = 1 − genome
+norm for time-like stats, or plot 1/moveTime — not raw ticks alone.
+
+Suggested single-gene params by AI pair (rule of thumb)
+----------------------------------------------------------------------------
+  • lightRush vs workerRush + evolve Light.maxDamage (default) or Light.*
+  • lightRush vs workerRush + evolve Worker.*    — matches worker-spam side.
+  • heavyRush vs rangedRush + evolve Heavy.* / Ranged.* — match respective units.
+
+See also: scripts/Running Simulations/diagnose_side_bias_light_vs_worker.py
+
+----------------------------------------------------------------------------
+Seat (left/right) bias vs UTT stats — does the experiment still make sense?
+----------------------------------------------------------------------------
+Stats still drive combat and production in the engine. What can “throw off” a
+single-gene study is when, for a given map + AI pair + match settings, the WINNER
+is almost always determined by seating (spawn distance, who hits first, etc.),
+so each ordering becomes a 16–0 or 0–16 sweep. Then:
+
+  • Combined-by-AI score can sit at 16–16 even though no game is “close” — that is
+    mirror + seat bias, not proof that stats are irrelevant.
+  • Evolving one stat may barely change who wins PER SEATING if outcomes stay
+    perfectly deterministic; the signal becomes “does this flip any game?” not
+    “smooth balance curve.”
+
+That does NOT mean UTT stats “don’t matter” globally — it means this MAP / matchup
+may be a bad choice for measuring stat sensitivity, or you need more variance.
+
+Mitigations (pick what fits your goal):
+  • Try other maps (SINGLE_GENE_MAP_PATH); smaller or more symmetric layouts
+    sometimes reduce first-move wipeouts.
+  • More games per eval (SINGLE_GENE_DEC_GAMES) + nondeterministic combat —
+    mixed 10–6 style splits only appear if outcomes are not identical every game.
+  • Evaluate on several maps and average fitness (manual runs or extend code).
+  • PCG maps: `python PCG/pcg.py --width 16 --height 16 --seed <n>` writes
+    `gym_microrts/microrts/maps/pcg/pcg_generated.xml`. Point the GA at
+    `SINGLE_GENE_MAP_PATH=maps/pcg/pcg_generated.xml`. PCG adds layout variety;
+    it does not remove seat bias by itself — still use cross_seat_min shaping or
+    low-asymmetry maps from the sweep when you care about worst seating.
+  • Interpret aggregate 16–16 with care: read ordering1 vs ordering2 columns;
+    if both are sweeps, focus on whether DENORM gene changes those rates over gens.
+
+The GA can still nerf/buff using per-ordering or max-ordering win rates; just be
+clear the experimental claim is “tuning this gene under seat-mixed outcomes,”
+not “UTT is the only force in the world.”
+
+----------------------------------------------------------------------------
+“Agent 1 / one side always wins” — environment flaw or GA flaw?
+----------------------------------------------------------------------------
+Usually it is neither a random bug nor “the GA broke MicroRTS.”
+
+• Environment / game: P0 (left) and P1 (right) start in different tiles. Even with
+  a symmetric UTT, distance to the opponent, choke points, and who attacks first
+  can make one seat win almost every game for a fixed map + AI pair. That is a
+  property of the map and the scripted AIs, not necessarily a defect in gym_microrts.
+
+• GA / pipeline: The evolution code does not decide who wins; it only counts
+  outcomes and shapes fitness. A “flaw” here is mostly interpretive: e.g. treating
+  combined 16–16 as “balanced games” when it is two opposite sweeps. That is why
+  runs log ordering1 vs ordering2 win rates and optional shaping modes.
+
+So: strong seat bias → mostly simulation + matchup design. Misleading conclusions
+→ check aggregation and metrics; change map / games / bots if you need stat
+effects to show through.
+
+----------------------------------------------------------------------------
+Finding maps with less seat bias (recommended workflow)
+----------------------------------------------------------------------------
+Run (from repo root):
+
+  python "scripts/Running Simulations/sweep_maps_seat_balance.py"
+
+This evaluates lightRush vs workerRush (default UTT) on many basesWorkers* maps,
+computes seat_asymmetry = |winrate_ai1_ordering1 − winrate_ai1_ordering2|, and
+writes scripts/Running Simulations/diagnostics/map_seat_balance_sweep.csv sorted
+with **lowest asymmetry first**. Prefer those maps for single-gene runs:
+
+  SINGLE_GENE_MAP_PATH=maps/8x8/basesWorkers8x8.xml python run_single_gene_balance_decrease.py
+
+Tune with MAP_SWEEP_GAMES (more = stabler), MAP_SWEEP_MAX_MAPS, MAP_SWEEP_MAX_STEPS.
+
+Why this helps: if both orderings give similar AI1 win rates, changing Light.* is
+more likely to show up as “how strong the rush is” instead of pure left-vs-right
+lottery. You still want both orderings in the GA so aggregate-by-AI is fair.
+
+----------------------------------------------------------------------------
+Goal: “Win because of ability, not because of which side I’m on”
+----------------------------------------------------------------------------
+Conceptually you want **both** seatings to go well. A single number for that is:
+
+  cross-seat win rate = min( AI1 win% as P0, AI1 win% as P1 )
+
+If one seating is 0% and the other 100%, min = 0 — you are **not** “strong overall,”
+you are **seat-carried**. The GA can use:
+
+  SINGLE_GENE_SHAPING_WIN_RATE=cross_seat_min
+
+so fitness and dominance shaping use **min(order1, order2)** instead of aggregate
+or max. Evolution then pushes stats until **the weaker seating** improves (still
+subject to what the map allows).
+
+Combine with **maps** where sweeps are not inevitable (sweep script + eyeball CSV;
+avoid maps where agg_ai1 is always 0 or always 1 unless that is what you study).
+
+Optional later: average fitness over **several maps** so one layout does not rule.

@@ -2,7 +2,6 @@ package rts;
 
 import java.io.Writer;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import org.jdom.Element;
@@ -203,7 +202,13 @@ public class UnitAction {
         } else if (type == TYPE_ATTACK_LOCATION) {
             return a.x == x && a.y == y;
         } else {
-            return a.parameter == parameter && a.unitType == unitType;
+            // TYPE_PRODUCE uses unitType; must match UnitType.equals (name), not reference equality.
+            // Otherwise issueSafe -> canExecuteAction rejects valid trains/builds when the AI's
+            // UnitType handle is not the same instance as in playerType.produces (JSON/overlay paths).
+            boolean sameType =
+                    a.unitType == unitType
+                            || (a.unitType != null && unitType != null && a.unitType.equals(unitType));
+            return a.parameter == parameter && sameType;
         }
     }
 
@@ -213,7 +218,8 @@ public class UnitAction {
         hash = 19 * hash + this.parameter;
         hash = 19 * hash + this.x;
         hash = 19 * hash + this.y;
-        hash = 19 * hash + Objects.hashCode(this.unitType);
+        // Align with UnitType.hashCode (name) so equals/hashCode stay consistent for produce actions.
+        hash = 19 * hash + (unitType == null ? 0 : unitType.hashCode());
         return hash;
     }
 

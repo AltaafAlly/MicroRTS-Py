@@ -5,6 +5,7 @@ This bypasses the UTT loading bug by using the working test_utt.py approach.
 """
 
 import os
+import math
 import shutil
 import sys
 import json
@@ -45,7 +46,11 @@ class WorkingGAEvaluator(FitnessEvaluator):
                  use_nondeterministic: bool = False,  # If True, force random move conflicts and damage ranges
                  use_both_orderings: bool = False,  # If True, run (ai1,ai2) and (ai2,ai1) and aggregate → 50-50 when UTT is balanced
                  target_duration: int = 500,  # Target avg steps per game for duration score (sweet spot)
-                 duration_tolerance: int = 400):  # Acceptable deviation; score decays outside [target±tolerance]
+                 duration_tolerance: int = 400,  # Used only when duration_scoring == "target_window"
+                 duration_scoring: str = "target_window",
+                 duration_longer_softness_scale: float = 3000.0,
+                 fe_utt_builtin: Optional[Tuple[int, int]] = None,
+                 use_utt_json_fe_overlay: bool = True):
         """
         Initialize the working GA evaluator.
         
@@ -64,6 +69,15 @@ class WorkingGAEvaluator(FitnessEvaluator):
             use_both_orderings: If True, for each pair run (ai1,ai2) and (ai2,ai1) and aggregate; balanced UTT gives ~50-50 so balance > 0
             target_duration: Target average steps per game for duration score (sweet spot)
             duration_tolerance: Duration score decays when avg steps/game is outside [target ± tolerance]
+            duration_scoring: "target_window" (peak at target±tolerance) or "longer_better" (monotone: longer avg
+                steps/game → higher duration score; no target band and no fixed step ceiling — uses a soft asymptotic curve)
+            duration_longer_softness_scale: For longer_better: scale τ in score = 1 - exp(-avg_steps/τ); larger τ = slower rise (default 3000)
+            fe_utt_builtin: If set (e.g. ``(3, 1)`` = FE **Nondeterministic-Both**), ``run_pair`` uses that Java
+                table only; chromosome JSON is **not** loaded for matches (every individual sees the same rules—use for
+                GUI-parity smoke tests, not for evolving UTT parameters).
+            use_utt_json_fe_overlay: If True (default) and ``fe_utt_builtin`` is unset, ``run_pair`` loads JSON stats on top
+                of ``UnitTypeTable(3, 1)`` (same FE base as diagnose). Set False or ``GA_USE_UTT_JSON_FE_OVERLAY=0`` to use
+                plain ``UnitTypeTable.fromJSON`` (legacy).
         """
         super().__init__(alpha, beta, gamma)
         
@@ -77,6 +91,27 @@ class WorkingGAEvaluator(FitnessEvaluator):
         self.use_both_orderings = use_both_orderings
         self.target_duration = target_duration
         self.duration_tolerance = duration_tolerance
+        self.duration_scoring = duration_scoring
+        self.duration_longer_softness_scale = float(duration_longer_softness_scale)
+        self.fe_utt_builtin = fe_utt_builtin
+        _ov_env = os.environ.get("GA_USE_UTT_JSON_FE_OVERLAY", "").strip().lower()
+        if _ov_env in ("0", "false", "no", "off"):
+            use_utt_json_fe_overlay = False
+        elif _ov_env in ("1", "true", "yes", "on"):
+            use_utt_json_fe_overlay = True
+        self.use_utt_json_fe_overlay = bool(use_utt_json_fe_overlay)
+        if self.fe_utt_builtin is not None:
+            print(
+                f"  WorkingGAEvaluator: fe_utt_builtin={self.fe_utt_builtin} — matches use FE-style Java UTT; "
+                "chromosome JSON is not applied in run_pair (evolved stats ignored for fitness).",
+                flush=True,
+            )
+        elif self.use_utt_json_fe_overlay:
+            print(
+                "  WorkingGAEvaluator: JSON UTT overlaid on UnitTypeTable(3,1) (FE Nondeterministic-Both base + evolved stats). "
+                "Set use_utt_json_fe_overlay=False or GA_USE_UTT_JSON_FE_OVERLAY=0 for legacy fromJSON-only loading.",
+                flush=True,
+            )
         
         # Baseline AI agents for comprehensive evaluation
         # Covers diverse strategies: rush, balanced, defensive
@@ -178,6 +213,12 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         "_per_game_compositions": r.get("_per_game_compositions"),  # for match_outputs/*.txt
                         "_game_snapshots": r.get("_game_snapshots", []),  # (step, text) for match_outputs full map
                         "_games_per_ordering": r.get("_games_per_ordering"),  # when both orderings: 5 so we can label Games 1-5 vs 6-10
+                        "_ordering1_ai1_wins": r.get("_ordering1_ai1_wins"),
+                        "_ordering1_ai2_wins": r.get("_ordering1_ai2_wins"),
+                        "_ordering1_draws": r.get("_ordering1_draws"),
+                        "_ordering2_ai1_wins": r.get("_ordering2_ai1_wins"),
+                        "_ordering2_ai2_wins": r.get("_ordering2_ai2_wins"),
+                        "_ordering2_draws": r.get("_ordering2_draws"),
                     })
             
             # Calculate fitness from match results
@@ -187,7 +228,10 @@ class WorkingGAEvaluator(FitnessEvaluator):
             if utt_path.exists():
                 utt_path.unlink()
             
-            print(f"    Fitness: {fitness.overall_fitness:.3f} (balance={fitness.balance:.3f}, duration={fitness.duration:.3f}, diversity={fitness.strategy_diversity:.3f})")
+            if self.gamma > 1e-9:
+                print(f"    Fitness: {fitness.overall_fitness:.3f} (balance={fitness.balance:.3f}, duration={fitness.duration:.3f}, diversity={fitness.strategy_diversity:.3f})")
+            else:
+                print(f"    Fitness: {fitness.overall_fitness:.3f} (balance={fitness.balance:.3f}, duration={fitness.duration:.3f})")
             
             return fitness
             
@@ -204,8 +248,11 @@ class WorkingGAEvaluator(FitnessEvaluator):
     def _create_utt_file(self, chromosome: MicroRTSChromosome) -> Path:
         """Create a UTT file from a chromosome."""
         
-        # Generate UTT config and clamp to safe bounds (e.g. Worker cost <= 5 so Base can produce with 5 starting resources)
-        utt_config = UTTValidator.validate_and_fix_utt(chromosome.to_microrts_config())
+        # Generate UTT config; optionally clamp to safe bounds.
+        # Single-gene experiments may disable this so the evolved target stat is not clipped by validator bounds.
+        base_config = chromosome.to_microrts_config()
+        validate_utt = getattr(self, "validate_utt", True)
+        utt_config = UTTValidator.validate_and_fix_utt(base_config) if validate_utt else base_config
         
         # Nondeterministic mode: random move conflicts + wider damage ranges so outcomes can flip (balance signal)
         if self.use_nondeterministic:
@@ -224,6 +271,24 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         # Widen existing range to at least DAMAGE_SPREAD for stronger variance
                         u["maxDamage"] = mn + DAMAGE_SPREAD
         
+        # Vanilla-patch mode (single-gene experiments): emit ONLY the target unit/param so the JSON
+        # overlay merges just that field onto the vanilla Java UnitTypeTable (everything else stays at
+        # MicroRTS defaults). This avoids the "buffed background" — where the full evolved config
+        # rewrites every stat — which can make the matchup seat-decided and unbalanceable by one gene.
+        patch_fields = getattr(self, "utt_patch_only_fields", None)
+        if patch_fields:
+            by_name = {u.get("name"): u for u in utt_config.get("unitTypes", []) if u.get("name")}
+            patched_units: Dict[str, Dict] = {}
+            for uname, pname in patch_fields:
+                src = by_name.get(uname)
+                if src is None or pname not in src:
+                    continue
+                patched_units.setdefault(uname, {"name": uname})[pname] = src[pname]
+            utt_config = {
+                "moveConflictResolutionStrategy": utt_config.get("moveConflictResolutionStrategy", 2),
+                "unitTypes": list(patched_units.values()),
+            }
+
         # Create unique filename
         timestamp = int(time.time() * 1000)
         utt_filename = f"ga_utt_{timestamp}.json"
@@ -264,9 +329,12 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 orderings_note = " (both orderings)" if self.use_both_orderings else ""
                 print(f"      [{pair_idx}/{len(test_pairs)}] Testing {ai1} vs {ai2}{orderings_note} ({games_per_pair} games × {len(self.map_paths)} map(s))...")
                 
-                # Copy UTT to a unique filename so the Java client cannot return cached results
+                # Copy UTT to a unique filename so the Java client cannot return cached results (JSON mode only)
                 unique_id = str(time.time_ns())
-                microrts_utt_path = self._copy_utt_to_microrts(utt_path, unique_suffix=unique_id)
+                if self.fe_utt_builtin is None:
+                    microrts_utt_path = self._copy_utt_to_microrts(utt_path, unique_suffix=unique_id)
+                else:
+                    microrts_utt_path = None
 
                 def _run_one_ordering(left_ai: str, right_ai: str):
                     """Run left_ai vs right_ai on all maps; return aggregated {left_wins, right_wins, draws, _total_steps}."""
@@ -299,6 +367,13 @@ class WorkingGAEvaluator(FitnessEvaluator):
                         # For run_log/CSV: left/right = ai1/ai2 when both orderings
                         "left_wins": ai1_wins,
                         "right_wins": ai2_wins,
+                        # Preserve per-ordering outcomes so downstream fitness can penalize side-locked behavior.
+                        "_ordering1_ai1_wins": R1.get("left_wins", 0),
+                        "_ordering1_ai2_wins": R1.get("right_wins", 0),
+                        "_ordering1_draws": R1.get("draws", 0),
+                        "_ordering2_ai1_wins": R2.get("right_wins", 0),
+                        "_ordering2_ai2_wins": R2.get("left_wins", 0),
+                        "_ordering2_draws": R2.get("draws", 0),
                     }
                     # Pass through capture data for match_outputs: merge both orderings so all 10 games are shown
                     s1 = R1.get("_game_snapshots") or []
@@ -374,14 +449,26 @@ class WorkingGAEvaluator(FitnessEvaluator):
                             total_games = result.get('left_wins', 0) + result.get('right_wins', 0) + result.get('draws', 0)
                             draws_total = result.get('draws', 0)
                     
-                    # If all games were draws, rerun once (single map only)
-                    if len(self.map_paths) == 1 and total_games >= 3 and draws_total == total_games:
+                    # If all games were draws, rerun once — unless they clearly hit max_steps (timeout reruns are pointless).
+                    likely_timeout = (
+                        total_steps is not None
+                        and total_games > 0
+                        and draws_total == total_games
+                        and total_steps >= int(total_games * self.max_steps * 0.95)
+                    )
+                    if len(self.map_paths) == 1 and total_games >= 3 and draws_total == total_games and not likely_timeout:
                         print(f"        First run: 0-0-{draws_total} (all draws). Rerunning...")
                         rerun_result = self._run_match_with_utt(ai1, ai2, microrts_utt_path, games_per_pair, map_path_override=self.map_paths[0])
                         if rerun_result:
                             results_to_append = [rerun_result]
                             total_games = rerun_result.get('left_wins', 0) + rerun_result.get('right_wins', 0) + rerun_result.get('draws', 0)
                             print(f"        Rerun result: {rerun_result.get('left_wins', 0)}-{rerun_result.get('right_wins', 0)}-{rerun_result.get('draws', 0)} (L-W-D).")
+                    elif len(self.map_paths) == 1 and draws_total == total_games and likely_timeout:
+                        print(
+                            "        Skipping draw rerun: outcomes match max_steps timeouts — "
+                            "raise SINGLE_GENE_MAX_STEPS (BroodWar defaults to 300k in run_single_gene; try 400k+ if still timeouts).",
+                            flush=True,
+                        )
                     
                     # Append one match_results entry per map (so balance is computed per map and can be > 0)
                     for r in results_to_append:
@@ -395,8 +482,8 @@ class WorkingGAEvaluator(FitnessEvaluator):
                     print(f"        Warning: No result returned for {ai1} vs {ai2}")
                     # Continue - don't fail entire evaluation if one matchup fails
                 
-                # Clean up
-                if microrts_utt_path.exists():
+                # Clean up copied UTT under microrts/utts/ (not used in fe_utt_builtin mode)
+                if microrts_utt_path is not None and microrts_utt_path.exists():
                     microrts_utt_path.unlink()
                     
             except Exception as e:
@@ -423,7 +510,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
         shutil.copy2(utt_path, dest_path)
         return dest_path
     
-    def _run_match_with_utt(self, ai1: str, ai2: str, utt_path: Path, games: int = None,
+    def _run_match_with_utt(self, ai1: str, ai2: str, utt_path: Optional[Path], games: int = None,
                             map_path_override: Optional[str] = None) -> Dict:
         """
         Run a match using the working approach.
@@ -432,7 +519,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
         Args:
             ai1: First AI agent name
             ai2: Second AI agent name
-            utt_path: Path to UTT file (caller copies to a unique file under utts/)
+            utt_path: Path to UTT file under ``utts/`` (ignored when ``fe_utt_builtin`` is set)
             games: Number of games to run (defaults to self.games_per_eval or 3)
             map_path_override: If set, use this map instead of self.map_path
         """
@@ -448,13 +535,32 @@ class WorkingGAEvaluator(FitnessEvaluator):
             games = max(1, self.games_per_eval)
         map_to_use = map_path_override if map_path_override is not None else self.map_path
 
-        # Symmetric UTT: both players use the same evolved UTT (fair, interesting games)
-        utt_rel = "utts/" + utt_path.name
         capture_composition = getattr(self, "run_match_capture_composition", False)
         capture_snapshots = getattr(self, "run_match_capture_snapshots", False)
         # Snapshot every N steps so short games (~40-80 steps) still show multiple states
         snapshot_interval = getattr(self, "run_match_snapshot_interval", 15)
         try:
+            if self.fe_utt_builtin is not None:
+                return run_pair(
+                    ai_left=ai1,
+                    ai_right=ai2,
+                    map_path=map_to_use,
+                    max_steps=self.max_steps,
+                    games=games,
+                    autobuild=False,
+                    utt_json=None,
+                    utt_json_p0=None,
+                    utt_json_p1=None,
+                    capture_composition=capture_composition,
+                    capture_snapshots=capture_snapshots,
+                    snapshot_interval=snapshot_interval,
+                    utt_builtin=self.fe_utt_builtin,
+                )
+            # Symmetric UTT: both players use the same evolved UTT (fair, interesting games)
+            if utt_path is None:
+                raise ValueError("_run_match_with_utt: utt_path is required when fe_utt_builtin is None")
+            utt_rel = "utts/" + utt_path.name
+            _overlay = (3, 1) if getattr(self, "use_utt_json_fe_overlay", True) else None
             return run_pair(
                 ai_left=ai1,
                 ai_right=ai2,
@@ -468,6 +574,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 capture_composition=capture_composition,
                 capture_snapshots=capture_snapshots,
                 snapshot_interval=snapshot_interval,
+                utt_json_overlay_builtin=_overlay,
             )
         except Exception as e:
             print(f"    Error running match: {e}")
@@ -568,25 +675,35 @@ class WorkingGAEvaluator(FitnessEvaluator):
                     total_steps = result.get('_total_steps')
                     if total_games > 0 and total_steps is not None and total_steps >= 0:
                         avg_steps_per_game = total_steps / total_games
-                        # Reward "good" length: peak at target_duration, decay outside [target ± tolerance]
-                        dev = abs(avg_steps_per_game - self.target_duration)
-                        if dev <= self.duration_tolerance:
-                            duration_score = 1.0 - (dev / self.duration_tolerance)  # 1.0 at target, 0 at ±tolerance
+                        if str(getattr(self, "duration_scoring", "target_window") or "target_window").lower() == "longer_better":
+                            # Longer games → higher score; no target band and no hard cap at a fixed step count.
+                            # Monotone asymptotic in [0, 1): evolution trades off vs balance without a “max at N steps” rule.
+                            tau = max(1e-6, float(getattr(self, "duration_longer_softness_scale", 3000.0)))
+                            duration_score = 1.0 - math.exp(-float(avg_steps_per_game) / tau)
                         else:
-                            duration_score = 0.0
+                            # Reward "good" length: peak at target_duration, decay outside [target ± tolerance]
+                            dev = abs(avg_steps_per_game - self.target_duration)
+                            if dev <= self.duration_tolerance:
+                                duration_score = 1.0 - (dev / self.duration_tolerance)  # 1.0 at target, 0 at ±tolerance
+                            else:
+                                duration_score = 0.0
                         duration_scores.append(max(0.0, duration_score))
                     else:
-                        # Fallback: use draw ratio (games completing = reasonable duration)
+                        # Fallback when step totals are missing
                         draws = result.get('draws', 0)
                         draw_ratio = draws / total_games if total_games > 0 else 1.0
-                        if draw_ratio <= 0.3:
-                            duration_score = 1.0
-                        elif draw_ratio <= 0.5:
-                            duration_score = 0.8
-                        elif draw_ratio <= 0.7:
+                        if str(getattr(self, "duration_scoring", "target_window") or "target_window").lower() == "longer_better":
+                            # Without per-step data, use a neutral score so evolution is not steered by this path.
                             duration_score = 0.5
                         else:
-                            duration_score = 0.15
+                            if draw_ratio <= 0.3:
+                                duration_score = 1.0
+                            elif draw_ratio <= 0.5:
+                                duration_score = 0.8
+                            elif draw_ratio <= 0.7:
+                                duration_score = 0.5
+                            else:
+                                duration_score = 0.15
                         duration_scores.append(duration_score)
         
         # Calculate balance using geometric mean to penalize very imbalanced matchups more
@@ -597,8 +714,7 @@ class WorkingGAEvaluator(FitnessEvaluator):
                 # At least one matchup had all draws (timeouts) => dead UTT
                 balance = 0.0
             elif self.use_strict_balance:
-                import math
-                # Use geometric mean: more sensitive to very low scores
+                # Use geometric mean: more sensitive to very low scores (math is module-level)
                 balanced_scores = [max(0.001, score) for score in balance_scores]
                 log_sum = sum(math.log(score) for score in balanced_scores)
                 geometric_mean = math.exp(log_sum / len(balance_scores))
@@ -615,34 +731,38 @@ class WorkingGAEvaluator(FitnessEvaluator):
         # Calculate average duration score
         duration = sum(duration_scores) / len(duration_scores) if duration_scores else 0.5
         
-        # Strategy Diversity: Based on:
-        # 1. Number of different AIs tested (more = more diverse)
-        # 2. Variance in balance scores across matchups (more variance = more diverse outcomes)
-        # 3. Variety in match outcomes (wins, losses, draws)
-        
-        ai_diversity = min(1.0, len(all_ai_names) / len(self.ai_agents))  # Normalize by number of AIs in this run
-        
-        if len(balance_scores) > 1:
-            # Calculate variance in balance scores across different matchups
-            balance_variance = sum((score - balance) ** 2 for score in balance_scores) / len(balance_scores)
-            # Higher variance = more diverse outcomes (some matchups favor one side, others favor the other)
-            # But we want some variance (not all 50-50, not all one-sided)
-            variance_score = min(1.0, balance_variance * 2)  # Scale variance to 0-1
-            
-            # Count unique outcome patterns
-            outcome_patterns = set()
-            for match in match_results:
-                result = match['result']
-                if result:
-                    pattern = (result.get('left_wins', 0), result.get('right_wins', 0), result.get('draws', 0))
-                    outcome_patterns.add(pattern)
-            pattern_diversity = min(1.0, len(outcome_patterns) / len(match_results))
-            
-            # Combine diversity metrics
-            strategy_diversity = 0.4 * ai_diversity + 0.3 * variance_score + 0.3 * pattern_diversity
+        # Strategy diversity (omit when gamma is 0 — e.g. two-AI / single-matchup experiments)
+        if self.gamma <= 1e-9:
+            strategy_diversity = 0.0
         else:
-            # Single matchup - lower diversity
-            strategy_diversity = 0.3 * ai_diversity
+            # Strategy Diversity: Based on:
+            # 1. Number of different AIs tested (more = more diverse)
+            # 2. Variance in balance scores across matchups (more variance = more diverse outcomes)
+            # 3. Variety in match outcomes (wins, losses, draws)
+            ai_diversity = min(1.0, len(all_ai_names) / len(self.ai_agents))  # Normalize by number of AIs in this run
+            
+            if len(balance_scores) > 1:
+                # Variance in balance scores: mean of (score - mean(balance_scores))^2 (matches README §4.2)
+                mean_balance = sum(balance_scores) / len(balance_scores)
+                balance_variance = sum((score - mean_balance) ** 2 for score in balance_scores) / len(balance_scores)
+                # Higher variance = more diverse outcomes (some matchups favor one side, others favor the other)
+                # But we want some variance (not all 50-50, not all one-sided)
+                variance_score = min(1.0, balance_variance * 2)  # Scale variance to 0-1
+                
+                # Count unique outcome patterns
+                outcome_patterns = set()
+                for match in match_results:
+                    result = match['result']
+                    if result:
+                        pattern = (result.get('left_wins', 0), result.get('right_wins', 0), result.get('draws', 0))
+                        outcome_patterns.add(pattern)
+                pattern_diversity = min(1.0, len(outcome_patterns) / len(match_results))
+                
+                # Combine diversity metrics
+                strategy_diversity = 0.4 * ai_diversity + 0.3 * variance_score + 0.3 * pattern_diversity
+            else:
+                # Single matchup - lower diversity
+                strategy_diversity = 0.3 * ai_diversity
         
         # Calculate overall fitness
         overall = (self.alpha * balance + 

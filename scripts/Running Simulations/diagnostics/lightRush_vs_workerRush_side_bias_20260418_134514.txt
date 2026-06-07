@@ -1,0 +1,4 @@
+
+=== Testing map: PCG/maps/filename.xml ===
+
+=== ordering_1_light_left: lightRushAI (P0/left) vs lightRushAI (P1/right) ===

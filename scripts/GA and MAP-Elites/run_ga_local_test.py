@@ -14,6 +14,10 @@ Run from project root:
 Or from this directory (scripts/GA and MAP-Elites):
 
   python run_ga_local_test.py
+
+**GUI-parity matches (optional):** set ``GA_FE_UTT=1`` to use Java ``UnitTypeTable(3,1)`` (MicroRTS FE **Nondeterministic-Both**)
+in ``run_pair``. Chromosome JSON is then **not** used for games—every individual gets the same fitness (useful to verify
+the GA pipeline matches the diagnose script / FE; not for evolving UTT stats).
 """
 
 import csv
@@ -50,6 +54,22 @@ GA_RUN_LOGS_DIR = os.path.join(SCRIPT_DIR, "ga_run_logs")
 RUN_HISTORY_CSV = "run_history.csv"
 
 
+def _fe_utt_builtin_from_env() -> Optional[Tuple[int, int]]:
+    """``GA_FE_UTT=1`` / ``yes`` → ``(3, 1)`` (FE Nondeterministic-Both); ``GA_FE_UTT=3,1`` for explicit pair; unset → off."""
+    raw = os.environ.get("GA_FE_UTT", "").strip().lower()
+    if not raw or raw in ("0", "false", "no", "off"):
+        return None
+    if raw in ("1", "true", "yes", "on", "both", "nondeterministic-both"):
+        return (3, 1)
+    parts = raw.replace(" ", "").split(",")
+    if len(parts) == 2:
+        try:
+            return (int(parts[0]), int(parts[1]))
+        except ValueError:
+            return None
+    return None
+
+
 class Tee:
     """Write to both stdout and a file so the full run is logged."""
     def __init__(self, stream, filepath):
@@ -70,11 +90,11 @@ class Tee:
         self.file.close()
 
 # Local test config (override with GA_GENERATIONS, GA_POPULATION, GA_GAMES_PER_EVAL if needed)
-# Tuned for a “medium” local run on a typical PC: ~30–60 minutes.
-GENERATIONS = int(os.getenv("GA_GENERATIONS", "10"))
-POPULATION = int(os.getenv("GA_POPULATION", "5"))
-GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "4"))  # per map, per ordering
-MAX_STEPS = 20000    # Cap per game; decisive games end in hundreds, draws stop here
+# Short diagnostic run to see map impact on balance.
+GENERATIONS = int(os.getenv("GA_GENERATIONS", "3"))
+POPULATION = int(os.getenv("GA_POPULATION", "6"))
+GAMES_PER_EVAL = int(os.getenv("GA_GAMES_PER_EVAL", "3"))  # per map, per ordering
+MAX_STEPS = 20000    # Cap per game; decisive games usually end well before this
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "ga_local_test_output")
 EXPERIMENT_NAME = "local_two_ai_test"
 # Save per-game snapshots and match_outputs/*.txt — change to False for faster runs, less disk
@@ -488,9 +508,11 @@ def main():
 
 
 def _main(ts: str, log_path: str):
-    # Single map for fast debug; add more maps for better balance estimates
+    # Maps used for evaluation (neutral maps from side-bias diagnostic)
     MAP_PATHS = [
-        "maps/8x8/basesWorkers8x8A.xml",
+        "maps/10x10/basesWorkers10x10.xml",
+        "maps/12x12/basesWorkers12x12F.xml",
+        "maps/16x16/basesWorkers16x16G.xml",
     ]
     # Run folder and UTT log: create at start so we can save every evaluated UTT for comparison
     run_id = f"{EXPERIMENT_NAME}_{ts}"
@@ -510,7 +532,19 @@ def _main(ts: str, log_path: str):
     print(f"  Max steps:      {MAX_STEPS}")
     print(f"  Save game details: {SAVE_GAME_DETAILS} (edit SAVE_GAME_DETAILS in this script or set GA_SAVE_GAME_DETAILS=0)")
     print(f"  Output dir:     {OUTPUT_DIR}")
+    fe_utt = _fe_utt_builtin_from_env()
+    if fe_utt:
+        print(f"  GA_FE_UTT:      {fe_utt} (matches ignore evolved JSON—pipeline / FE parity check only)")
     print("=" * 60)
+
+    use_nondet = os.environ.get("GA_USE_NONDETERMINISTIC", "").strip().lower()
+    if use_nondet in ("0", "false", "no", "off"):
+        nondet_flag = False
+    elif use_nondet in ("1", "true", "yes", "on"):
+        nondet_flag = True
+    else:
+        # Default: off when using FE builtin (JSON tweaks unused); else on as before
+        nondet_flag = fe_utt is None
 
     config = GAConfig(
         population_size=POPULATION,
@@ -544,16 +578,19 @@ def _main(ts: str, log_path: str):
         fitness_alpha=0.5,   # balance weight
         fitness_beta=0.3,    # duration weight
         fitness_gamma=0.2,   # diversity weight
-        # Duration target: typical avg steps/game ~50 with wide tolerance band [10, 90]
-        target_duration=50,
-        duration_tolerance=40,
+        # Duration target: with these larger maps (10x10,12x12,16x16) we typically
+        # see ~3k–7k steps per game. Reward around 6000 with a wide band [2000, 10000].
+        target_duration=6000,
+        duration_tolerance=4000,
         max_generations_without_improvement=GENERATIONS,  # run full 20 gens, don't early-stop at 5
         random_immigrant_interval=5,  # inject random UTT every 5 gens to escape 2-0-10 plateau
-        use_nondeterministic=True,  # random move conflicts + wider damage ranges
-        use_both_orderings=True,    # run (ai1,ai2) and (ai2,ai1); symmetric UTT → 50-50 gives balance signal
+        use_nondeterministic=nondet_flag,  # GA_USE_NONDETERMINISTIC=0/1 overrides; default off if GA_FE_UTT on
+        # For balance-focused runs we want both orderings so side bias cancels out.
+        use_both_orderings=True,
         verbose=True,
         utt_log_dir=utt_log_dir,    # save every evaluated UTT (gen{N}_ind{M}.json) for comparison
         save_game_details=SAVE_GAME_DETAILS,  # per-game snapshots + match_outputs/*.txt (set GA_SAVE_GAME_DETAILS=0 to disable)
+        fe_utt_builtin=fe_utt,
     )
 
     experiment_manager = ExperimentManager(OUTPUT_DIR)

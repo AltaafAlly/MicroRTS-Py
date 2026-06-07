@@ -400,6 +400,8 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         utt_json=None,
         utt_json_p0=None,
         utt_json_p1=None,
+        utt_builtin=None,
+        utt_json_overlay_builtin=None,
     ):
 
         self.ai1s = ai1s
@@ -416,6 +418,10 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         self.utt_json = utt_json
         self.utt_json_p0 = utt_json_p0
         self.utt_json_p1 = utt_json_p1
+        # (version, moveConflictResolution) e.g. (3, 1) = FE "Nondeterministic-Both"; overrides JSON when set
+        self._utt_builtin = utt_builtin
+        # With utt_json_p*: start from UnitTypeTable(version, crs) then apply JSON stats (FE rules + GA numbers)
+        self._utt_json_overlay_builtin = utt_json_overlay_builtin
 
         # read map
         self.microrts_path = os.path.join(gym_microrts.__path__[0], "microrts")
@@ -457,24 +463,74 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
                 jpype.addClassPath(os.path.join(self.microrts_path, jar))
             jpype.startJVM(*jvm_args, convertStrings=False)
 
+        # simple per-env/game RNG seed counter for bot-vs-bot runs
+        # (we randomize seeds on each gameStep call instead of always using 0)
+        self._seed_counter = 1
+
         # start microrts client
         from rts.units import UnitTypeTable
         
         # Load UTTs for both players
-        if self.utt_json_p0:
+        if self._utt_builtin is not None:
+            bv, bc = self._utt_builtin
+            _shared = UnitTypeTable(int(bv), int(bc))
+            self.real_utt_p0 = _shared
+            self.real_utt_p1 = _shared
+        elif self._utt_json_overlay_builtin is not None and self.utt_json_p0:
+            bv, bc = self._utt_json_overlay_builtin
+
+            def _load_json_overlay(rel_path: str):
+                # Build FE/base stats in Java, merge GA JSON on top in Python, then ``fromJSON``.
+                # JPype cannot set ``moveConflictResolutionStrategy`` or call ``UnitType.updateFromJSON``
+                # (package-private); ``UnitTypeTable.fromJSON`` is public.
+                from java.io import StringWriter
+
+                full = os.path.join(self.microrts_path, rel_path)
+                with open(full, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                raw_crs = data.get("moveConflictResolutionStrategy")
+                crs = int(bc) if raw_crs is None else int(raw_crs)
+                base_utt = UnitTypeTable(int(bv), int(crs))
+                w = StringWriter()
+                base_utt.toJSON(w)
+                base = json.loads(str(w.toString()))
+                ga_by_name = {}
+                for u in data.get("unitTypes") or []:
+                    nm = u.get("name")
+                    if nm is not None:
+                        ga_by_name[str(nm)] = u
+                for t in base.get("unitTypes") or []:
+                    nm = t.get("name")
+                    if nm is None:
+                        continue
+                    patch = ga_by_name.get(str(nm))
+                    if patch:
+                        t.update(patch)
+                base["moveConflictResolutionStrategy"] = crs
+                return UnitTypeTable.fromJSON(json.dumps(base))
+
+            self.real_utt_p0 = _load_json_overlay(self.utt_json_p0)
+            if self.utt_json_p1 and self.utt_json_p1 != self.utt_json_p0:
+                self.real_utt_p1 = _load_json_overlay(self.utt_json_p1)
+            else:
+                self.real_utt_p1 = self.real_utt_p0
+        elif self.utt_json_p0:
             utt_path_p0 = os.path.join(self.microrts_path, self.utt_json_p0)
             with open(utt_path_p0, "r") as f:
                 self.real_utt_p0 = UnitTypeTable.fromJSON(f.read())
         else:
             self.real_utt_p0 = UnitTypeTable()
-            
-        if self.utt_json_p1:
-            utt_path_p1 = os.path.join(self.microrts_path, self.utt_json_p1)
-            with open(utt_path_p1, "r") as f:
-                self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
-        else:
-            # Asymmetric: P1 uses default UTT when only P0 has custom UTT (e.g. GA evolved vs baseline)
-            self.real_utt_p1 = UnitTypeTable()
+
+        if self._utt_builtin is None and not (
+            self._utt_json_overlay_builtin is not None and self.utt_json_p0
+        ):
+            if self.utt_json_p1:
+                utt_path_p1 = os.path.join(self.microrts_path, self.utt_json_p1)
+                with open(utt_path_p1, "r") as f:
+                    self.real_utt_p1 = UnitTypeTable.fromJSON(f.read())
+            else:
+                # Asymmetric: P1 uses default UTT when only P0 has custom UTT (e.g. GA evolved vs baseline)
+                self.real_utt_p1 = UnitTypeTable()
             
         # For backward compatibility, use P0's UTT as the main one
         self.real_utt = self.real_utt_p0
@@ -568,8 +624,8 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
         self.actions = actions
 
     def step_wait(self):
-        # For bot clients, gameStep only needs player IDs, not actions (both AIs play automatically)
-        # Pass empty 3D array for actions (required by signature) and player IDs
+        # For bot clients, gameStep only needs player IDs, not actions (both AIs play automatically).
+        # Pass empty 3D array for actions (required by signature) and fixed player IDs (seed 0).
         import numpy as np
         from jpype import JArray, JInt
         empty_actions = JArray(JArray(JArray(JInt)))([[[]] for _ in range(self.num_envs)])

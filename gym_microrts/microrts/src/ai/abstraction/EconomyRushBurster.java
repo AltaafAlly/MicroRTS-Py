@@ -76,7 +76,7 @@ public class EconomyRushBurster extends AbstractionLayerAI {
 
         // behavior of bases:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == baseType
+            if (baseType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
                 baseBehavior(u, p, pgs);
@@ -85,7 +85,7 @@ public class EconomyRushBurster extends AbstractionLayerAI {
 
         // behavior of barracks:
         for (Unit u : pgs.getUnits()) {
-            if (u.getType() == barracksType
+            if (barracksType.equals(u.getType())
                     && u.getPlayer() == player
                     && gs.getActionAssignment(u) == null) {
                 barracksBehavior(u, p, pgs);
@@ -97,7 +97,7 @@ public class EconomyRushBurster extends AbstractionLayerAI {
         for (Unit u : pgs.getUnits()) {
             if (u.getType().canHarvest
                     && u.getPlayer() == player
-                    && u.getType() == workerType) {
+                    && workerType.equals(u.getType())) {
                 workers.add(u);
             }
         }
@@ -132,14 +132,14 @@ public class EconomyRushBurster extends AbstractionLayerAI {
     public void baseBehavior(Unit u, Player p, PhysicalGameState pgs) {
         int nworkers = 0;
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == workerType
+            if (workerType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nworkers++;
             }
         }
         int nBases = 0;
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nBases++;
             }
@@ -156,15 +156,15 @@ public class EconomyRushBurster extends AbstractionLayerAI {
         int nRanged = 0;
         int nHeavy = 0;
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == lightType
+            if (lightType.equals(u2.getType())
                     && u.getPlayer() == p.getID()) {
                 nLight++;
             }
-            if (u2.getType() == rangedType
+            if (rangedType.equals(u2.getType())
                     && u.getPlayer() == p.getID()) {
                 nRanged++;
             }
-            if (u2.getType() == heavyType
+            if (heavyType.equals(u2.getType())
                     && u.getPlayer() == p.getID()) {
                 nHeavy++;
             }
@@ -229,11 +229,11 @@ public class EconomyRushBurster extends AbstractionLayerAI {
             return;
         }
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbases++;
             }
-            if (u2.getType() == barracksType
+            if (barracksType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 nbarracks++;
             }
@@ -244,8 +244,9 @@ public class EconomyRushBurster extends AbstractionLayerAI {
             // build a base:
             if (p.getResources() >= baseType.cost + resourcesUsed) {
                 Unit u = freeWorkers.remove(0);
-                buildIfNotAlreadyBuilding(u, baseType, u.getX(), u.getY(), reservedPositions, p, pgs);
-                resourcesUsed += baseType.cost;
+                if (buildIfNotAlreadyBuilding(u, baseType, u.getX(), u.getY(), reservedPositions, p, pgs)) {
+                    resourcesUsed += baseType.cost;
+                }
             }
         }
 
@@ -253,8 +254,9 @@ public class EconomyRushBurster extends AbstractionLayerAI {
             // build a barracks:
             if (p.getResources() >= barracksType.cost + resourcesUsed) {
                 Unit u = freeWorkers.remove(0);
-                buildIfNotAlreadyBuilding(u, barracksType, u.getX(), u.getY(), reservedPositions, p, pgs);
-                resourcesUsed += barracksType.cost;
+                if (buildIfNotAlreadyBuilding(u, barracksType, u.getX(), u.getY(), reservedPositions, p, pgs)) {
+                    resourcesUsed += barracksType.cost;
+                }
             }
         }
         if (nbarracks != 0) {
@@ -264,8 +266,9 @@ public class EconomyRushBurster extends AbstractionLayerAI {
                     //envio para construção
                     if (p.getResources() >= baseType.cost + resourcesUsed) {
                         Unit u = freeWorkers.remove(0);
-                        buildIfNotAlreadyBuilding(u, baseType, otherResources.get(0).getX()-2, otherResources.get(0).getY()-2, reservedPositions, p, pgs);
-                        resourcesUsed += baseType.cost;
+                        if (buildIfNotAlreadyBuilding(u, baseType, otherResources.get(0).getX()-2, otherResources.get(0).getY()-2, reservedPositions, p, pgs)) {
+                            resourcesUsed += baseType.cost;
+                        }
                     }
                 }
             } 
@@ -305,7 +308,7 @@ public class EconomyRushBurster extends AbstractionLayerAI {
 
         List<Unit> bases = new ArrayList<>();
         for (Unit u2 : pgs.getUnits()) {
-            if (u2.getType() == baseType
+            if (baseType.equals(u2.getType())
                     && u2.getPlayer() == p.getID()) {
                 bases.add(u2);
             }

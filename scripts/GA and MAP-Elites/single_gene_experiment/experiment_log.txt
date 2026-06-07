@@ -1,0 +1,22 @@
+Single-gene two-AI experiment starting...
+Project root: /home/altaaf/projects/MicroRTS-Py-Research
+AI left:  lightRushAI
+AI right: workerRushAI
+Maps: maps/10x10/basesWorkers10x10.xml, maps/12x12/basesWorkers12x12F.xml, maps/16x16/basesWorkers16x16G.xml
+Gene: Light.maxDamage in [6, 16]
+Gen 0: Light.maxDamage mean=15.79, std=0.06, best=15.79
+Gen 1: Light.maxDamage mean=15.63, std=0.33, best=16.00
+Gen 2: Light.maxDamage mean=15.72, std=0.42, best=16.00
+Gen 3: Light.maxDamage mean=15.37, std=0.94, best=16.00
+Gen 4: Light.maxDamage mean=15.29, std=1.18, best=16.00
+Gen 5: Light.maxDamage mean=14.89, std=0.89, best=15.65
+Gen 6: Light.maxDamage mean=15.49, std=0.60, best=15.46
+Gen 7: Light.maxDamage mean=15.30, std=0.71, best=14.74
+Gen 8: Light.maxDamage mean=15.21, std=1.02, best=14.78
+Gen 9: Light.maxDamage mean=15.26, std=0.70, best=16.00
+
+Single-gene experiment complete.
+- Gene: Light.maxDamage in [6, 16]
+- CSV:  /home/altaaf/projects/MicroRTS-Py-Research/scripts/GA and MAP-Elites/single_gene_experiment/gene_trajectory.csv
+- Plot: /home/altaaf/projects/MicroRTS-Py-Research/scripts/GA and MAP-Elites/single_gene_experiment/gene_trajectory.png
+- Log:  /home/altaaf/projects/MicroRTS-Py-Research/scripts/GA and MAP-Elites/single_gene_experiment/experiment_log.txt

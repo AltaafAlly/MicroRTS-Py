@@ -2,7 +2,7 @@ import os
 import sys
 import csv
 from pathlib import Path
-from typing import Dict, Tuple, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from gym_microrts.envs.vec_env import MicroRTSBotVecEnv
@@ -10,6 +10,40 @@ from gym_microrts import microrts_ai
 
 
 # Single-file launcher: set your match parameters here and run this file.
+
+
+def resolve_winner_side_p0_p1(env: MicroRTSBotVecEnv, info0: Optional[dict]) -> str:
+    """
+    Map episode to ``left`` (player 0) / ``right`` (player 1) / ``draw``.
+
+    Prefer ``GameState.winner()`` from the JNI bot client (``getLastTerminalGameState``), which is
+    the same authority the MicroRTS GUI uses. When the episode ends on the **step cap** without
+    ``gameover()``, fall back to WinLoss ``raw_rewards[0]`` sign (empirically: ``< 0`` → P0/left,
+    ``> 0`` → P1/right in this bridge).
+    """
+    try:
+        vc = getattr(env, "vec_client", None)
+        if vc is not None and hasattr(vc, "getLastTerminalGameState"):
+            gs = vc.getLastTerminalGameState(0)
+            if gs is not None and bool(gs.gameover()):
+                w = int(gs.winner())
+                if w == 0:
+                    return "left"
+                if w == 1:
+                    return "right"
+                return "draw"
+    except Exception:
+        pass
+    if isinstance(info0, dict) and "raw_rewards" in info0:
+        rr = info0["raw_rewards"]
+        rr = rr.tolist() if hasattr(rr, "tolist") else list(rr)
+        if rr:
+            v = float(rr[0])
+            if v < 0:
+                return "left"
+            if v > 0:
+                return "right"
+    return "draw"
 
 
 def run_games_with_env(env: MicroRTSBotVecEnv, games: int) -> Dict[str, int]:
@@ -36,14 +70,7 @@ def run_games_with_env(env: MicroRTSBotVecEnv, games: int) -> Dict[str, int]:
                 continue
             total_steps_this_run += steps
             inf = info[0] if isinstance(info, list) and info else info
-            winner = "draw"
-            if isinstance(inf, dict) and "raw_rewards" in inf:
-                rr = inf["raw_rewards"]
-                rr = rr.tolist() if hasattr(rr, "tolist") else rr
-                if rr and rr[0] > 0:
-                    winner = "left"
-                elif rr and rr[0] < 0:
-                    winner = "right"
+            winner = resolve_winner_side_p0_p1(env, inf if isinstance(inf, dict) else None)
             if winner == "left":
                 results["left_wins"] += 1
             elif winner == "right":
@@ -61,11 +88,19 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
              utt_json_p0: Optional[str] = None, utt_json_p1: Optional[str] = None,
              capture_composition: bool = False,
              capture_snapshots: bool = False,
-             snapshot_interval: int = 50) -> Dict:
+             snapshot_interval: int = 50,
+             verbose_games: bool = False,
+             utt_builtin: Optional[Tuple[int, int]] = None,
+             utt_json_overlay_builtin: Optional[Tuple[int, int]] = None) -> Dict:
     """
     Run games between ai_left (P0) and ai_right (P1).
     If capture_composition is True, end-of-game unit composition is captured and returned.
     If capture_snapshots is True, game-state snapshots (last game only) are captured every snapshot_interval steps.
+    If verbose_games is True, prints each game's winner and step count, and sets results[\"per_game\"].
+    If utt_builtin is (version, move_conflict), both players use that Java ``UnitTypeTable`` (e.g. ``(3, 1)``
+    matches the MicroRTS FE preset **Nondeterministic-Both**); JSON paths are ignored when this is set.
+    If utt_json_overlay_builtin is set (and utt_builtin is not), JSON unit stats are applied on top of that Java
+    table (e.g. ``(3, 1)`` for GA / headless parity with the FE while still loading evolved ``utts/*.json``).
     """
     # Optional: import game_state_utils for composition and/or snapshots
     get_unit_composition_dict = None
@@ -123,6 +158,12 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     a1 = getattr(microrts_ai, ai_left)
     a2 = getattr(microrts_ai, ai_right)
 
+    jp0, jp1 = utt_json_p0, utt_json_p1
+    if utt_builtin is not None:
+        jp0, jp1 = None, None
+
+    overlay = utt_json_overlay_builtin if utt_builtin is None else None
+
     env = MicroRTSBotVecEnv(
         ai1s=[a1], ai2s=[a2],
         max_steps=max_steps,
@@ -130,8 +171,10 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
         reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
         autobuild=autobuild,
         utt_json=utt_json,
-        utt_json_p0=utt_json_p0,
-        utt_json_p1=utt_json_p1,
+        utt_json_p0=jp0,
+        utt_json_p1=jp1,
+        utt_builtin=utt_builtin,
+        utt_json_overlay_builtin=overlay,
     )
 
     _ = env.reset()
@@ -142,6 +185,7 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     results = {"left_wins": 0, "right_wins": 0, "draws": 0}
     total_steps_this_run = 0
     per_game_compositions = []
+    per_game_rows: List[Dict[str, Union[int, str]]] = []
     game_snapshots = []  # list of per-game [(step, text), ...] when capture_snapshots (every game)
     for _g in range(games):
         steps = 0
@@ -179,20 +223,35 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
             if capture_snapshots:
                 game_snapshots.append(this_game_snapshots)
             inf = info[0] if isinstance(info, list) and info else info
-            winner = "draw"
-            if isinstance(inf, dict) and "raw_rewards" in inf:
-                rr = inf["raw_rewards"]
-                rr = rr.tolist() if hasattr(rr, "tolist") else rr
-                if rr and rr[0] > 0:
-                    winner = "left"
-                elif rr and rr[0] < 0:
-                    winner = "right"
+            winner = resolve_winner_side_p0_p1(env, inf if isinstance(inf, dict) else None)
             if winner == "left":
                 results["left_wins"] += 1
             elif winner == "right":
                 results["right_wins"] += 1
             else:
                 results["draws"] += 1
+
+            if verbose_games:
+                if winner == "left":
+                    w_ai = ai_left
+                elif winner == "right":
+                    w_ai = ai_right
+                else:
+                    w_ai = "draw"
+                per_game_rows.append(
+                    {
+                        "game_index": _g,
+                        "winner_side": winner,
+                        "winner_ai": w_ai,
+                        "steps": steps,
+                    }
+                )
+                _map_tag = map_path.replace("\\", "/").split("/")[-1] if map_path else "?"
+                print(
+                    f"        [{_map_tag}] game {_g + 1}/{games}: winner={w_ai}  "
+                    f"(P0/left={ai_left}, P1/right={ai_right})  steps={steps}",
+                    flush=True,
+                )
 
             # Capture end-of-game unit composition (before reset) when requested
             if capture_composition and get_unit_composition_dict and composition_to_string:
@@ -210,6 +269,18 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
     if total_steps_this_run == 0:
         print("        WARNING: total steps this run = 0 (games may not have run)", file=sys.stderr)
     results["_total_steps"] = total_steps_this_run
+
+    lw_, rw_, d_ = results.get("left_wins", 0), results.get("right_wins", 0), results.get("draws", 0)
+    if games > 0 and d_ == games and lw_ == 0 and rw_ == 0:
+        if total_steps_this_run >= games * max_steps - 1:
+            print(
+                "        NOTE: All games logged as draws and total steps ≈ games×max_steps — "
+                f"each episode likely **hit the step cap** ({max_steps}/game) before natural elimination. "
+                "Raise SINGLE_GENE_MAX_STEPS (run_single_gene uses 300000 default for BroodWar; try 400000+ if still all draws), "
+                "or reduce SINGLE_GENE_DEC_GAMES while tuning.",
+                flush=True,
+            )
+
     if capture_composition:
         if per_game_compositions and composition_to_string:
             results["_per_game_compositions"] = per_game_compositions
@@ -220,6 +291,9 @@ def run_pair(ai_left: str, ai_right: str, map_path: str, max_steps: int, games: 
             results["_left_unit_composition"] = "N/A"
             results["_right_unit_composition"] = "N/A"
             print("  (Unit composition N/A: rebuild gym_microrts/microrts JAR for end-of-game capture)", file=sys.stderr)
+
+    if verbose_games and per_game_rows:
+        results["per_game"] = per_game_rows
 
     try:
         env.vec_client.close()

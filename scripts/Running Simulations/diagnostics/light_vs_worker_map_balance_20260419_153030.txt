@@ -1,0 +1,4 @@
+Map set: broodwar  (45 maps)  games/order=24  max_steps=100000  ai1=lightRushAI ai2=workerRushAI
+
+
+[1/45] maps/BroodWar/(2)Benzene.scxA.xml

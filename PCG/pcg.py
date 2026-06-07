@@ -1,14 +1,40 @@
+from __future__ import annotations
+
 import argparse
 import random
 import xml.etree.cElementTree as ET
+from pathlib import Path
+from typing import Union
 
 
 def parse_args():
+    repo_root = Path(__file__).resolve().parents[1]
+    default_out = (
+        repo_root
+        / "gym_microrts"
+        / "microrts"
+        / "maps"
+        / "pcg"
+        / "pcg_generated.xml"
+    )
     # fmt: off
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--width', type=int, default=16,help='the width of the map')
-    parser.add_argument('--height', type=int, default=16,help='the height of the map')
-
+    parser = argparse.ArgumentParser(
+        description="Generate a random bases+workers style map for MicroRTS (gym loads maps under microrts/).",
+    )
+    parser.add_argument("--width", type=int, default=16, help="Map width")
+    parser.add_argument("--height", type=int, default=16, help="Map height")
+    parser.add_argument(
+        "--out",
+        type=str,
+        default=str(default_out),
+        help="Output XML file (default: gym_microrts/microrts/maps/pcg/pcg_generated.xml)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="RNG seed for reproducible maps (optional)",
+    )
     args = parser.parse_args()
     # fmt: on
     return args
@@ -144,17 +170,22 @@ class PCG:
         self.unit_location_records.append((x, y))
         return x, y
 
-    def get_map(self):
+    def get_map(self, output_path: Union[str, Path]) -> ET.ElementTree:
         root = ET.Element("rts.PhysicalGameState", width=str(self.width), height=str(self.height))
         self.initiate_terrain(root, "terrain", self.wallRings)
         self.initiate_players(root, "players")
         self.initiate_units(root, "units")
         tree = ET.ElementTree(root)
-        tree.write("./maps/filename.xml")
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        tree.write(str(out), encoding="utf-8", xml_declaration=True)
         return tree
 
 
 if __name__ == "__main__":
     args = parse_args()
+    if args.seed is not None:
+        random.seed(args.seed)
     pcg = PCG(width=args.width, height=args.height)
-    pcg.get_map()
+    pcg.get_map(args.out)
+    print(f"Wrote {args.out}")

@@ -1,0 +1,17 @@
+LightRushFavored_GUI.json
+=========================
+Purpose: symmetric UTT for GUI / manual tests where Light units are much stronger
+than TestUnitTypeTable — lightRushAI spams Lights; workerRushAI mostly uses Workers,
+so this favors the light-rush playstyle more than the worker-rush one.
+
+Relative to TestUnitTypeTable.json (Light only):
+  cost 2→1, hp 4→30, minDamage 2→8, maxDamage 2→14, produceTime 65→35,
+  moveTime 8→2, attackTime 5→2, sightRadius 2→3.
+
+Load in MicroRTS GUI:
+  Point the client at this file under microrts/utts/ (path depends on your launcher).
+
+From repo root (headless sanity check exists via run_match_configured / GA):
+  utts/LightRushFavored_GUI.json
+
+Pair with e.g. maps/10x10/basesWorkers10x10.xml, AIs lightRushAI vs workerRushAI.
